@@ -64,4 +64,9 @@ class Treatment extends Model
     {
         return $this->hasMany(BeforeAfterCase::class);
     }
+
+    public function countryTreatments(): HasMany
+    {
+        return $this->hasMany(CountryTreatment::class);
+    }
 }

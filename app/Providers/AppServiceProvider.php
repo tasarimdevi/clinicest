@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Country;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +21,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        View::composer('layouts.public', function ($view) {
+            $view->with('footerCountries', Country::where('is_target', true)->orderBy('name')->get());
+        });
     }
 }

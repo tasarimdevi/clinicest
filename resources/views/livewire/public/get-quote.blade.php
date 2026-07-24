@@ -28,7 +28,7 @@
                 <select wire:model="country_id" class="mt-1.5 w-full rounded-md border-ink-300 text-sm">
                     <option value="">{{ __('Select your country (optional)') }}</option>
                     @foreach ($countries as $country)
-                        <option value="{{ $country->id }}">{{ $country->name }}</option>
+                        <option value="{{ $country->id }}" @selected($country_id === $country->id)>{{ $country->name }}</option>
                     @endforeach
                 </select>
             </div>

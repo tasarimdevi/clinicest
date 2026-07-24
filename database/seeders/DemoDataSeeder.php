@@ -9,6 +9,7 @@ use App\Models\BeforeAfterCase;
 use App\Models\City;
 use App\Models\Clinic;
 use App\Models\Country;
+use App\Models\CountryTreatment;
 use App\Models\Doctor;
 use App\Models\Faq;
 use App\Models\Review;
@@ -28,14 +29,29 @@ class DemoDataSeeder extends Seeder
         $gb = Country::create([
             'iso2' => 'GB', 'iso3' => 'GBR', 'name' => 'United Kingdom', 'slug' => 'uk',
             'currency' => 'GBP', 'dial_code' => '+44', 'is_target' => true, 'tier' => 'primary',
+            'primary_language' => 'en',
+            'flight_note' => 'Direct flights from London, Manchester & Edinburgh to Istanbul.',
+            'avg_flight_hours' => 4.0,
+            'visa_info' => 'UK passport holders can enter Turkey visa-free for tourism stays up to 90 days.',
+            'best_time_to_visit' => 'April–June and September–October, for mild weather and fewer crowds.',
         ]);
         $de = Country::create([
             'iso2' => 'DE', 'iso3' => 'DEU', 'name' => 'Germany', 'slug' => 'germany',
             'currency' => 'EUR', 'dial_code' => '+49', 'is_target' => true, 'tier' => 'primary',
+            'primary_language' => 'de',
+            'flight_note' => 'Direct flights from Frankfurt, Munich, Berlin & Cologne to Istanbul.',
+            'avg_flight_hours' => 3.5,
+            'visa_info' => 'German passport holders can enter Turkey visa-free for tourism stays up to 90 days.',
+            'best_time_to_visit' => 'April–June and September–October, for mild weather and fewer crowds.',
         ]);
         $ie = Country::create([
             'iso2' => 'IE', 'iso3' => 'IRL', 'name' => 'Ireland', 'slug' => 'ireland',
             'currency' => 'EUR', 'dial_code' => '+353', 'is_target' => true, 'tier' => 'primary',
+            'primary_language' => 'en',
+            'flight_note' => 'Direct and one-stop flights from Dublin to Istanbul.',
+            'avg_flight_hours' => 4.5,
+            'visa_info' => 'Irish passport holders can enter Turkey visa-free for tourism stays up to 90 days.',
+            'best_time_to_visit' => 'April–June and September–October, for mild weather and fewer crowds.',
         ]);
         $tr = Country::create([
             'iso2' => 'TR', 'iso3' => 'TUR', 'name' => 'Turkey', 'slug' => 'turkey',
@@ -76,6 +92,54 @@ class DemoDataSeeder extends Seeder
                 'is_featured' => true,
                 'sort' => $i,
                 'status' => 'published',
+            ]);
+        }
+
+        // Home-country vs. Turkey price comparison rows powering the
+        // /countries/{country} and /cost/{treatment} landing pages.
+        // Local prices are realistic ballpark private-dental figures for
+        // each market; Turkey prices are the treatment's own EUR base
+        // price converted to the country's currency (GBP uses a fixed
+        // approximate rate since this is demo data, not live FX).
+        $eurToGbp = 0.86;
+        $localPriceDefs = [
+            'dental-implants' => ['uk' => [200000, 300000], 'germany' => [150000, 250000], 'ireland' => [220000, 320000]],
+            'all-on-4' => ['uk' => [1500000, 2500000], 'germany' => [1200000, 2000000], 'ireland' => [1600000, 2400000]],
+            'hollywood-smile' => ['uk' => [800000, 1500000], 'germany' => [600000, 1200000], 'ireland' => [700000, 1300000]],
+            'veneers' => ['uk' => [300000, 600000], 'germany' => [250000, 500000], 'ireland' => [300000, 550000]],
+            'teeth-whitening' => ['uk' => [30000, 60000], 'germany' => [25000, 50000], 'ireland' => [30000, 55000]],
+            'invisalign' => ['uk' => [300000, 550000], 'germany' => [250000, 450000], 'ireland' => [280000, 500000]],
+        ];
+
+        foreach ($localPriceDefs as $slug => $byCountry) {
+            $t = $treatments[$slug];
+
+            CountryTreatment::create([
+                'country_id' => $gb->id,
+                'treatment_id' => $t->id,
+                'currency' => 'GBP',
+                'local_price_min' => $byCountry['uk'][0],
+                'local_price_max' => $byCountry['uk'][1],
+                'turkey_price_min' => (int) round($t->base_price_min * $eurToGbp),
+                'turkey_price_max' => (int) round($t->base_price_max * $eurToGbp),
+            ]);
+            CountryTreatment::create([
+                'country_id' => $de->id,
+                'treatment_id' => $t->id,
+                'currency' => 'EUR',
+                'local_price_min' => $byCountry['germany'][0],
+                'local_price_max' => $byCountry['germany'][1],
+                'turkey_price_min' => $t->base_price_min,
+                'turkey_price_max' => $t->base_price_max,
+            ]);
+            CountryTreatment::create([
+                'country_id' => $ie->id,
+                'treatment_id' => $t->id,
+                'currency' => 'EUR',
+                'local_price_min' => $byCountry['ireland'][0],
+                'local_price_max' => $byCountry['ireland'][1],
+                'turkey_price_min' => $t->base_price_min,
+                'turkey_price_max' => $t->base_price_max,
             ]);
         }
 

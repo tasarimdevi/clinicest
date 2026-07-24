@@ -5,6 +5,8 @@ declare(strict_types=1);
 use App\Livewire\Public\BeforeAfterIndex;
 use App\Livewire\Public\ClinicShow;
 use App\Livewire\Public\ClinicsIndex;
+use App\Livewire\Public\CostShow;
+use App\Livewire\Public\CountryShow;
 use App\Livewire\Public\DoctorShow;
 use App\Livewire\Public\DoctorsIndex;
 use App\Livewire\Public\GetQuote;
@@ -52,11 +54,9 @@ Route::get('/doctors/{doctor:slug}', DoctorShow::class)->name('doctors.show');
 Route::get('/dental-tourism-turkey', PlaceholderPage::class)
     ->name('guide.index')->defaults('title', 'Dental Tourism Guide');
 
-Route::get('/countries/{country:slug}', PlaceholderPage::class)
-    ->name('countries.show')->defaults('title', 'Country');
+Route::get('/countries/{country:slug}', CountryShow::class)->name('countries.show');
 
-Route::get('/cost/{treatment:slug}', PlaceholderPage::class)
-    ->name('cost.show')->defaults('title', 'Treatment Cost');
+Route::get('/cost/{treatment:slug}', CostShow::class)->name('cost.show');
 
 Route::get('/before-after', BeforeAfterIndex::class)->name('before-after.index');
 

@@ -59,6 +59,12 @@ class GetQuote extends Component
                 ]);
             }
         }
+
+        if ($countryId = request()->integer('country')) {
+            if (Country::where('id', $countryId)->where('is_target', true)->exists()) {
+                $this->country_id = $countryId;
+            }
+        }
     }
 
     protected function rules(): array

@@ -60,7 +60,7 @@
 
     <footer class="border-t border-ink-100 bg-ink-50">
         <div class="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-2 gap-8 md:grid-cols-4">
+            <div class="grid grid-cols-2 gap-8 md:grid-cols-5">
                 <div>
                     <h3 class="text-sm font-semibold text-ink-900">{{ __('nav.treatments') }}</h3>
                     <ul class="mt-4 space-y-2 text-sm text-ink-600">
@@ -68,6 +68,16 @@
                         <li><a href="{{ route('clinics.index') }}" class="hover:text-brand-700">{{ __('nav.clinics') }}</a></li>
                     </ul>
                 </div>
+                @if (($footerCountries ?? collect())->isNotEmpty())
+                    <div>
+                        <h3 class="text-sm font-semibold text-ink-900">{{ __('Popular routes') }}</h3>
+                        <ul class="mt-4 space-y-2 text-sm text-ink-600">
+                            @foreach ($footerCountries as $fc)
+                                <li><a href="{{ route('countries.show', $fc->slug) }}" class="hover:text-brand-700">{{ __('Turkey for :country', ['country' => $fc->name]) }}</a></li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
                 <div>
                     <h3 class="text-sm font-semibold text-ink-900">{{ __('Company') }}</h3>
                     <ul class="mt-4 space-y-2 text-sm text-ink-600">

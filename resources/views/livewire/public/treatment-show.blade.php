@@ -67,9 +67,14 @@
                 <p class="mt-2 text-sm text-ink-500">
                     {{ __('Final price is confirmed in writing by your matched clinic after reviewing your case — no on-site upsells.') }}
                 </p>
-                <x-button :href="route('get-quote', ['treatment' => $treatment->id])" as="a" variant="secondary" size="sm" class="mt-4">
-                    {{ __('Get exact quote') }}
-                </x-button>
+                <div class="mt-4 flex flex-wrap gap-3">
+                    <x-button :href="route('get-quote', ['treatment' => $treatment->id])" as="a" variant="secondary" size="sm">
+                        {{ __('Get exact quote') }}
+                    </x-button>
+                    <a href="{{ route('cost.show', $treatment->slug) }}" class="inline-flex items-center text-sm font-medium text-brand-700 hover:underline">
+                        {{ __('Compare cost vs. your country') }} →
+                    </a>
+                </div>
             </div>
         @endif
     </div>
