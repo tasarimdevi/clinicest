@@ -2,6 +2,9 @@
 
 declare(strict_types=1);
 
+use App\Livewire\Admin\Dashboard;
+use App\Livewire\Admin\LeadDetail;
+use App\Livewire\Admin\Leads;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -9,25 +12,17 @@ use Illuminate\Support\Facades\Route;
 | Admin panel routes
 |--------------------------------------------------------------------------
 | See docs/09-crm-admin-architecture.md §4 (admin panel) and
-| docs/04-wireframes.md §16. Built out from Phase 1 (CRM inbox) through
-| Phase 4 (docs/10-roadmap.md). Livewire components will live in
-| app/Livewire/Admin/*, gated by Spatie permissions (docs/09 §1).
+| docs/04-wireframes.md §16. The CRM lead inbox (Dashboard, Leads,
+| LeadDetail) is built out below — everything else (clinics, doctors,
+| content, SEO, media, users, billing) remains Phase 2+ (docs/10-roadmap.md).
+| Gated on the 'access-admin' permission, seeded by RolePermissionSeeder.
 */
 
 Route::middleware(['auth', 'can:access-admin'])->prefix('admin')->name('admin.')->group(function () {
-    // Route::get('/', Dashboard::class)->name('dashboard');
-    // Route::get('/clinics', Clinics::class)->name('clinics');
-    // Route::get('/doctors', Doctors::class)->name('doctors');
-    // Route::get('/leads', Leads::class)->name('leads'); // CRM inbox — Phase 1
-    // Route::get('/treatments', Treatments::class)->name('treatments');
-    // Route::get('/countries', Countries::class)->name('countries');
-    // Route::get('/posts', Posts::class)->name('posts');
-    // Route::get('/reviews', Reviews::class)->name('reviews');
-    // Route::get('/seo', Seo::class)->name('seo');
-    // Route::get('/media', Media::class)->name('media');
-    // Route::get('/users', Users::class)->name('users');
-    // Route::get('/payments', Payments::class)->name('payments');
-    // Route::get('/commissions', Commissions::class)->name('commissions');
-    // Route::get('/invoices', Invoices::class)->name('invoices');
-    // Route::get('/settings', Settings::class)->name('settings');
+    Route::get('/', Dashboard::class)->name('dashboard');
+
+    Route::prefix('leads')->name('leads.')->group(function () {
+        Route::get('/', Leads::class)->name('index');
+        Route::get('/{lead}', LeadDetail::class)->name('show');
+    });
 });
