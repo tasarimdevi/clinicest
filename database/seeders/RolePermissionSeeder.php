@@ -7,6 +7,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 /**
  * Seeds the role/permission matrix from docs/09-crm-admin-architecture.md §1.
@@ -17,6 +18,13 @@ class RolePermissionSeeder extends Seeder
 {
     public function run(): void
     {
+        // Spatie caches the role<->permission map. Re-running this seeder
+        // (every test via RefreshDatabase re-creates roles/permissions with
+        // reused auto-increment IDs) can otherwise leave a stale cache
+        // pointing old IDs at the wrong role, silently granting or denying
+        // the wrong permissions.
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+
         $permissions = [
             // Leads / CRM
             'leads.view', 'leads.assign', 'leads.manage',
@@ -41,16 +49,21 @@ class RolePermissionSeeder extends Seeder
         }
 
         $roles = [
+            // Clinic-portal roles never get access-admin — they operate
+            // entirely within /clinic/{id} via EnsureClinicMember, not /admin.
             'patient' => [],
             'clinic_owner' => ['clinics.manage', 'doctors.manage', 'leads.view', 'billing.view'],
             'clinic_manager' => ['clinics.view', 'doctors.manage', 'leads.view'],
             'clinic_staff' => ['leads.view'],
             'doctor' => [],
-            'sales_agent' => ['leads.view', 'leads.assign', 'leads.manage'],
-            'content_editor' => ['content.view', 'content.edit'],
-            'seo_manager' => ['seo.manage', 'content.view'],
-            'moderator' => ['reviews.moderate', 'clinics.verify'],
-            'finance' => ['billing.view', 'billing.manage', 'commissions.manage', 'invoices.manage'],
+            // Internal staff roles all need access-admin just to reach
+            // /admin at all; their other permissions then scope what they
+            // see once inside (docs/09-crm-admin-architecture.md §1).
+            'sales_agent' => ['access-admin', 'leads.view', 'leads.assign', 'leads.manage'],
+            'content_editor' => ['access-admin', 'content.view', 'content.edit'],
+            'seo_manager' => ['access-admin', 'seo.manage', 'content.view'],
+            'moderator' => ['access-admin', 'reviews.moderate', 'clinics.verify'],
+            'finance' => ['access-admin', 'billing.view', 'billing.manage', 'commissions.manage', 'invoices.manage'],
             'admin' => [
                 'access-admin', 'leads.view', 'leads.assign', 'leads.manage',
                 'clinics.view', 'clinics.manage', 'clinics.verify',
@@ -66,5 +79,7 @@ class RolePermissionSeeder extends Seeder
         foreach ($roles as $role => $rolePermissions) {
             Role::findOrCreate($role)->syncPermissions($rolePermissions);
         }
+
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
     }
 }

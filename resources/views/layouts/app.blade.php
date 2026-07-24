@@ -12,12 +12,21 @@
 
     @php
         $currentClinic = request()->route('clinic');
+        $navUser = auth()->user();
 
         $navItems = match (true) {
-            request()->routeIs('admin.*') => [
+            request()->routeIs('admin.*') => array_values(array_filter([
                 ['label' => __('Dashboard'), 'route' => 'admin.dashboard', 'pattern' => 'admin.dashboard'],
-                ['label' => __('Leads'), 'route' => 'admin.leads.index', 'pattern' => 'admin.leads.*'],
-            ],
+                $navUser?->can('leads.view')
+                    ? ['label' => __('Leads'), 'route' => 'admin.leads.index', 'pattern' => 'admin.leads.*']
+                    : null,
+                $navUser?->can('clinics.view')
+                    ? ['label' => __('Clinics'), 'route' => 'admin.clinics.index', 'pattern' => 'admin.clinics.*']
+                    : null,
+                $navUser?->can('doctors.view')
+                    ? ['label' => __('Doctors'), 'route' => 'admin.doctors.index', 'pattern' => 'admin.doctors.*']
+                    : null,
+            ])),
             request()->routeIs('clinic.*') && $currentClinic => [
                 ['label' => __('Dashboard'), 'route' => 'clinic.dashboard', 'params' => [$currentClinic], 'pattern' => 'clinic.dashboard'],
                 ['label' => __('Lead Inbox'), 'route' => 'clinic.leads', 'params' => [$currentClinic], 'pattern' => 'clinic.leads'],
