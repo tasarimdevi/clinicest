@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 use Spatie\Translatable\HasTranslations;
@@ -84,5 +85,15 @@ class Clinic extends Model
     public function leadAssignments(): HasMany
     {
         return $this->hasMany(LeadAssignment::class);
+    }
+
+    public function beforeAfterCases(): HasMany
+    {
+        return $this->hasMany(BeforeAfterCase::class);
+    }
+
+    public function reviews(): MorphMany
+    {
+        return $this->morphMany(Review::class, 'reviewable');
     }
 }

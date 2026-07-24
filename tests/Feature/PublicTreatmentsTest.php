@@ -3,6 +3,10 @@
 declare(strict_types=1);
 
 use App\Livewire\Public\TreatmentsIndex;
+use App\Models\BeforeAfterCase;
+use App\Models\City;
+use App\Models\Clinic;
+use App\Models\Country;
 use App\Models\Faq;
 use App\Models\Treatment;
 use App\Models\TreatmentCategory;
@@ -47,6 +51,26 @@ it('renders a published treatment detail page with faqs and route', function () 
         ->assertOk()
         ->assertSee('Dental Implants')
         ->assertSee('Is it safe?');
+});
+
+it('shows published before/after cases on the treatment detail page', function () {
+    $treatment = Treatment::create(['slug' => 'implants', 'name' => ['en' => 'Implants'], 'status' => 'published']);
+
+    $country = Country::create([
+        'iso2' => 'TT', 'iso3' => 'TTT', 'name' => 'Testland', 'slug' => 'pt-testland',
+        'currency' => 'TRY', 'is_target' => false,
+    ]);
+    $city = City::create(['country_id' => $country->id, 'name' => 'Istanbul', 'slug' => 'pt-istanbul']);
+    $clinic = Clinic::create(['slug' => 'pt-clinic', 'name' => ['en' => 'PT Clinic'], 'city_id' => $city->id, 'verification_tier' => 'verified', 'is_active' => true]);
+
+    BeforeAfterCase::create([
+        'clinic_id' => $clinic->id, 'treatment_id' => $treatment->id,
+        'title' => ['en' => 'Treatment Page Case'], 'is_published' => true,
+    ]);
+
+    $this->get(route('treatments.show', $treatment->slug))
+        ->assertOk()
+        ->assertSee('Treatment Page Case');
 });
 
 it('404s for a draft treatment detail page', function () {

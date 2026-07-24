@@ -10,9 +10,7 @@ use Livewire\Attributes\Layout;
 use Livewire\Component;
 
 /**
- * See docs/04-wireframes.md §3 — the SEO+conversion workhorse. Reviews and
- * before/after are omitted here (not modeled yet, see docs/10-roadmap.md
- * Phase 2) rather than shown with placeholder/fabricated content.
+ * See docs/04-wireframes.md §3 — the SEO+conversion workhorse.
  */
 #[Layout('layouts.public')]
 class TreatmentShow extends Component
@@ -35,6 +33,7 @@ class TreatmentShow extends Component
                 ->limit(6)
                 ->get(),
             'faqs' => $this->treatment->faqs()->where('status', 'published')->orderBy('sort')->get(),
+            'beforeAfterCases' => $this->treatment->beforeAfterCases()->where('is_published', true)->limit(3)->get(),
             'related' => Treatment::query()
                 ->where('status', 'published')
                 ->where('id', '!=', $this->treatment->id)

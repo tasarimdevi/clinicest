@@ -3,10 +3,12 @@
 declare(strict_types=1);
 
 use App\Livewire\Public\ClinicsIndex;
+use App\Models\BeforeAfterCase;
 use App\Models\City;
 use App\Models\Clinic;
 use App\Models\Country;
 use App\Models\Doctor;
+use App\Models\Review;
 use App\Models\Treatment;
 use Livewire\Livewire;
 
@@ -65,6 +67,34 @@ it('renders an active clinic profile with treatments and doctors', function () {
         ->assertSee('Test Clinic')
         ->assertSee('Implants')
         ->assertSee('Dr. Test Person');
+});
+
+it('shows approved reviews and published before/after cases on the clinic profile', function () {
+    $city = seedPublicCity();
+    $treatment = Treatment::create(['slug' => 'implants', 'name' => ['en' => 'Implants'], 'status' => 'published']);
+    $clinic = Clinic::create([
+        'slug' => 'reviewed-clinic', 'name' => ['en' => 'Reviewed Clinic'], 'city_id' => $city->id,
+        'verification_tier' => 'verified', 'is_active' => true,
+    ]);
+
+    Review::create([
+        'reviewable_type' => Clinic::class, 'reviewable_id' => $clinic->id,
+        'reviewer_name' => 'Embedded Reviewer', 'rating' => 5, 'body' => 'Fantastic care.', 'status' => 'approved',
+    ]);
+    Review::create([
+        'reviewable_type' => Clinic::class, 'reviewable_id' => $clinic->id,
+        'reviewer_name' => 'Hidden Reviewer', 'rating' => 1, 'body' => 'Not moderated.', 'status' => 'pending',
+    ]);
+    BeforeAfterCase::create([
+        'clinic_id' => $clinic->id, 'treatment_id' => $treatment->id,
+        'title' => ['en' => 'Embedded Case'], 'is_published' => true,
+    ]);
+
+    $this->get(route('clinics.show', $clinic->slug))
+        ->assertOk()
+        ->assertSee('Embedded Reviewer')
+        ->assertDontSee('Hidden Reviewer')
+        ->assertSee('Embedded Case');
 });
 
 it('404s for an inactive clinic profile', function () {

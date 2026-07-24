@@ -74,6 +74,23 @@
         @endif
     </div>
 
+    {{-- Before & After --}}
+    @if ($beforeAfterCases->isNotEmpty())
+        <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between">
+                <h2 class="font-serif text-xl font-medium text-ink-900">{{ __('Before & After') }}</h2>
+                <a href="{{ route('before-after.index', ['treatment' => $treatment->id]) }}" class="text-sm text-brand-600 hover:underline">
+                    {{ __('See all') }}
+                </a>
+            </div>
+            <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                @foreach ($beforeAfterCases as $case)
+                    <x-before-after-card :case="$case" />
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     {{-- Recommended clinics --}}
     @if ($clinics->isNotEmpty())
         <div class="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">

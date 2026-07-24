@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace Database\Seeders;
 
 use App\Enums\VerificationTier;
+use App\Models\BeforeAfterCase;
 use App\Models\City;
 use App\Models\Clinic;
 use App\Models\Country;
 use App\Models\Doctor;
 use App\Models\Faq;
+use App\Models\Review;
 use App\Models\Treatment;
 use App\Models\TreatmentCategory;
 use Illuminate\Database\Seeder;
@@ -23,15 +25,15 @@ class DemoDataSeeder extends Seeder
 {
     public function run(): void
     {
-        Country::create([
+        $gb = Country::create([
             'iso2' => 'GB', 'iso3' => 'GBR', 'name' => 'United Kingdom', 'slug' => 'uk',
             'currency' => 'GBP', 'dial_code' => '+44', 'is_target' => true, 'tier' => 'primary',
         ]);
-        Country::create([
+        $de = Country::create([
             'iso2' => 'DE', 'iso3' => 'DEU', 'name' => 'Germany', 'slug' => 'germany',
             'currency' => 'EUR', 'dial_code' => '+49', 'is_target' => true, 'tier' => 'primary',
         ]);
-        Country::create([
+        $ie = Country::create([
             'iso2' => 'IE', 'iso3' => 'IRL', 'name' => 'Ireland', 'slug' => 'ireland',
             'currency' => 'EUR', 'dial_code' => '+353', 'is_target' => true, 'tier' => 'primary',
         ]);
@@ -107,8 +109,6 @@ class DemoDataSeeder extends Seeder
             'verified_at' => now(),
             'response_time_minutes' => 90,
             'languages_json' => ['en', 'de', 'tr'],
-            'rating_avg' => 4.9,
-            'rating_count' => 128,
             'is_active' => true,
             'is_featured' => true,
         ]);
@@ -123,7 +123,7 @@ class DemoDataSeeder extends Seeder
             ]);
         }
 
-        Doctor::create([
+        $doctor = Doctor::create([
             'slug' => 'dr-elif-kaya',
             'clinic_id' => $clinic->id,
             'full_name' => 'Dr. Elif Kaya',
@@ -132,9 +132,82 @@ class DemoDataSeeder extends Seeder
             'bio' => ['en' => 'Dr. Kaya has 14 years of experience and has completed over 2,300 implant cases, with training in Istanbul and Berlin.'],
             'years_experience' => 14,
             'languages_json' => ['en', 'de', 'tr'],
-            'rating_avg' => 4.9,
-            'rating_count' => 86,
             'is_featured' => true,
+        ]);
+
+        // Reviews — approved and seeded directly (no submission form or
+        // moderation queue yet, see App\Models\Review docblock). Ratings
+        // are honest, small numbers rather than an inflated placeholder
+        // count, and clinic/doctor rating_avg/rating_count below are
+        // computed FROM these rows so the two never drift apart.
+        $clinicReviews = [
+            ['name' => 'Sarah M.', 'country' => $gb, 'rating' => 5, 'verified' => true, 'treatment' => 'all-on-4',
+                'title' => 'Saved thousands and the care was excellent', 'body' => 'I saved almost £9,000 on my All-on-4 and the clinic organised my airport transfer and hotel. I felt safer than I expected to.'],
+            ['name' => 'Michael B.', 'country' => $de, 'rating' => 4, 'verified' => true, 'treatment' => 'dental-implants',
+                'title' => 'Professional and transparent pricing', 'body' => 'Everything was explained clearly before I travelled. The only reason it is not five stars is the wait at check-in was longer than expected.'],
+            ['name' => 'James T.', 'country' => $ie, 'rating' => 5, 'verified' => false, 'treatment' => null,
+                'title' => 'Great experience overall', 'body' => 'Friendly staff, modern clinic, and the English-speaking coordinator made the whole trip easy to plan.'],
+        ];
+
+        foreach ($clinicReviews as $r) {
+            Review::create([
+                'reviewable_type' => Clinic::class,
+                'reviewable_id' => $clinic->id,
+                'reviewer_name' => $r['name'],
+                'reviewer_country_id' => $r['country']->id,
+                'rating' => $r['rating'],
+                'title' => $r['title'],
+                'body' => $r['body'],
+                'treatment_id' => $r['treatment'] ? $treatments[$r['treatment']]->id : null,
+                'is_verified' => $r['verified'],
+                'status' => 'approved',
+                'moderated_at' => now(),
+            ]);
+        }
+
+        $clinic->update([
+            'rating_avg' => round(collect($clinicReviews)->avg('rating'), 2),
+            'rating_count' => count($clinicReviews),
+        ]);
+
+        Review::create([
+            'reviewable_type' => Doctor::class,
+            'reviewable_id' => $doctor->id,
+            'reviewer_name' => 'Sarah M.',
+            'reviewer_country_id' => $gb->id,
+            'rating' => 5,
+            'title' => 'Dr. Kaya was excellent',
+            'body' => 'Very reassuring throughout the whole procedure and spoke perfect English.',
+            'treatment_id' => $treatments['all-on-4']->id,
+            'is_verified' => true,
+            'status' => 'approved',
+            'moderated_at' => now(),
+        ]);
+
+        $doctor->update(['rating_avg' => 5.0, 'rating_count' => 1]);
+
+        // Before/after cases — photos are left null on purpose (see
+        // migration comment): no real clinic photos exist yet, and this
+        // platform never substitutes a placeholder image for a genuine
+        // patient result. The page renders these honestly as "pending".
+        BeforeAfterCase::create([
+            'clinic_id' => $clinic->id,
+            'doctor_id' => $doctor->id,
+            'treatment_id' => $treatments['all-on-4']->id,
+            'title' => ['en' => 'Full-arch restoration, 1-week trip'],
+            'description' => ['en' => 'Patient from the UK travelled for a single week to complete an All-on-4 full-arch restoration.'],
+            'patient_country_id' => $gb->id,
+            'consent_confirmed' => true,
+            'is_published' => true,
+        ]);
+        BeforeAfterCase::create([
+            'clinic_id' => $clinic->id,
+            'doctor_id' => $doctor->id,
+            'treatment_id' => $treatments['hollywood-smile']->id,
+            'title' => ['en' => 'Hollywood Smile veneer set'],
+            'patient_country_id' => $de->id,
+            'consent_confirmed' => true,
+            'is_published' => true,
         ]);
     }
 }

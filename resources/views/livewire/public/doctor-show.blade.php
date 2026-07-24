@@ -44,6 +44,17 @@
         </div>
     @endif
 
+    @if ($reviews->isNotEmpty())
+        <div class="mt-10">
+            <h2 class="font-serif text-xl font-medium text-ink-900">{{ __('Patient Reviews') }}</h2>
+            <div class="mt-4 space-y-4">
+                @foreach ($reviews as $review)
+                    <x-review-card :review="$review" />
+                @endforeach
+            </div>
+        </div>
+    @endif
+
     @if ($related->isNotEmpty())
         <div class="mt-14">
             <h2 class="font-serif text-xl font-medium text-ink-900">{{ __('Other dentists at this clinic') }}</h2>

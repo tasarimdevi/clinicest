@@ -59,4 +59,9 @@ class Treatment extends Model
     {
         return $this->morphMany(Faq::class, 'faqable');
     }
+
+    public function beforeAfterCases(): HasMany
+    {
+        return $this->hasMany(BeforeAfterCase::class);
+    }
 }

@@ -83,6 +83,42 @@
                 </div>
             @endif
 
+            {{-- Before & After --}}
+            @if ($beforeAfterCases->isNotEmpty())
+                <div class="mt-10">
+                    <h2 class="font-serif text-xl font-medium text-ink-900">{{ __('Before & After') }}</h2>
+                    <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                        @foreach ($beforeAfterCases as $case)
+                            <x-before-after-card :case="$case" />
+                        @endforeach
+                    </div>
+                </div>
+            @endif
+
+            {{-- Reviews --}}
+            <div class="mt-10">
+                <div class="flex items-center justify-between">
+                    <h2 class="font-serif text-xl font-medium text-ink-900">{{ __('nav.reviews') }}</h2>
+                    @if ($clinic->rating_count > 0)
+                        <a href="{{ route('reviews.show', $clinic->slug) }}" class="text-sm text-brand-600 hover:underline">
+                            {{ __('See all') }} ({{ $clinic->rating_count }})
+                        </a>
+                    @endif
+                </div>
+                @if ($clinic->rating_count > 0)
+                    <p class="mt-1 font-mono text-sm tabular-nums text-ink-600">★ {{ number_format($clinic->rating_avg, 1) }}</p>
+                @endif
+                @if ($reviews->isNotEmpty())
+                    <div class="mt-4 space-y-4">
+                        @foreach ($reviews as $review)
+                            <x-review-card :review="$review" />
+                        @endforeach
+                    </div>
+                @else
+                    <p class="mt-3 text-sm text-ink-500">{{ __('No reviews yet.') }}</p>
+                @endif
+            </div>
+
             {{-- Contact --}}
             <div class="mt-10">
                 <h2 class="font-serif text-xl font-medium text-ink-900">{{ __('Location & contact') }}</h2>

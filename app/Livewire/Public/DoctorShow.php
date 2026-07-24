@@ -28,6 +28,7 @@ class DoctorShow extends Component
     public function render(): View
     {
         return view('livewire.public.doctor-show', [
+            'reviews' => $this->doctor->reviews()->where('status', 'approved')->latest()->limit(5)->get(),
             'related' => Doctor::query()
                 ->where('clinic_id', $this->doctor->clinic_id)
                 ->where('id', '!=', $this->doctor->id)

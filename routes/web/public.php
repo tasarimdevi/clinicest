@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Livewire\Public\BeforeAfterIndex;
 use App\Livewire\Public\ClinicShow;
 use App\Livewire\Public\ClinicsIndex;
 use App\Livewire\Public\DoctorShow;
@@ -9,6 +10,8 @@ use App\Livewire\Public\DoctorsIndex;
 use App\Livewire\Public\GetQuote;
 use App\Livewire\Public\HomePage;
 use App\Livewire\Public\PlaceholderPage;
+use App\Livewire\Public\ReviewsIndex;
+use App\Livewire\Public\ReviewsShow;
 use App\Livewire\Public\TreatmentShow;
 use App\Livewire\Public\TreatmentsIndex;
 use Illuminate\Support\Facades\Route;
@@ -55,11 +58,10 @@ Route::get('/countries/{country:slug}', PlaceholderPage::class)
 Route::get('/cost/{treatment:slug}', PlaceholderPage::class)
     ->name('cost.show')->defaults('title', 'Treatment Cost');
 
-Route::get('/before-after', PlaceholderPage::class)
-    ->name('before-after.index')->defaults('title', 'Before & After');
+Route::get('/before-after', BeforeAfterIndex::class)->name('before-after.index');
 
-Route::get('/reviews', PlaceholderPage::class)
-    ->name('reviews.index')->defaults('title', 'Reviews');
+Route::get('/reviews', ReviewsIndex::class)->name('reviews.index');
+Route::get('/reviews/{clinic:slug}', ReviewsShow::class)->name('reviews.show');
 
 Route::get('/blog', PlaceholderPage::class)
     ->name('blog.index')->defaults('title', 'Blog');
