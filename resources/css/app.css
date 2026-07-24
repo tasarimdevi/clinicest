@@ -6,70 +6,81 @@
 @source '../**/*.js';
 
 /*
- * Clinicest design tokens — see docs/03-design-system.md
+ * Clinicest design tokens — "travel dossier" identity, see docs/03-design-system.md.
+ * Bosphorus navy + clinical porcelain + antique brass + verification teal.
  * Tailwind v4 CSS-first theme (no tailwind.config.js needed).
  */
 @theme {
-    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-        'Segoe UI Symbol', 'Noto Color Emoji';
-    --font-display: 'Inter', ui-sans-serif, system-ui, sans-serif;
+    --font-sans: -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-serif: 'Iowan Old Style', 'Palatino Linotype', 'URW Palladio L', 'Book Antiqua', Georgia, serif;
+    --font-mono: 'SF Mono', 'Cascadia Code', Consolas, 'Courier New', monospace;
 
-    /* Brand — primary trust blue. 700/900 = primary actions & headers */
-    --color-brand-50: #eff5ff;
-    --color-brand-100: #dbe8fe;
-    --color-brand-200: #bfd7fe;
-    --color-brand-300: #93bbfd;
-    --color-brand-400: #6098fa;
-    --color-brand-500: #3b76f6;
-    --color-brand-600: #2456eb;
-    --color-brand-700: #1d43d8;
-    --color-brand-800: #1e3aaf;
-    --color-brand-900: #1e3a8a;
-    --color-brand-950: #172554;
+    /* Brand — harbor blue. 600 = primary actions, 900/950 = hero/header ground */
+    --color-brand-50: #eef3fa;
+    --color-brand-100: #dce7f5;
+    --color-brand-200: #b9ceeb;
+    --color-brand-300: #8fb0de;
+    --color-brand-400: #5f8ccb;
+    --color-brand-500: #3d6db2;
+    --color-brand-600: #2c5ea8;
+    --color-brand-700: #204577;
+    --color-brand-800: #1a3760;
+    --color-brand-900: #142a4c;
+    --color-brand-950: #0b1e3a;
 
-    /* Gold — premium / verification accent only, never body buttons */
-    --color-gold-50: #fbf8ef;
-    --color-gold-300: #e7ce8f;
-    --color-gold-400: #dbbb6a;
-    --color-gold-500: #c9a24b;
-    --color-gold-600: #ae8636;
-    --color-gold-700: #8a691f;
+    /* Gold — antique brass, verification/premium accent only, never body buttons */
+    --color-gold-50: #fbf3e7;
+    --color-gold-100: #f5e4c7;
+    --color-gold-300: #e3be87;
+    --color-gold-400: #c79b57;
+    --color-gold-500: #a97833;
+    --color-gold-600: #8f6529;
+    --color-gold-700: #6e4d1e;
 
-    /* Ink — neutral text/surfaces (slate-based, warm-neutral) */
-    --color-ink-50: #f8fafc;
-    --color-ink-100: #f1f5f9;
-    --color-ink-200: #e2e8f0;
-    --color-ink-300: #cbd5e1;
-    --color-ink-400: #94a3b8;
-    --color-ink-500: #64748b;
-    --color-ink-600: #475569;
-    --color-ink-700: #334155;
-    --color-ink-800: #1e293b;
-    --color-ink-900: #0f172a;
+    /* Teal — clinical verification / positive-savings accent */
+    --color-teal-50: #e9f5f2;
+    --color-teal-100: #cde9e3;
+    --color-teal-300: #7cbfaf;
+    --color-teal-400: #3e9683;
+    --color-teal-500: #14675c;
+    --color-teal-600: #0f5049;
 
-    /* Status colors */
+    /* Ink — blue-grey neutrals (hue-biased toward brand, not pure grey) */
+    --color-ink-50: #f4f6f7;
+    --color-ink-100: #e7ebee;
+    --color-ink-200: #d3dbe1;
+    --color-ink-300: #b3bfc9;
+    --color-ink-400: #8493a5;
+    --color-ink-500: #66768b;
+    --color-ink-600: #4e5c70;
+    --color-ink-700: #3a4557;
+    --color-ink-800: #253046;
+    --color-ink-900: #17263f;
+    --color-ink-950: #0e1526;
+
+    /* Status colors — separate from the gold/teal accent hues */
     --color-success-500: #12a150;
     --color-success-600: #0e8a44;
-    --color-warning-500: #e8a317;
-    --color-danger-500: #e5484d;
-    --color-danger-600: #c62a2f;
-    --color-teal-500: #0ea5a5;
+    --color-warning-500: #c98a2e;
+    --color-danger-500: #b3413a;
+    --color-danger-600: #93332d;
 
     /* Radius scale */
-    --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 24px;
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 14px;
+    --radius-xl: 20px;
 
     /* Elevation */
-    --shadow-card: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.1);
-    --shadow-raised: 0 8px 24px rgba(16, 24, 40, 0.1);
-    --shadow-hero: 0 20px 60px rgba(30, 58, 138, 0.18);
+    --shadow-card: 0 1px 2px rgba(11, 30, 58, 0.06), 0 6px 20px rgba(11, 30, 58, 0.08);
+    --shadow-raised: 0 8px 24px rgba(11, 30, 58, 0.12);
+    --shadow-hero: 0 30px 80px rgba(6, 16, 32, 0.35);
 }
 
 @layer base {
     body {
-        @apply bg-white text-ink-800 antialiased;
+        @apply bg-ink-50 text-ink-900 antialiased;
     }
 
     [x-cloak] {

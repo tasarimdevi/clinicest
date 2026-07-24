@@ -11,45 +11,46 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
 </head>
-<body class="bg-white text-ink-800 antialiased">
+<body class="bg-ink-50 text-ink-900 antialiased">
 
-    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-4 focus:rounded-md focus:bg-brand-700 focus:px-4 focus:py-2 focus:text-white">
+    <a href="#main" class="sr-only focus:not-sr-only focus:absolute focus:z-50 focus:m-4 focus:rounded-md focus:bg-brand-600 focus:px-4 focus:py-2 focus:text-white">
         {{ __('Skip to content') }}
     </a>
 
-    <header x-data="{ scrolled: false, mobileOpen: false }" @scroll.window="scrolled = window.scrollY > 8"
-        :class="scrolled ? 'bg-white/80 backdrop-blur-xl shadow-card' : 'bg-white'"
-        class="sticky top-0 z-40 border-b border-ink-100 transition-colors">
+    {{-- The header/hero band is a deliberate always-dark zone (brand-950),
+         independent of light/dark theme — see docs/03-design-system.md §1. --}}
+    <header x-data="{ mobileOpen: false }"
+        class="sticky top-0 z-40 border-b border-white/10 bg-brand-950/90 backdrop-blur-xl">
         <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-            <a href="{{ route('home') }}" class="text-xl font-semibold tracking-tight text-brand-900">
-                Clinicest
+            <a href="{{ route('home') }}" class="font-serif text-xl font-medium tracking-tight text-ink-50">
+                Clin<span class="text-gold-400">i</span>cest
             </a>
 
             <nav class="hidden items-center gap-8 lg:flex">
-                <a href="{{ route('treatments.index') }}" class="text-sm font-medium text-ink-700 hover:text-brand-700">{{ __('nav.treatments') }}</a>
-                <a href="{{ route('clinics.index') }}" class="text-sm font-medium text-ink-700 hover:text-brand-700">{{ __('nav.clinics') }}</a>
-                <a href="{{ route('doctors.index') }}" class="text-sm font-medium text-ink-700 hover:text-brand-700">{{ __('nav.doctors') }}</a>
-                <a href="{{ route('reviews.index') }}" class="text-sm font-medium text-ink-700 hover:text-brand-700">{{ __('nav.reviews') }}</a>
+                <a href="{{ route('treatments.index') }}" class="text-sm font-medium text-ink-300 hover:text-ink-50">{{ __('nav.treatments') }}</a>
+                <a href="{{ route('clinics.index') }}" class="text-sm font-medium text-ink-300 hover:text-ink-50">{{ __('nav.clinics') }}</a>
+                <a href="{{ route('doctors.index') }}" class="text-sm font-medium text-ink-300 hover:text-ink-50">{{ __('nav.doctors') }}</a>
+                <a href="{{ route('reviews.index') }}" class="text-sm font-medium text-ink-300 hover:text-ink-50">{{ __('nav.reviews') }}</a>
             </nav>
 
             <div class="flex items-center gap-3">
                 <a href="{{ route('get-quote') }}"
-                   class="hidden rounded-md bg-brand-700 px-4 py-2 text-sm font-semibold text-white shadow-card transition hover:bg-brand-800 sm:inline-flex">
+                   class="hidden rounded-md bg-gold-500 px-4 py-2 text-sm font-semibold text-brand-950 shadow-card transition hover:bg-gold-400 sm:inline-flex">
                     {{ __('nav.get_quote') }}
                 </a>
                 <button @click="mobileOpen = !mobileOpen" class="lg:hidden" aria-label="{{ __('Menu') }}">
-                    <svg class="h-6 w-6 text-ink-700" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <svg class="h-6 w-6 text-ink-100" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
                     </svg>
                 </button>
             </div>
         </div>
 
-        <nav x-show="mobileOpen" x-cloak class="border-t border-ink-100 bg-white px-4 py-4 lg:hidden">
-            <a href="{{ route('treatments.index') }}" class="block py-2 text-sm font-medium text-ink-700">{{ __('nav.treatments') }}</a>
-            <a href="{{ route('clinics.index') }}" class="block py-2 text-sm font-medium text-ink-700">{{ __('nav.clinics') }}</a>
-            <a href="{{ route('doctors.index') }}" class="block py-2 text-sm font-medium text-ink-700">{{ __('nav.doctors') }}</a>
-            <a href="{{ route('reviews.index') }}" class="block py-2 text-sm font-medium text-ink-700">{{ __('nav.reviews') }}</a>
+        <nav x-show="mobileOpen" x-cloak class="border-t border-white/10 bg-brand-950 px-4 py-4 lg:hidden">
+            <a href="{{ route('treatments.index') }}" class="block py-2 text-sm font-medium text-ink-200">{{ __('nav.treatments') }}</a>
+            <a href="{{ route('clinics.index') }}" class="block py-2 text-sm font-medium text-ink-200">{{ __('nav.clinics') }}</a>
+            <a href="{{ route('doctors.index') }}" class="block py-2 text-sm font-medium text-ink-200">{{ __('nav.doctors') }}</a>
+            <a href="{{ route('reviews.index') }}" class="block py-2 text-sm font-medium text-ink-200">{{ __('nav.reviews') }}</a>
         </nav>
     </header>
 
@@ -102,7 +103,7 @@
     </a>
 
     <div class="fixed inset-x-0 bottom-0 z-30 flex gap-2 border-t border-ink-200 bg-white p-3 shadow-raised sm:hidden">
-        <a href="{{ route('get-quote') }}" class="flex-1 rounded-md bg-brand-700 py-2.5 text-center text-sm font-semibold text-white">
+        <a href="{{ route('get-quote') }}" class="flex-1 rounded-md bg-brand-600 py-2.5 text-center text-sm font-semibold text-white">
             {{ __('nav.get_quote') }}
         </a>
     </div>

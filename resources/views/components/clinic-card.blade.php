@@ -10,14 +10,14 @@
     </div>
     <div class="flex flex-1 flex-col gap-2 p-4">
         <div class="flex items-start justify-between gap-2">
-            <h3 class="text-sm font-semibold text-ink-900 group-hover:text-brand-700">
+            <h3 class="font-serif text-base font-medium text-ink-900 group-hover:text-brand-600">
                 {{ $clinic->getTranslation('name', app()->getLocale()) }}
             </h3>
             <x-verification-badge :tier="$clinic->verification_tier->value" />
         </div>
         <p class="text-xs text-ink-500">{{ $clinic->city?->name }}</p>
         @if ($clinic->rating_count > 0)
-            <p class="text-xs font-medium text-ink-700">
+            <p class="font-mono text-xs font-medium tabular-nums text-ink-700">
                 ★ {{ number_format($clinic->rating_avg, 1) }} ({{ $clinic->rating_count }})
             </p>
         @endif

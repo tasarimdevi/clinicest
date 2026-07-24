@@ -1,67 +1,75 @@
 # 03 · UI Design System
 
-**Design language:** *Trusted Medical Luxury* — Apple-level simplicity, Stripe-quality layout discipline, Healthgrades clinical credibility. Calm, spacious, confident. Glassmorphism used sparingly (hero search, sticky bars, badges) — never decoration for its own sake.
+**Design language:** *The Travel Dossier* — Clinicest is dental tourism, so the identity leans into that literally: a boarding-pass/departure-board vocabulary (route codes, ticket stubs, manifest grids) laid over a "Trusted Medical Luxury" foundation — Bosphorus navy, clinical porcelain, antique brass, verification teal. Calm and confident, not sterile; premium, not kitschy — the travel motif shows up in structure (ticket die-cuts, tabular flight-style numbers) rather than literal plane icons.
+
+> A working visual reference for this identity lives as a published artifact (homepage prototype) — see the design plan below for the canonical values, and `resources/css/app.css` for the implemented Tailwind v4 tokens.
 
 ## 1. Color palette
 
-Professional blue + white base, subtle gold for premium/verification accents, clinical greens/reds for status only.
+Bosphorus-navy + clinical porcelain base, antique-brass for premium/verification accents, a dedicated clinical teal for "verified"/positive figures — kept separate from brass so the two accents never compete. Reds/greens reserved for status only.
 
-> **Implementation note:** the scaffold uses **Tailwind v4** (Laravel 12 default), which is CSS-first — tokens live in `resources/css/app.css` under `@theme { --color-brand-700: ... }` rather than `tailwind.config.js`. Same values, different syntax. See the live file for the canonical source.
+> **Implementation note:** the scaffold uses **Tailwind v4** (Laravel 12 default), which is CSS-first — tokens live in `resources/css/app.css` under `@theme { --color-brand-600: ... }` rather than `tailwind.config.js`. The block below mirrors that file exactly.
 
-### Tokens (conceptual — see `resources/css/app.css` for the real Tailwind v4 `@theme` block)
+### Tokens (mirrors `resources/css/app.css` `@theme` block)
 
-```js
-// tailwind.config.js (excerpt)
+```
 colors: {
-  brand: {                 // primary — trust blue
-    50:'#EFF5FF', 100:'#DBE8FE', 200:'#BFD7FE', 300:'#93BBFD',
-    400:'#6098FA', 500:'#3B76F6', 600:'#2456EB', 700:'#1D43D8',
-    800:'#1E3AAF', 900:'#1E3A8A', 950:'#172554',   // 700/900 = primary actions & headers
+  brand: {                 // harbor blue — 950/900 double as the hero/header ground
+    50:'#EEF3FA', 100:'#DCE7F5', 200:'#B9CEEB', 300:'#8FB0DE',
+    400:'#5F8CCB', 500:'#3D6DB2', 600:'#2C5EA8', 700:'#204577',
+    800:'#1A3760', 900:'#142A4C', 950:'#0B1E3A',
   },
-  gold: {                  // premium / verified accent (use sparingly)
-    50:'#FBF8EF', 300:'#E7CE8F', 400:'#DBBB6A',
-    500:'#C9A24B', 600:'#AE8636', 700:'#8A691F',
+  gold: {                  // antique brass — verification/premium accent (use sparingly)
+    50:'#FBF3E7', 100:'#F5E4C7', 300:'#E3BE87',
+    400:'#C79B57', 500:'#A97833', 600:'#8F6529', 700:'#6E4D1E',
   },
-  ink: {                   // neutral text/surfaces (slate-based, warm-neutral)
-    50:'#F8FAFC',100:'#F1F5F9',200:'#E2E8F0',300:'#CBD5E1',400:'#94A3B8',
-    500:'#64748B',600:'#475569',700:'#334155',800:'#1E293B',900:'#0F172A',
+  teal: {                  // clinical verification / positive-savings accent
+    50:'#E9F5F2', 100:'#CDE9E3', 300:'#7CBFAF',
+    400:'#3E9683', 500:'#14675C', 600:'#0F5049',
   },
-  success:{500:'#12A150',600:'#0E8A44'},   // verified / positive
-  warning:{500:'#E8A317'},
-  danger: {500:'#E5484D',600:'#C62A2F'},   // emergency / errors only
-  teal:   {500:'#0EA5A5'},                 // secondary medical accent
+  ink: {                   // neutral text/surfaces — blue-grey, hue-biased toward brand
+    50:'#F4F6F7', 100:'#E7EBEE', 200:'#D3DBE1', 300:'#B3BFC9', 400:'#8493A5',
+    500:'#66768B', 600:'#4E5C70', 700:'#3A4557', 800:'#253046', 900:'#17263F', 950:'#0E1526',
+  },
+  success:{500:'#12A150', 600:'#0E8A44'},   // verified / positive — distinct from teal accent
+  warning:{500:'#C98A2E'},
+  danger: {500:'#B3413A', 600:'#93332D'},   // emergency / errors only
 }
 ```
 
 ### Usage rules
-- **Primary action / links:** `brand-700`. Hover `brand-800`. Focus ring `brand-500/40`.
-- **Headers & hero:** deep `brand-900` → `brand-950` gradients over white.
-- **Gold:** only for verification tier ("Elite Partner"), premium badges, rating stars, subtle dividers. Never for body buttons.
-- **Backgrounds:** white / `ink-50`. Cards white with `ink-200` border + soft shadow.
-- **Status:** green verified, teal informational, amber pending, red emergency/error only.
-- **Contrast:** all text ≥ WCAG AA (body ≥ 4.5:1). Never gold text on white for body.
+- **Primary action / links:** `brand-600`. Hover `brand-700`. Focus ring `brand-500/35`.
+- **Header & hero:** `brand-950` ground (a *deliberately* always-dark zone — it does not flip with light/dark mode, see below), `ink-50` text at ~90% opacity for muted copy.
+- **Gold:** only for verification tier ("Elite Partner"), premium badges, ticket/boarding-pass accents. Never for body buttons or running text.
+- **Teal:** "verified" checkmarks and positive savings figures only — kept semantically separate from gold so premium ≠ verified are visually distinct claims.
+- **Backgrounds:** `ink-50` (porcelain) page ground / white cards with `ink-200` border + `shadow-card`.
+- **Status:** green = verified/positive, amber = pending, red = emergency/error only.
+- **Contrast:** all text ≥ WCAG AA (body ≥ 4.5:1; large text ≥ 3:1). Any accent placed *inside* the always-dark hero/header band must be checked against that fixed dark ground, not against the current theme's swapped token — see Dark mode below.
 
 ### Dark mode
-Optional for app/dashboards. Surfaces `ink-900/950`, text `ink-100`, brand shifts to `brand-400/500` for adequate contrast. Marketing pages stay light by default.
+Full support, not just "optional for app screens" — tokens are redefined under `@media (prefers-color-scheme: dark)` and mirrored under explicit `:root[data-theme="dark"]` / `[data-theme="light"]` overrides so the in-app theme toggle wins in both directions. The hero/header band is an intentional exception: it's `brand-950` in both themes (a single-toned zone, like the artifact's boarding-pass motif), so any gold/teal accent placed inside it must use a fixed, non-theme-swapped value calibrated against that constant dark ground — never the plain `brand-600`/`gold-500`/`teal-500` tokens, which are calibrated for whichever background the *current* theme puts them on.
 
 ## 2. Typography
 
-**Pairing:** display/headings **"Fraunces"** *or* **"Newsreader"** (optional editorial serif for hero H1 & pull quotes to add premium warmth) + UI/body **"Inter"** (or "Geist"). Numerals tabular for prices. Turkish/extended-Latin covered; load Arabic-capable fallback for future RTL.
+**Pairing (three roles, each earning its place):**
+- **Display serif** — `font-serif` → `"Iowan Old Style", "Palatino Linotype", "URW Palladio L", "Book Antiqua", Georgia, serif`. Headlines, pull-quotes. Warm, editorial, a nod to travel-document typography — used with restraint, never for body copy.
+- **Body sans** — `font-sans` (Tailwind default) → the OS-native stack (`-apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial`). Running copy; legible, not an imported "safe" face.
+- **Utility mono** — `font-mono` → `"SF Mono", "Cascadia Code", Consolas, "Courier New", monospace`. Ticket/manifest codes, prices, savings-ledger figures — always paired with `tabular-nums`.
 
-> Simpler single-family option (recommended for launch): **Inter** everywhere + **Inter Display** for large headings. Add serif accent later.
+Numerals tabular for prices throughout. Turkish/extended-Latin covered by all three stacks; load an Arabic-capable fallback before future RTL work.
 
 ### Type scale (rem, 1rem=16px) — fluid via `clamp()`
 ```
-Display   clamp(2.75, 5vw, 4.5)rem  / 1.05 / -0.02em / 600
-H1        clamp(2.25, 4vw, 3.25)rem / 1.1  / -0.02em / 600
-H2        clamp(1.75, 3vw, 2.5)rem  / 1.15 / -0.01em / 600
-H3        1.5rem  / 1.25 / 600
-H4        1.25rem / 1.3  / 600
-Body-lg   1.125rem/ 1.6  / 400
-Body      1rem    / 1.6  / 400
-Small     0.875rem/ 1.5  / 400
-Overline  0.75rem / 1.4  / 600 / uppercase / 0.08em
-Price     tabular-nums, 600
+Display   clamp(2.3, 4.6vw, 3.6)rem   / 1.06 / -0.01em / 500 / font-serif
+H1        clamp(2.25, 4vw, 3.25)rem   / 1.1  / -0.02em / 600 / font-sans
+H2        clamp(1.7, 3vw, 2.35)rem    / 1.15 / -0.01em / 500 / font-serif
+H3        1.5rem  / 1.25 / 600 / font-sans
+H4        1.25rem / 1.3  / 600 / font-sans
+Body-lg   1.125rem/ 1.6  / 400 / font-sans
+Body      1rem    / 1.6  / 400 / font-sans
+Small     0.875rem/ 1.5  / 400 / font-sans
+Overline  0.72rem / 1.4  / 600 / uppercase / 0.14em / font-mono
+Price     tabular-nums, 600, font-mono
 ```
 Max line length 66ch for article body. Generous vertical rhythm (8px base spacing scale).
 
@@ -70,12 +78,12 @@ Max line length 66ch for article body. Generous vertical rhythm (8px base spacin
 ```
 Spacing scale (px): 2 4 8 12 16 20 24 32 40 48 64 80 96 128  (Tailwind default + 18/22)
 Container: max-w-7xl (1280) content; max-w-3xl (768) for article prose
-Radius: sm 8 · md 12 · lg 16 · xl 24 · pill 9999   (cards = lg/xl, buttons = md/pill)
+Radius: sm 6 · md 10 · lg 14 · xl 20 · pill 9999   (cards = lg/xl, buttons = md/pill)
 Shadow:
-  card    0 1px 2px rgba(16,24,40,.06), 0 1px 3px rgba(16,24,40,.10)
-  raised  0 8px 24px rgba(16,24,40,.10)
-  hero    0 20px 60px rgba(30,58,138,.18)   // brand-tinted
-Glass:   bg-white/70 backdrop-blur-xl border-white/40 (sticky bars, hero search only)
+  card    0 1px 2px rgba(11,30,58,.06), 0 6px 20px rgba(11,30,58,.08)
+  raised  0 8px 24px rgba(11,30,58,.12)
+  hero    0 30px 80px rgba(6,16,32,.35)   // navy-tinted, for elements lifted off the hero band
+Glass:   header sticks over the hero with a translucent brand-950 wash + backdrop-blur (not white — the header/hero band stays dark always, see §1 Dark mode)
 ```
 **Motion:** 150–250ms `ease-out` for hovers, 300–450ms for section reveals (fade+8px rise, IntersectionObserver via Alpine). Respect `prefers-reduced-motion`. No parallax that hurts LCP. Micro-interactions on CTA hover (subtle scale 1.02 + shadow), on verified badge (soft shine once).
 

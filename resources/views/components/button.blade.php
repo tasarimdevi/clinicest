@@ -7,8 +7,8 @@
 
 @php
     $variants = [
-        'primary' => 'bg-brand-700 text-white hover:bg-brand-800 focus-visible:ring-brand-500/40',
-        'secondary' => 'bg-white text-brand-700 border border-brand-200 hover:bg-brand-50 focus-visible:ring-brand-500/40',
+        'primary' => 'bg-brand-600 text-white hover:bg-brand-700 focus-visible:ring-brand-500/40',
+        'secondary' => 'bg-white text-brand-600 border border-brand-200 hover:bg-brand-50 focus-visible:ring-brand-500/40',
         'ghost' => 'bg-transparent text-ink-700 hover:bg-ink-100 focus-visible:ring-ink-400/40',
         'gold' => 'bg-gold-500 text-white hover:bg-gold-600 focus-visible:ring-gold-400/40',
         'danger' => 'bg-danger-500 text-white hover:bg-danger-600 focus-visible:ring-danger-500/40',
