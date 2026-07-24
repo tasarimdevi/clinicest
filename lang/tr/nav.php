@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 return [
+    'home' => 'Ana Sayfa',
     'treatments' => 'Tedaviler',
     'clinics' => 'Klinikler',
     'doctors' => 'Doktorlar',

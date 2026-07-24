@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 return [
+    'home' => 'Home',
     'treatments' => 'Treatments',
     'clinics' => 'Clinics',
     'doctors' => 'Doctors',

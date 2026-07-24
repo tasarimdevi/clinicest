@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Public;
 
 use App\Actions\Leads\CreateLead;
+use App\Models\Clinic;
 use App\Models\Country;
 use App\Models\Lead;
 use App\Models\Treatment;
@@ -16,6 +17,13 @@ use Livewire\Component;
  * The primary conversion funnel. See docs/02-information-architecture-ux.md §4
  * for the full 4-step flow spec (photos/x-ray upload, timeline, etc.) —
  * this is the first working slice: treatment + contact + consent -> Lead.
+ *
+ * Context pre-fill: arriving via ?treatment={id} (from a treatment page)
+ * pre-selects that treatment; ?clinic={id} (from a clinic page) can't set
+ * a direct clinic relationship — leads aren't assigned to a clinic until
+ * an agent does so (docs/09-crm-admin-architecture.md §2) — so it's
+ * reflected in the message instead, giving the agent honest context
+ * without fabricating a schema relationship that doesn't exist.
  */
 #[Layout('layouts.public')]
 class GetQuote extends Component
@@ -35,6 +43,23 @@ class GetQuote extends Component
     public bool $consent = false;
 
     public bool $submitted = false;
+
+    public function mount(): void
+    {
+        if ($treatmentId = request()->integer('treatment')) {
+            if (Treatment::where('id', $treatmentId)->where('status', 'published')->exists()) {
+                $this->primary_treatment_id = $treatmentId;
+            }
+        }
+
+        if ($clinicId = request()->integer('clinic')) {
+            if ($clinic = Clinic::where('id', $clinicId)->where('is_active', true)->first()) {
+                $this->message = __('I\'m interested in a quote from :clinic.', [
+                    'clinic' => $clinic->getTranslation('name', app()->getLocale()),
+                ]);
+            }
+        }
+    }
 
     protected function rules(): array
     {

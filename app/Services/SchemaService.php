@@ -29,12 +29,14 @@ class SchemaService
         return [
             '@context' => 'https://schema.org',
             '@type' => 'BreadcrumbList',
-            'itemListElement' => collect($items)->values()->map(fn (array $item, int $i) => [
+            // The last item (current page) legitimately has no 'url' — it's
+            // not a link. Google's guidelines don't require `item` on it.
+            'itemListElement' => collect($items)->values()->map(fn (array $item, int $i) => array_filter([
                 '@type' => 'ListItem',
                 'position' => $i + 1,
                 'name' => $item['name'],
-                'item' => $item['url'],
-            ])->all(),
+                'item' => $item['url'] ?? null,
+            ], fn ($value) => $value !== null))->all(),
         ];
     }
 

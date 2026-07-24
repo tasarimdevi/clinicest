@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Livewire\Public\GetQuote;
+use App\Models\City;
+use App\Models\Clinic;
 use App\Models\Country;
 use App\Models\Lead;
 use App\Models\Treatment;
@@ -62,4 +64,46 @@ it('requires a valid email', function () {
         ->set('consent', true)
         ->call('submit')
         ->assertHasErrors(['email']);
+});
+
+/*
+ * These pre-fill tests hit the real route rather than Livewire::test():
+ * mount() reads request()->integer()/->query(), and Livewire's component
+ * test harness doesn't route a mutated/rebound Request through to that
+ * call the way an actual HTTP request does.
+ */
+it('pre-fills the treatment from a ?treatment= query parameter', function () {
+    $treatment = Treatment::create([
+        'slug' => 'veneers', 'name' => ['en' => 'Veneers'], 'currency' => 'EUR', 'status' => 'published',
+    ]);
+
+    $this->get(route('get-quote', ['treatment' => $treatment->id]))
+        ->assertOk()
+        ->assertSee('selected', false);
+});
+
+it('ignores a ?treatment= query parameter pointing at an unpublished treatment', function () {
+    $treatment = Treatment::create([
+        'slug' => 'draft-treatment', 'name' => ['en' => 'Draft'], 'currency' => 'EUR', 'status' => 'draft',
+    ]);
+
+    $this->get(route('get-quote', ['treatment' => $treatment->id]))
+        ->assertOk()
+        ->assertDontSee('selected', false);
+});
+
+it('pre-fills the message from a ?clinic= query parameter', function () {
+    $country = Country::create([
+        'iso2' => 'TR', 'iso3' => 'TUR', 'name' => 'Turkey', 'slug' => 'gq-turkey',
+        'currency' => 'TRY', 'is_target' => false,
+    ]);
+    $city = City::create(['country_id' => $country->id, 'name' => 'Istanbul', 'slug' => 'gq-istanbul']);
+    $clinic = Clinic::create([
+        'slug' => 'gq-clinic', 'name' => ['en' => 'Istanbul Smile Clinic'], 'city_id' => $city->id,
+        'verification_tier' => 'verified', 'is_active' => true,
+    ]);
+
+    $this->get(route('get-quote', ['clinic' => $clinic->id]))
+        ->assertOk()
+        ->assertSee("I'm interested in a quote from Istanbul Smile Clinic.");
 });

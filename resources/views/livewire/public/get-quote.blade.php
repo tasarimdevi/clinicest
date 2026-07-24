@@ -18,7 +18,7 @@
                 <select wire:model="primary_treatment_id" class="mt-1.5 w-full rounded-md border-ink-300 text-sm">
                     <option value="">{{ __('Select a treatment (optional)') }}</option>
                     @foreach ($treatments as $treatment)
-                        <option value="{{ $treatment->id }}">{{ $treatment->getTranslation('name', app()->getLocale()) }}</option>
+                        <option value="{{ $treatment->id }}" @selected($primary_treatment_id === $treatment->id)>{{ $treatment->getTranslation('name', app()->getLocale()) }}</option>
                     @endforeach
                 </select>
             </div>

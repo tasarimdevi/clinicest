@@ -2,9 +2,15 @@
 
 declare(strict_types=1);
 
+use App\Livewire\Public\ClinicShow;
+use App\Livewire\Public\ClinicsIndex;
+use App\Livewire\Public\DoctorShow;
+use App\Livewire\Public\DoctorsIndex;
 use App\Livewire\Public\GetQuote;
 use App\Livewire\Public\HomePage;
 use App\Livewire\Public\PlaceholderPage;
+use App\Livewire\Public\TreatmentShow;
+use App\Livewire\Public\TreatmentsIndex;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,20 +37,14 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', HomePage::class)->name('home');
 
-Route::get('/treatments', PlaceholderPage::class)
-    ->name('treatments.index')->defaults('title', 'Treatments');
-Route::get('/treatments/{treatment:slug}', PlaceholderPage::class)
-    ->name('treatments.show')->defaults('title', 'Treatment');
+Route::get('/treatments', TreatmentsIndex::class)->name('treatments.index');
+Route::get('/treatments/{treatment:slug}', TreatmentShow::class)->name('treatments.show');
 
-Route::get('/clinics', PlaceholderPage::class)
-    ->name('clinics.index')->defaults('title', 'Clinics');
-Route::get('/clinics/{clinic:slug}', PlaceholderPage::class)
-    ->name('clinics.show')->defaults('title', 'Clinic');
+Route::get('/clinics', ClinicsIndex::class)->name('clinics.index');
+Route::get('/clinics/{clinic:slug}', ClinicShow::class)->name('clinics.show');
 
-Route::get('/doctors', PlaceholderPage::class)
-    ->name('doctors.index')->defaults('title', 'Doctors');
-Route::get('/doctors/{doctor:slug}', PlaceholderPage::class)
-    ->name('doctors.show')->defaults('title', 'Doctor');
+Route::get('/doctors', DoctorsIndex::class)->name('doctors.index');
+Route::get('/doctors/{doctor:slug}', DoctorShow::class)->name('doctors.show');
 
 Route::get('/dental-tourism-turkey', PlaceholderPage::class)
     ->name('guide.index')->defaults('title', 'Dental Tourism Guide');
