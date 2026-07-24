@@ -6,7 +6,9 @@
 
 Professional blue + white base, subtle gold for premium/verification accents, clinical greens/reds for status only.
 
-### Tokens (Tailwind `theme.extend.colors`)
+> **Implementation note:** the scaffold uses **Tailwind v4** (Laravel 12 default), which is CSS-first — tokens live in `resources/css/app.css` under `@theme { --color-brand-700: ... }` rather than `tailwind.config.js`. Same values, different syntax. See the live file for the canonical source.
+
+### Tokens (conceptual — see `resources/css/app.css` for the real Tailwind v4 `@theme` block)
 
 ```js
 // tailwind.config.js (excerpt)
