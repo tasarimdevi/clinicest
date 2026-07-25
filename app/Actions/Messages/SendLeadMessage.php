@@ -8,9 +8,11 @@ use App\Mail\LeadMessageMail;
 use App\Models\Clinic;
 use App\Models\Lead;
 use App\Models\Message;
+use App\Notifications\PatientMessageReceived;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 
 /**
  * Mirrors CreateOffer/RequestAppointment's shape. `channel=web` +
@@ -49,6 +51,13 @@ class SendLeadMessage
 
             if ($data['channel'] === 'web' && $data['direction'] === 'outbound') {
                 Mail::to($lead->email)->send(new LeadMessageMail($clinic, $message));
+            }
+
+            if ($sender instanceof Lead) {
+                Notification::send(
+                    $clinic->usersWithPermission('messages.manage'),
+                    new PatientMessageReceived($message, $clinic)
+                );
             }
 
             $lead->activities()->create([

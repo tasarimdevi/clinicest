@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Laravel\Scout\Searchable;
 use Spatie\Translatable\HasTranslations;
@@ -145,6 +146,18 @@ class Clinic extends Model
     public function reviews(): MorphMany
     {
         return $this->morphMany(Review::class, 'reviewable');
+    }
+
+    /**
+     * Recipient resolution for clinic-scoped notifications — every
+     * clinic_user with the given permission, e.g. 'offers.manage' for
+     * "a patient responded to an offer". In-memory filter, not a query
+     * scope: clinic staff counts are small (owner/manager/staff), so this
+     * isn't worth a Spatie team-scoped permission query.
+     */
+    public function usersWithPermission(string $permission): Collection
+    {
+        return $this->users()->get()->filter(fn (User $user) => $user->can($permission))->values();
     }
 
     public function searchableAs(): string

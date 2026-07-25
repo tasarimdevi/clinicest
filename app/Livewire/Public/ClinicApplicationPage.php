@@ -7,8 +7,10 @@ namespace App\Livewire\Public;
 use App\Models\City;
 use App\Models\Clinic;
 use App\Models\User;
+use App\Notifications\NewClinicApplicationSubmitted;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
@@ -126,6 +128,8 @@ class ClinicApplicationPage extends Component
         });
 
         RateLimiter::clear($throttleKey);
+
+        Notification::send(User::permission('clinics.verify')->get(), new NewClinicApplicationSubmitted($clinic));
 
         $this->redirect(route('clinic.dashboard', $clinic), navigate: false);
     }

@@ -10,6 +10,7 @@ require __DIR__.'/web/auth.php';
 require __DIR__.'/web/patient.php';
 require __DIR__.'/web/clinic.php';
 require __DIR__.'/web/admin.php';
+require __DIR__.'/web/settings.php';
 
 // Shared between the clinic portal and admin — DocumentPolicy::view()
 // does the actual authorization (clinic-membership scoping or

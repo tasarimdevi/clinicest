@@ -8,7 +8,9 @@ use App\Enums\LeadStatus;
 use App\Models\Clinic;
 use App\Models\Lead;
 use App\Models\User;
+use App\Notifications\LeadAssignedToClinic;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Notification;
 
 /**
  * Assigns a lead to one or more clinics, opening the SLA clock on each.
@@ -33,6 +35,11 @@ class AssignLeadToClinics
                         'assigned_at' => now(),
                         'sla_due_at' => now()->addHours($slaHours),
                     ]
+                );
+
+                Notification::send(
+                    $clinic->usersWithPermission('leads.view'),
+                    new LeadAssignedToClinic($lead, $clinic)
                 );
             }
 

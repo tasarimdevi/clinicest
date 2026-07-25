@@ -13,9 +13,14 @@ use App\Models\Message;
 use App\Models\Offer;
 use App\Models\Review;
 use App\Models\TreatmentCase;
+use Database\Seeders\RolePermissionSeeder;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 use Livewire\Livewire;
+
+beforeEach(function () {
+    (new RolePermissionSeeder)->run();
+});
 
 function seedPortalClinic(): Clinic
 {

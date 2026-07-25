@@ -5,10 +5,17 @@ declare(strict_types=1);
 namespace App\Livewire\Patient;
 
 use App\Actions\Messages\SendLeadMessage;
+use App\Models\Appointment;
 use App\Models\Clinic;
 use App\Models\Lead;
+use App\Models\Offer;
 use App\Models\Review;
+use App\Models\User;
+use App\Notifications\AppointmentRespondedTo;
+use App\Notifications\OfferRespondedTo;
+use App\Notifications\ReviewPendingModeration;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Notification;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
 
@@ -65,6 +72,7 @@ class PatientPortal extends Component
         $offer->update(['status' => 'accepted']);
 
         $this->logActivity('offer_accepted', ['offer_id' => $offer->id]);
+        $this->notifyOfferResponse($offer);
     }
 
     public function rejectOffer(int $offerId): void
@@ -76,6 +84,7 @@ class PatientPortal extends Component
         $offer->update(['status' => 'rejected']);
 
         $this->logActivity('offer_rejected', ['offer_id' => $offer->id]);
+        $this->notifyOfferResponse($offer);
     }
 
     public function confirmAppointment(int $appointmentId): void
@@ -87,6 +96,7 @@ class PatientPortal extends Component
         $appointment->update(['status' => 'confirmed']);
 
         $this->logActivity('appointment_confirmed', ['appointment_id' => $appointment->id]);
+        $this->notifyAppointmentResponse($appointment);
     }
 
     public function cancelAppointment(int $appointmentId): void
@@ -98,6 +108,7 @@ class PatientPortal extends Component
         $appointment->update(['status' => 'cancelled']);
 
         $this->logActivity('appointment_cancelled', ['appointment_id' => $appointment->id]);
+        $this->notifyAppointmentResponse($appointment);
     }
 
     public function sendMessage(int $clinicId, SendLeadMessage $sendLeadMessage): void
@@ -143,7 +154,7 @@ class PatientPortal extends Component
             'reviewBody' => ['required', 'string', 'max:2000'],
         ]);
 
-        Review::create([
+        $review = Review::create([
             'reviewable_type' => Clinic::class,
             'reviewable_id' => $treatmentCase->clinic_id,
             'lead_id' => $this->lead->id,
@@ -159,6 +170,8 @@ class PatientPortal extends Component
             'status' => 'pending',
         ]);
 
+        Notification::send(User::permission('reviews.moderate')->get(), new ReviewPendingModeration($review));
+
         $this->reviewSubmitted = true;
     }
 
@@ -171,6 +184,16 @@ class PatientPortal extends Component
             'payload_json' => ['event' => $event, ...$payload],
             'created_at' => now(),
         ]);
+    }
+
+    protected function notifyOfferResponse(Offer $offer): void
+    {
+        Notification::send($offer->clinic->usersWithPermission('offers.manage'), new OfferRespondedTo($offer));
+    }
+
+    protected function notifyAppointmentResponse(Appointment $appointment): void
+    {
+        Notification::send($appointment->clinic->usersWithPermission('appointments.manage'), new AppointmentRespondedTo($appointment));
     }
 
     public function render(): View

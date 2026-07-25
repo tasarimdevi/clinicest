@@ -86,7 +86,8 @@
                 </div>
 
                 <div class="flex items-center gap-4">
-                    <span class="hidden text-sm text-ink-500 sm:inline">{{ auth()->user()?->name }}</span>
+                    <livewire:notification-bell />
+                    <a href="{{ route('settings.notifications') }}" class="hidden text-sm text-ink-500 hover:text-brand-700 sm:inline">{{ auth()->user()?->name }}</a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="text-sm font-medium text-ink-500 hover:text-brand-700">

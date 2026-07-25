@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 use App\Livewire\Admin\ClinicApplications;
 use App\Livewire\Public\ClinicApplicationPage;
-use App\Mail\ClinicApplicationDecisionMail;
 use App\Models\City;
 use App\Models\Clinic;
 use App\Models\Country;
 use App\Models\User;
+use App\Notifications\ClinicApplicationDecided;
 use Database\Seeders\RolePermissionSeeder;
-use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
 
 beforeEach(function () {
@@ -94,7 +94,7 @@ it('requires a matching password confirmation and a unique owner email', functio
 });
 
 it('lets a moderator (clinics.verify, no clinics.view) approve an application and notifies the owner', function () {
-    Mail::fake();
+    Notification::fake();
 
     $city = seedOnboardingCity();
     $owner = User::factory()->create(['email' => 'owner@example.com']);
@@ -117,11 +117,11 @@ it('lets a moderator (clinics.verify, no clinics.view) approve an application an
     expect($clinic->verification_tier->value)->toBe('verified');
     expect($clinic->verified_by)->toBe($moderator->id);
 
-    Mail::assertSent(ClinicApplicationDecisionMail::class, fn ($mail) => $mail->hasTo('owner@example.com'));
+    Notification::assertSentTo($owner, ClinicApplicationDecided::class);
 });
 
 it('lets an admin reject an application with a reason and notifies the owner', function () {
-    Mail::fake();
+    Notification::fake();
 
     $city = seedOnboardingCity();
     $owner = User::factory()->create(['email' => 'rejectee@example.com']);
@@ -144,7 +144,7 @@ it('lets an admin reject an application with a reason and notifies the owner', f
     expect($clinic->is_active)->toBeFalse();
     expect($clinic->rejection_reason)->toBe('Missing a valid practice license.');
 
-    Mail::assertSent(ClinicApplicationDecisionMail::class, fn ($mail) => $mail->hasTo('rejectee@example.com'));
+    Notification::assertSentTo($owner, ClinicApplicationDecided::class);
 });
 
 it('blocks a user without clinics.verify from reaching the applications queue', function () {

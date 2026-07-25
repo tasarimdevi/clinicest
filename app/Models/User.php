@@ -32,6 +32,7 @@ class User extends Authenticatable
         'locale',
         'avatar_path',
         'status',
+        'notification_preferences',
     ];
 
     protected $hidden = [
@@ -52,7 +53,22 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'last_login_at' => 'datetime',
+            'notification_preferences' => 'array',
         ];
+    }
+
+    /**
+     * Missing key => wants email (opt-out, not opt-in) — see the
+     * notification_preferences migration docblock.
+     */
+    public function wantsEmailFor(string $notificationClass): bool
+    {
+        return (bool) (($this->notification_preferences[$notificationClass]['mail'] ?? true));
+    }
+
+    public function wantsDigest(): bool
+    {
+        return (bool) (($this->notification_preferences['digest']['mail'] ?? true));
     }
 
     public function country(): BelongsTo

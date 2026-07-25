@@ -6,6 +6,7 @@ namespace App\Livewire\Admin;
 
 use App\Mail\ClinicApplicationDecisionMail;
 use App\Models\Clinic;
+use App\Notifications\ClinicApplicationDecided;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\Layout;
@@ -53,7 +54,7 @@ class ClinicApplications extends Component
             'is_active' => true,
         ]);
 
-        Mail::to($clinic->owner?->email ?? $clinic->email)->send(new ClinicApplicationDecisionMail($clinic->fresh()));
+        $this->notifyDecision($clinic->fresh());
     }
 
     public function reject(Clinic $clinic): void
@@ -65,9 +66,25 @@ class ClinicApplications extends Component
             'rejection_reason' => $this->rejectReason[$clinic->id] ?? null,
         ]);
 
-        Mail::to($clinic->owner?->email ?? $clinic->email)->send(new ClinicApplicationDecisionMail($clinic->fresh()));
+        $this->notifyDecision($clinic->fresh());
 
         unset($this->rejecting[$clinic->id]);
+    }
+
+    /**
+     * A clinic without a linked owner (legacy/admin-seeded row) has no
+     * User to notify in-app — falls back to the plain transactional mail
+     * this replaced, same as before this notification existed.
+     */
+    protected function notifyDecision(Clinic $clinic): void
+    {
+        if ($clinic->owner) {
+            $clinic->owner->notify(new ClinicApplicationDecided($clinic));
+
+            return;
+        }
+
+        Mail::to($clinic->email)->send(new ClinicApplicationDecisionMail($clinic));
     }
 
     public function render(): View
