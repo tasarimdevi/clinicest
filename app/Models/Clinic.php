@@ -92,6 +92,11 @@ class Clinic extends Model
         return $this->hasMany(Offer::class);
     }
 
+    public function appointments(): HasMany
+    {
+        return $this->hasMany(Appointment::class);
+    }
+
     public function beforeAfterCases(): HasMany
     {
         return $this->hasMany(BeforeAfterCase::class);

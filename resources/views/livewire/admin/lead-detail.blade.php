@@ -103,6 +103,49 @@
             </div>
         @endcan
 
+        {{-- Appointments --}}
+        @can('viewAny', \App\Models\Appointment::class)
+            <div class="rounded-lg border border-ink-200 bg-white p-6 shadow-card">
+                <h3 class="text-sm font-semibold text-ink-900">{{ __('Appointments') }}</h3>
+                <ul class="mt-4 space-y-4">
+                    @forelse ($appointments as $appointment)
+                        <li class="rounded-md border border-ink-100 p-4">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <p class="font-medium text-ink-900">{{ $appointment->type->label() }}</p>
+                                    <p class="text-xs text-ink-500">
+                                        {{ $appointment->clinic->getTranslation('name', app()->getLocale()) }}
+                                        &middot; {{ $appointment->scheduled_at->format('d M Y H:i') }} ({{ $appointment->timezone }})
+                                    </p>
+                                </div>
+                            </div>
+
+                            @can('update', $appointment)
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    @foreach ($appointmentStatuses as $s)
+                                        <button wire:click="updateAppointmentStatus({{ $appointment->id }}, '{{ $s->value }}')"
+                                                @class([
+                                                    'rounded-full px-2.5 py-1 text-xs font-medium',
+                                                    'bg-brand-700 text-white' => $appointment->status === $s,
+                                                    'bg-ink-100 text-ink-600 hover:bg-ink-200' => $appointment->status !== $s,
+                                                ])>
+                                            {{ $s->label() }}
+                                        </button>
+                                    @endforeach
+                                </div>
+                            @else
+                                <span class="mt-3 inline-flex rounded-full bg-ink-100 px-2.5 py-1 text-xs font-medium text-ink-700">
+                                    {{ $appointment->status->label() }}
+                                </span>
+                            @endcan
+                        </li>
+                    @empty
+                        <li class="text-sm text-ink-500">{{ __('No appointments requested yet.') }}</li>
+                    @endforelse
+                </ul>
+            </div>
+        @endcan
+
         {{-- Activity timeline --}}
         <div class="rounded-lg border border-ink-200 bg-white p-6 shadow-card">
             <h3 class="text-sm font-semibold text-ink-900">{{ __('Activity') }}</h3>

@@ -39,16 +39,28 @@
                                     <x-button wire:click="decline({{ $assignment->id }})" variant="ghost" size="sm">{{ __('Decline') }}</x-button>
                                 </div>
                             @elseif ($assignment->status === 'accepted')
-                                @can('create', \App\Models\Offer::class)
-                                    <a href="{{ route('clinic.offers.create', ['clinic' => $clinic->id, 'lead' => $assignment->lead_id]) }}"
-                                       class="text-sm font-medium text-brand-700 hover:underline">
-                                        @if ($assignment->lead->offers->isNotEmpty())
-                                            {{ __(':count offer sent · Send another', ['count' => $assignment->lead->offers->count()]) }}
-                                        @else
-                                            {{ __('Send offer') }}
-                                        @endif
-                                    </a>
-                                @endcan
+                                <div class="flex flex-col items-end gap-1">
+                                    @can('create', \App\Models\Offer::class)
+                                        <a href="{{ route('clinic.offers.create', ['clinic' => $clinic->id, 'lead' => $assignment->lead_id]) }}"
+                                           class="text-sm font-medium text-brand-700 hover:underline">
+                                            @if ($assignment->lead->offers->isNotEmpty())
+                                                {{ __(':count offer sent · Send another', ['count' => $assignment->lead->offers->count()]) }}
+                                            @else
+                                                {{ __('Send offer') }}
+                                            @endif
+                                        </a>
+                                    @endcan
+                                    @can('create', \App\Models\Appointment::class)
+                                        <a href="{{ route('clinic.appointments.index', ['clinic' => $clinic->id, 'lead' => $assignment->lead_id]) }}"
+                                           class="text-sm font-medium text-brand-700 hover:underline">
+                                            @if ($assignment->lead->appointments->isNotEmpty())
+                                                {{ __(':count appointment · View', ['count' => $assignment->lead->appointments->count()]) }}
+                                            @else
+                                                {{ __('Schedule appointment') }}
+                                            @endif
+                                        </a>
+                                    @endcan
+                                </div>
                             @endif
                         </td>
                     </tr>

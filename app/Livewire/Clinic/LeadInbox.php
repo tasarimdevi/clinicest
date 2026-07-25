@@ -58,7 +58,11 @@ class LeadInbox extends Component
     {
         $assignments = LeadAssignment::query()
             ->where('clinic_id', $this->clinic->id)
-            ->with(['lead.primaryTreatment', 'lead.offers' => fn ($q) => $q->where('clinic_id', $this->clinic->id)])
+            ->with([
+                'lead.primaryTreatment',
+                'lead.offers' => fn ($q) => $q->where('clinic_id', $this->clinic->id),
+                'lead.appointments' => fn ($q) => $q->where('clinic_id', $this->clinic->id),
+            ])
             ->latest('assigned_at')
             ->paginate(20);
 
