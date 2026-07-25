@@ -85,6 +85,9 @@
                         <li><a href="{{ route('how-it-works') }}" class="hover:text-brand-700">{{ __('nav.how_it_works') }}</a></li>
                         <li><a href="{{ route('contact') }}" class="hover:text-brand-700">{{ __('nav.contact') }}</a></li>
                         <li><a href="{{ route('blog.index') }}" class="hover:text-brand-700">{{ __('Blog') }}</a></li>
+                        @guest
+                            <li><a href="{{ route('for-clinics') }}" class="hover:text-brand-700">{{ __('List your clinic') }}</a></li>
+                        @endguest
                     </ul>
                 </div>
                 <div>

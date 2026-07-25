@@ -16,9 +16,19 @@
                 @endforeach
             </select>
         </div>
-        @can('create', \App\Models\Clinic::class)
-            <x-button :href="route('admin.clinics.create')" as="a" size="sm">{{ __('Add clinic') }}</x-button>
-        @endcan
+        <div class="flex gap-2">
+            @if (auth()->user()->can('clinics.verify'))
+                @php $pendingCount = \App\Models\Clinic::where('application_status', 'pending')->count(); @endphp
+                @if ($pendingCount > 0)
+                    <x-button :href="route('admin.clinics.applications')" as="a" variant="ghost" size="sm">
+                        {{ __(':count pending application(s)', ['count' => $pendingCount]) }}
+                    </x-button>
+                @endif
+            @endif
+            @can('create', \App\Models\Clinic::class)
+                <x-button :href="route('admin.clinics.create')" as="a" size="sm">{{ __('Add clinic') }}</x-button>
+            @endcan
+        </div>
     </div>
 
     <div class="mt-6 overflow-x-auto rounded-lg border border-ink-200 bg-white shadow-card">

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Livewire\Admin\ClinicApplications;
 use App\Livewire\Admin\ClinicForm;
 use App\Livewire\Admin\Clinics;
 use App\Livewire\Admin\Dashboard;
@@ -36,6 +37,7 @@ Route::middleware(['auth', 'can:access-admin'])->prefix('admin')->name('admin.')
 
     Route::prefix('clinics')->name('clinics.')->group(function () {
         Route::get('/', Clinics::class)->name('index');
+        Route::get('/applications', ClinicApplications::class)->name('applications');
         Route::get('/create', ClinicForm::class)->name('create');
         Route::get('/{clinic}/edit', ClinicForm::class)->name('edit');
     });

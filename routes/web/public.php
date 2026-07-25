@@ -7,6 +7,7 @@ use App\Livewire\Public\AiCostEstimator;
 use App\Livewire\Public\BeforeAfterIndex;
 use App\Livewire\Public\BlogIndex;
 use App\Livewire\Public\BlogShow;
+use App\Livewire\Public\ClinicApplicationPage;
 use App\Livewire\Public\ClinicShow;
 use App\Livewire\Public\ClinicsIndex;
 use App\Livewire\Public\ContactPage;
@@ -89,3 +90,8 @@ Route::get('/legal/terms', TermsPage::class)->name('legal.terms');
 Route::get('/legal/gdpr', GdprPage::class)->name('legal.gdpr');
 
 Route::get('/get-quote', GetQuote::class)->name('get-quote');
+
+// Guest-only: the form always creates a brand-new User + Clinic, so an
+// already-authenticated visitor (already a clinic owner, patient, etc.)
+// isn't a supported entry point here — see the component docblock.
+Route::middleware('guest')->get('/for-clinics', ClinicApplicationPage::class)->name('for-clinics');

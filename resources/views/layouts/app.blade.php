@@ -23,6 +23,9 @@
                 $navUser?->can('clinics.view')
                     ? ['label' => __('Clinics'), 'route' => 'admin.clinics.index', 'pattern' => 'admin.clinics.*']
                     : null,
+                $navUser?->can('clinics.verify')
+                    ? ['label' => __('Applications'), 'route' => 'admin.clinics.applications', 'pattern' => 'admin.clinics.applications']
+                    : null,
                 $navUser?->can('doctors.view')
                     ? ['label' => __('Doctors'), 'route' => 'admin.doctors.index', 'pattern' => 'admin.doctors.*']
                     : null,

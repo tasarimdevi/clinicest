@@ -25,6 +25,8 @@ class Clinic extends Model
         'founded_year', 'patients_treated', 'verification_tier', 'verified_at',
         'verified_by', 'response_time_minutes', 'languages_json',
         'rating_avg', 'rating_count', 'is_active', 'is_featured', 'owner_user_id',
+        'application_status', 'application_message', 'credentials_url',
+        'rejection_reason', 'applied_at',
     ];
 
     public array $translatable = ['name', 'about'];
@@ -45,6 +47,7 @@ class Clinic extends Model
             'rating_avg' => 'decimal:2',
             'is_active' => 'boolean',
             'is_featured' => 'boolean',
+            'applied_at' => 'datetime',
         ];
     }
 
