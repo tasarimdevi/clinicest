@@ -34,10 +34,15 @@
         <p class="mt-2 text-3xl font-semibold text-ink-900">★ {{ number_format($rating, 1) }}</p>
     </div>
 
-    <div class="col-span-full mt-4">
+    <div class="col-span-full mt-4 flex flex-wrap gap-4">
         <a href="{{ route('clinic.leads', $clinic) }}" class="text-sm font-semibold text-brand-700 hover:underline">
             {{ __('View lead inbox') }} &rarr;
         </a>
+        @can('manage', $clinic)
+            <a href="{{ route('clinic.profile', $clinic) }}" class="text-sm font-semibold text-brand-700 hover:underline">
+                {{ __('Edit clinic profile') }} &rarr;
+            </a>
+        @endcan
     </div>
 </div>
 </div>

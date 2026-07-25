@@ -39,6 +39,9 @@
                 $navUser?->can('documents.view')
                     ? ['label' => __('Documents'), 'route' => 'clinic.documents.index', 'params' => [$currentClinic], 'pattern' => 'clinic.documents.*']
                     : null,
+                $navUser?->can('clinics.manage')
+                    ? ['label' => __('Profile'), 'route' => 'clinic.profile', 'params' => [$currentClinic], 'pattern' => 'clinic.profile']
+                    : null,
             ])),
             default => [
                 ['label' => __('Dashboard'), 'route' => 'patient.dashboard', 'pattern' => 'patient.dashboard'],
