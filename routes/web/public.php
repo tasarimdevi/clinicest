@@ -44,65 +44,66 @@ use Illuminate\Support\Facades\Route;
 | silently freeze every placeholder at the boot-time locale. Each of
 | these gets a real, translated, SEO-driven title when it's built out.
 |
-| TODO (Phase 4, docs/10-roadmap.md): wire /{locale}/ prefix routing.
-| Two registrations (default group as below, plus the same set wrapped in
-| Route::prefix('{locale}')->where('locale', 'tr|de|...') with route names
-| suffixed, e.g. 'treatments.index.tr') is the robust pattern — a single
-| optional-prefix group is fragile around the root '/' route. Until then,
-| config('clinicest.locales.supported') stays ['en'] so nothing 404s.
+| Locale URL scheme (docs/06-seo-architecture.md §5): every locale lives
+| under a required /{locale}/ path prefix (/en/..., /tr/...) — Laravel's
+| official URL::defaults pattern. The locale param is provided by
+| URL::defaults (set in SetLocale), so existing positional route() calls
+| like route('treatments.show', $slug) keep working unchanged; the scalar
+| fills the treatment, not the (defaulted) locale. This is why the prefix
+| is REQUIRED, not optional {locale?} — an optional leading param gets
+| consumed by positional args and breaks every route('x.show', $model)
+| call. English isn't at the bare root as a result; `/` 301-redirects to
+| the default locale's home, which is SEO-equivalent (canonical + x-default
+| both target /en).
 */
 
-// Session-based locale switch — see config/clinicest.php's docblock. Not
-// the docs' planned /{locale}/ URL-prefix scheme (still Phase 4); this
-// just persists the choice to session, same as SetLocale already reads.
-Route::get('/locale/{locale}', function (string $locale) {
-    abort_unless(in_array($locale, config('clinicest.locales.supported', ['en']), true), 404);
+// `/` -> the default locale's homepage (301). Everything else lives under
+// a locale prefix, so this is the only unprefixed public entry point.
+Route::get('/', fn () => redirect(route('home', ['locale' => config('clinicest.locales.default', 'en')]), 301));
 
-    session(['locale' => $locale]);
+Route::prefix('{locale}')
+    ->where(['locale' => implode('|', config('clinicest.locales.supported', ['en']))])
+    ->group(function () {
+        Route::get('/', HomePage::class)->name('home');
 
-    return redirect()->back();
-})->name('locale.switch');
+        Route::get('/treatments', TreatmentsIndex::class)->name('treatments.index');
+        Route::get('/treatments/{treatment:slug}', TreatmentShow::class)->name('treatments.show');
 
-Route::get('/', HomePage::class)->name('home');
+        Route::get('/clinics', ClinicsIndex::class)->name('clinics.index');
+        Route::get('/clinics/{clinic:slug}', ClinicShow::class)->name('clinics.show');
 
-Route::get('/treatments', TreatmentsIndex::class)->name('treatments.index');
-Route::get('/treatments/{treatment:slug}', TreatmentShow::class)->name('treatments.show');
+        Route::get('/doctors', DoctorsIndex::class)->name('doctors.index');
+        Route::get('/doctors/{doctor:slug}', DoctorShow::class)->name('doctors.show');
 
-Route::get('/clinics', ClinicsIndex::class)->name('clinics.index');
-Route::get('/clinics/{clinic:slug}', ClinicShow::class)->name('clinics.show');
+        Route::get('/dental-tourism-turkey', GuidePillarPage::class)->name('guide.index');
+        Route::get('/dental-tourism-turkey/{post:slug}', GuideArticleShow::class)->name('guide.show');
 
-Route::get('/doctors', DoctorsIndex::class)->name('doctors.index');
-Route::get('/doctors/{doctor:slug}', DoctorShow::class)->name('doctors.show');
+        Route::get('/countries/{country:slug}', CountryShow::class)->name('countries.show');
 
-Route::get('/dental-tourism-turkey', GuidePillarPage::class)->name('guide.index');
-Route::get('/dental-tourism-turkey/{post:slug}', GuideArticleShow::class)->name('guide.show');
+        Route::get('/cost/{treatment:slug}', CostShow::class)->name('cost.show');
 
-Route::get('/countries/{country:slug}', CountryShow::class)->name('countries.show');
+        Route::get('/cost-estimator', AiCostEstimator::class)->name('cost-estimator');
 
-Route::get('/cost/{treatment:slug}', CostShow::class)->name('cost.show');
+        Route::get('/before-after', BeforeAfterIndex::class)->name('before-after.index');
 
-Route::get('/cost-estimator', AiCostEstimator::class)->name('cost-estimator');
+        Route::get('/reviews', ReviewsIndex::class)->name('reviews.index');
+        Route::get('/reviews/{clinic:slug}', ReviewsShow::class)->name('reviews.show');
 
-Route::get('/before-after', BeforeAfterIndex::class)->name('before-after.index');
+        Route::get('/blog', BlogIndex::class)->name('blog.index');
+        Route::get('/blog/{post:slug}', BlogShow::class)->name('blog.show');
 
-Route::get('/reviews', ReviewsIndex::class)->name('reviews.index');
-Route::get('/reviews/{clinic:slug}', ReviewsShow::class)->name('reviews.show');
+        Route::get('/how-it-works', HowItWorksPage::class)->name('how-it-works');
+        Route::get('/about', AboutPage::class)->name('about');
+        Route::get('/contact', ContactPage::class)->name('contact');
+        Route::get('/faq', FaqPage::class)->name('faq');
 
-Route::get('/blog', BlogIndex::class)->name('blog.index');
-Route::get('/blog/{post:slug}', BlogShow::class)->name('blog.show');
+        Route::get('/legal/privacy', PrivacyPolicyPage::class)->name('legal.privacy');
+        Route::get('/legal/terms', TermsPage::class)->name('legal.terms');
+        Route::get('/legal/gdpr', GdprPage::class)->name('legal.gdpr');
 
-Route::get('/how-it-works', HowItWorksPage::class)->name('how-it-works');
-Route::get('/about', AboutPage::class)->name('about');
-Route::get('/contact', ContactPage::class)->name('contact');
-Route::get('/faq', FaqPage::class)->name('faq');
+        Route::get('/get-quote', GetQuote::class)->name('get-quote');
 
-Route::get('/legal/privacy', PrivacyPolicyPage::class)->name('legal.privacy');
-Route::get('/legal/terms', TermsPage::class)->name('legal.terms');
-Route::get('/legal/gdpr', GdprPage::class)->name('legal.gdpr');
-
-Route::get('/get-quote', GetQuote::class)->name('get-quote');
-
-// Guest-only: the form always creates a brand-new User + Clinic, so an
-// already-authenticated visitor (already a clinic owner, patient, etc.)
-// isn't a supported entry point here — see the component docblock.
-Route::middleware('guest')->get('/for-clinics', ClinicApplicationPage::class)->name('for-clinics');
+        // Guest-only: the form always creates a brand-new User + Clinic, so
+        // an already-authenticated visitor isn't a supported entry point.
+        Route::middleware('guest')->get('/for-clinics', ClinicApplicationPage::class)->name('for-clinics');
+    });

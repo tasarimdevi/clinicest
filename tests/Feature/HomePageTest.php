@@ -2,13 +2,14 @@
 
 declare(strict_types=1);
 
-it('renders the homepage successfully', function () {
-    $this->get('/')->assertOk();
+it('redirects the bare root to the default locale home', function () {
+    $this->get('/')->assertRedirect(route('home', ['locale' => 'en']));
 });
 
-it('renders key public pages', function () {
-    $this->get('/treatments')->assertOk();
-    $this->get('/clinics')->assertOk();
-    $this->get('/doctors')->assertOk();
-    $this->get('/get-quote')->assertOk();
+it('renders key public pages under the locale prefix', function () {
+    $this->get(route('home'))->assertOk();            // /en
+    $this->get(route('treatments.index'))->assertOk(); // /en/treatments
+    $this->get(route('clinics.index'))->assertOk();
+    $this->get(route('doctors.index'))->assertOk();
+    $this->get(route('get-quote'))->assertOk();
 });
