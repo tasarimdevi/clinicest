@@ -13,12 +13,15 @@ use App\Livewire\Public\CountryShow;
 use App\Livewire\Public\DoctorShow;
 use App\Livewire\Public\DoctorsIndex;
 use App\Livewire\Public\FaqPage;
+use App\Livewire\Public\GdprPage;
 use App\Livewire\Public\GetQuote;
 use App\Livewire\Public\HomePage;
 use App\Livewire\Public\HowItWorksPage;
 use App\Livewire\Public\PlaceholderPage;
+use App\Livewire\Public\PrivacyPolicyPage;
 use App\Livewire\Public\ReviewsIndex;
 use App\Livewire\Public\ReviewsShow;
+use App\Livewire\Public\TermsPage;
 use App\Livewire\Public\TreatmentShow;
 use App\Livewire\Public\TreatmentsIndex;
 use Illuminate\Support\Facades\Route;
@@ -78,11 +81,8 @@ Route::get('/about', AboutPage::class)->name('about');
 Route::get('/contact', ContactPage::class)->name('contact');
 Route::get('/faq', FaqPage::class)->name('faq');
 
-Route::get('/legal/privacy', PlaceholderPage::class)
-    ->name('legal.privacy')->defaults('title', 'Privacy Policy');
-Route::get('/legal/terms', PlaceholderPage::class)
-    ->name('legal.terms')->defaults('title', 'Terms of Service');
-Route::get('/legal/gdpr', PlaceholderPage::class)
-    ->name('legal.gdpr')->defaults('title', 'GDPR');
+Route::get('/legal/privacy', PrivacyPolicyPage::class)->name('legal.privacy');
+Route::get('/legal/terms', TermsPage::class)->name('legal.terms');
+Route::get('/legal/gdpr', GdprPage::class)->name('legal.gdpr');
 
 Route::get('/get-quote', GetQuote::class)->name('get-quote');
