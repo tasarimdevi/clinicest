@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Admin;
 
+use App\Livewire\Concerns\WithTranslations;
 use App\Models\Clinic;
 use App\Models\Doctor;
 use App\Services\ImageProcessor;
@@ -13,10 +14,15 @@ use Livewire\Attributes\Layout;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
+/**
+ * `title`/`specialty`/`bio` are Spatie-translatable and edited per-locale
+ * (EN/TR) via WithTranslations + <x-translatable-field>; `full_name` is a
+ * plain column (a person's name isn't translated).
+ */
 #[Layout('layouts.app', ['title' => 'Doctor'])]
 class DoctorForm extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, WithTranslations;
 
     public ?Doctor $doctor = null;
 
@@ -28,11 +34,14 @@ class DoctorForm extends Component
 
     public ?int $clinic_id = null;
 
-    public string $title = '';
+    /** @var array<string, string> */
+    public array $title = [];
 
-    public string $specialty = '';
+    /** @var array<string, string> */
+    public array $specialty = [];
 
-    public string $bio = '';
+    /** @var array<string, string> */
+    public array $bio = [];
 
     public ?int $years_experience = null;
 
@@ -48,6 +57,11 @@ class DoctorForm extends Component
      * of staying null when there's no route/test value for it (e.g. the
      * create route, with no {doctor} segment), silently breaking creation.
      */
+    protected function translatableFields(): array
+    {
+        return ['title' => 'title', 'specialty' => 'specialty', 'bio' => 'bio'];
+    }
+
     public function mount(mixed $doctor = null): void
     {
         $model = match (true) {
@@ -58,14 +72,14 @@ class DoctorForm extends Component
 
         $this->authorize($model ? 'update' : 'create', $model ?? Doctor::class);
 
+        $this->emptyTranslations(['title', 'specialty', 'bio']);
+
         if ($model) {
             $this->doctor = $model;
+            $this->fillTranslations($model);
             $this->full_name = $model->full_name;
             $this->slug = $model->slug;
             $this->clinic_id = $model->clinic_id;
-            $this->title = $model->getTranslation('title', 'en') ?? '';
-            $this->specialty = $model->getTranslation('specialty', 'en') ?? '';
-            $this->bio = $model->getTranslation('bio', 'en') ?? '';
             $this->years_experience = $model->years_experience;
             $this->languages = $model->languages_json ?? [];
             $this->is_featured = (bool) $model->is_featured;
@@ -75,12 +89,14 @@ class DoctorForm extends Component
     protected function rules(): array
     {
         return [
+            ...$this->translationRules([
+                'title' => ['max' => 255],
+                'specialty' => ['max' => 255],
+                'bio' => ['max' => 2000],
+            ]),
             'full_name' => ['required', 'string', 'max:255'],
             'slug' => ['required', 'string', 'max:255', 'alpha_dash', Rule::unique('doctors', 'slug')->ignore($this->doctor?->id)],
             'clinic_id' => ['required', Rule::exists(Clinic::class, 'id')],
-            'title' => ['nullable', 'string', 'max:255'],
-            'specialty' => ['nullable', 'string', 'max:255'],
-            'bio' => ['nullable', 'string', 'max:2000'],
             'years_experience' => ['nullable', 'integer', 'min:0', 'max:80'],
             'photo' => ['nullable', 'image', 'max:5120'],
         ];
@@ -91,15 +107,19 @@ class DoctorForm extends Component
         $this->authorize($this->doctor ? 'update' : 'create', $this->doctor ?? Doctor::class);
 
         $validated = $this->validate();
-        $validated['languages_json'] = $this->languages;
-        $validated['is_featured'] = $this->is_featured;
-        unset($validated['photo']);
 
-        if ($this->doctor) {
-            $this->doctor->update($validated);
-        } else {
-            $this->doctor = Doctor::create($validated);
-        }
+        $model = $this->doctor ?? new Doctor;
+        $model->fill([
+            'full_name' => $validated['full_name'],
+            'slug' => $validated['slug'],
+            'clinic_id' => $validated['clinic_id'],
+            'years_experience' => $validated['years_experience'] ?? null,
+            'languages_json' => $this->languages,
+            'is_featured' => $this->is_featured,
+        ]);
+        $this->applyTranslations($model);
+        $model->save();
+        $this->doctor = $model;
 
         // Stored after the create/update so a new doctor already has an id
         // for the path. Downscaled+compressed (no WebP variant — avatars

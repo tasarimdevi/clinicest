@@ -24,12 +24,10 @@
                     @error('clinic_id') <p class="mt-1 text-xs text-danger-500">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-ink-700">{{ __('Title') }}</label>
-                    <input type="text" wire:model="title" placeholder="e.g. DDS" class="mt-1.5 w-full rounded-md border-ink-300 text-sm">
+                    <x-translatable-field field="title" :label="__('Title')" placeholder="e.g. DDS" />
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-ink-700">{{ __('Specialty') }}</label>
-                    <input type="text" wire:model="specialty" placeholder="e.g. Prosthodontics" class="mt-1.5 w-full rounded-md border-ink-300 text-sm">
+                    <x-translatable-field field="specialty" :label="__('Specialty')" placeholder="e.g. Prosthodontics" />
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-ink-700">{{ __('Years of experience') }}</label>
@@ -37,8 +35,7 @@
                     @error('years_experience') <p class="mt-1 text-xs text-danger-500">{{ $message }}</p> @enderror
                 </div>
                 <div class="sm:col-span-2">
-                    <label class="block text-sm font-medium text-ink-700">{{ __('Bio') }}</label>
-                    <textarea wire:model="bio" rows="3" class="mt-1.5 w-full rounded-md border-ink-300 text-sm"></textarea>
+                    <x-translatable-field field="bio" type="textarea" :label="__('Bio')" />
                 </div>
                 <div class="sm:col-span-2">
                     <label class="block text-sm font-medium text-ink-700">{{ __('Profile photo') }}</label>

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Clinic;
 
 use App\Actions\Media\UploadClinicMedia;
+use App\Livewire\Concerns\WithTranslations;
 use App\Models\Clinic;
 use App\Models\Treatment;
 use App\Services\ImageProcessor;
@@ -34,7 +35,7 @@ use Livewire\WithFileUploads;
 #[Layout('layouts.app', ['title' => 'Clinic Profile'])]
 class ClinicProfile extends Component
 {
-    use WithFileUploads;
+    use WithFileUploads, WithTranslations;
 
     public Clinic $clinic;
 
@@ -42,9 +43,11 @@ class ClinicProfile extends Component
 
     public string $newMediaCaption = '';
 
-    public string $name = '';
+    /** @var array<string, string> */
+    public array $name = [];
 
-    public string $about = '';
+    /** @var array<string, string> */
+    public array $about = [];
 
     public string $address = '';
 
@@ -74,13 +77,17 @@ class ClinicProfile extends Component
     /** @var array<int, array{min: string, max: string, currency: string}> */
     public array $prices = [];
 
+    protected function translatableFields(): array
+    {
+        return ['name' => 'name', 'about' => 'about'];
+    }
+
     public function mount(Clinic $clinic): void
     {
         $this->authorize('manage', $clinic);
 
         $this->clinic = $clinic;
-        $this->name = $clinic->getTranslation('name', 'en') ?? '';
-        $this->about = $clinic->getTranslation('about', 'en') ?? '';
+        $this->fillTranslations($clinic);
         $this->address = $clinic->address ?? '';
         $this->phone = $clinic->phone ?? '';
         $this->whatsapp = $clinic->whatsapp ?? '';
@@ -103,8 +110,10 @@ class ClinicProfile extends Component
         $this->authorize('manage', $this->clinic);
 
         $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'about' => ['nullable', 'string', 'max:2000'],
+            ...$this->translationRules([
+                'name' => ['required' => true, 'max' => 255],
+                'about' => ['max' => 2000],
+            ]),
             'address' => ['nullable', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:32'],
             'whatsapp' => ['nullable', 'string', 'max:32'],
@@ -112,9 +121,14 @@ class ClinicProfile extends Component
             'website' => ['nullable', 'url', 'max:255'],
             'founded_year' => ['nullable', 'integer', 'min:1900', 'max:'.date('Y')],
         ]);
+        // name/about are applied via the trait (empty locales dropped so
+        // fallback works) rather than through the mass-update below.
+        unset($validated['name'], $validated['about']);
         $validated['languages_json'] = $this->languages;
 
-        $this->clinic->update($validated);
+        $this->clinic->fill($validated);
+        $this->applyTranslations($this->clinic);
+        $this->clinic->save();
 
         $this->saved = true;
     }

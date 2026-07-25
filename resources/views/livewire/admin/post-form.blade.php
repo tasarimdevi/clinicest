@@ -22,9 +22,7 @@
                         </select>
                     </div>
                     <div class="sm:col-span-2">
-                        <label class="block text-sm font-medium text-ink-700">{{ __('Title') }}</label>
-                        <input type="text" wire:model="title" class="mt-1.5 w-full rounded-md border-ink-300 text-sm">
-                        @error('title') <p class="mt-1 text-xs text-danger-500">{{ $message }}</p> @enderror
+                        <x-translatable-field field="title" :label="__('Title')" />
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-ink-700">{{ __('Slug') }}</label>
@@ -49,9 +47,7 @@
                         </div>
                     @endif
                     <div class="sm:col-span-2">
-                        <label class="block text-sm font-medium text-ink-700">{{ __('Excerpt') }}</label>
-                        <textarea wire:model="excerpt" rows="2" class="mt-1.5 w-full rounded-md border-ink-300 text-sm"></textarea>
-                        @error('excerpt') <p class="mt-1 text-xs text-danger-500">{{ $message }}</p> @enderror
+                        <x-translatable-field field="excerpt" type="textarea" :rows="2" :label="__('Excerpt')" />
                     </div>
                     <div class="sm:col-span-2">
                         <label class="block text-sm font-medium text-ink-700">{{ __('Hero image URL (optional)') }}</label>
@@ -59,9 +55,7 @@
                         @error('hero_image_path') <p class="mt-1 text-xs text-danger-500">{{ $message }}</p> @enderror
                     </div>
                     <div class="sm:col-span-2">
-                        <label class="block text-sm font-medium text-ink-700">{{ __('Body (HTML)') }}</label>
-                        <textarea wire:model="body" rows="14" class="mt-1.5 w-full rounded-md border-ink-300 font-mono text-xs"></textarea>
-                        @error('body') <p class="mt-1 text-xs text-danger-500">{{ $message }}</p> @enderror
+                        <x-translatable-field field="body" type="textarea" :rows="14" :label="__('Body (HTML)')" />
                     </div>
                 </div>
             </div>

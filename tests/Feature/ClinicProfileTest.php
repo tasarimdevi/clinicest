@@ -48,8 +48,9 @@ it('lets a clinic owner update their basic profile info', function () {
 
     Livewire::actingAs($owner)
         ->test(ClinicProfile::class, ['clinic' => $clinic])
-        ->set('name', 'Updated Clinic Name')
-        ->set('about', 'A brand new description.')
+        ->set('name.en', 'Updated Clinic Name')
+        ->set('name.tr', 'Güncellenen Klinik Adı')
+        ->set('about.en', 'A brand new description.')
         ->set('phone', '+90 212 111 2233')
         ->set('languages', ['en', 'tr'])
         ->call('save')
@@ -58,6 +59,7 @@ it('lets a clinic owner update their basic profile info', function () {
 
     $clinic->refresh();
     expect($clinic->getTranslation('name', 'en'))->toBe('Updated Clinic Name');
+    expect($clinic->getTranslation('name', 'tr'))->toBe('Güncellenen Klinik Adı');
     expect($clinic->getTranslation('about', 'en'))->toBe('A brand new description.');
     expect($clinic->phone)->toBe('+90 212 111 2233');
     expect($clinic->languages_json)->toBe(['en', 'tr']);

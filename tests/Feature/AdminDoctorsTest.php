@@ -82,6 +82,30 @@ it('lets a user with doctors.manage create a doctor', function () {
     expect(Doctor::where('full_name', 'Dr. New Doctor')->exists())->toBeTrue();
 });
 
+it('saves a doctor specialty and bio in both english and turkish', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+
+    $clinic = seedClinicForDoctors();
+
+    Livewire::actingAs($admin)
+        ->test(DoctorForm::class)
+        ->set('full_name', 'Dr. Bilingual')
+        ->set('slug', 'dr-bilingual')
+        ->set('clinic_id', $clinic->id)
+        ->set('specialty.en', 'Prosthodontics')
+        ->set('specialty.tr', 'Protez Diş Tedavisi')
+        ->set('bio.en', 'Experienced.')
+        ->call('save')
+        ->assertHasNoErrors();
+
+    $doctor = Doctor::where('slug', 'dr-bilingual')->firstOrFail();
+    expect($doctor->getTranslation('specialty', 'en'))->toBe('Prosthodontics');
+    expect($doctor->getTranslation('specialty', 'tr'))->toBe('Protez Diş Tedavisi');
+    // bio has no tr, falls back to en.
+    expect($doctor->getTranslation('bio', 'tr'))->toBe('Experienced.');
+});
+
 it('blocks a user without doctors.manage from creating a doctor', function () {
     $agent = User::factory()->create();
     $agent->assignRole('sales_agent');

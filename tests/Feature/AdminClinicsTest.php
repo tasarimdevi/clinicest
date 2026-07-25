@@ -78,7 +78,8 @@ it('lets a user with clinics.manage create a new clinic', function () {
 
     Livewire::actingAs($admin)
         ->test(ClinicForm::class)
-        ->set('name', 'New Clinic')
+        ->set('name.en', 'New Clinic')
+        ->set('name.tr', 'Yeni Klinik')
         ->set('slug', 'new-clinic')
         ->set('city_id', $city->id)
         ->call('save');
@@ -86,6 +87,7 @@ it('lets a user with clinics.manage create a new clinic', function () {
     $clinic = Clinic::where('slug', 'new-clinic')->first();
     expect($clinic)->not->toBeNull();
     expect($clinic->getTranslation('name', 'en'))->toBe('New Clinic');
+    expect($clinic->getTranslation('name', 'tr'))->toBe('Yeni Klinik');
 });
 
 it('blocks a user without clinics.manage from creating a clinic', function () {
@@ -123,7 +125,7 @@ it('blocks a moderator from editing clinic profile fields, only the tier', funct
 
     Livewire::actingAs($moderator)
         ->test(ClinicForm::class, ['clinic' => $clinic])
-        ->set('name', 'Hacked Name')
+        ->set('name.en', 'Hacked Name')
         ->call('save')
         ->assertForbidden();
 
@@ -138,4 +140,46 @@ it('blocks a sales agent (no clinics.view) from opening the clinic edit page', f
     $clinic = Clinic::create(['slug' => 'a-clinic', 'name' => ['en' => 'Alpha Dental'], 'city_id' => $city->id, 'verification_tier' => 'pending']);
 
     $this->actingAs($agent)->get(route('admin.clinics.edit', $clinic))->assertForbidden();
+});
+
+it('hydrates existing translations into the edit form and edits one locale without wiping the other', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+
+    $city = seedCity();
+    $clinic = Clinic::create([
+        'slug' => 'bilingual-clinic', 'name' => ['en' => 'English Name', 'tr' => 'Türkçe Ad'],
+        'city_id' => $city->id, 'verification_tier' => 'verified', 'is_active' => true,
+    ]);
+
+    $component = Livewire::actingAs($admin)->test(ClinicForm::class, ['clinic' => $clinic]);
+    $component->assertSet('name.en', 'English Name');
+    $component->assertSet('name.tr', 'Türkçe Ad');
+
+    // Change only Turkish; English must survive.
+    $component->set('name.tr', 'Güncellenen Ad')->call('save');
+
+    $clinic->refresh();
+    expect($clinic->getTranslation('name', 'en'))->toBe('English Name');
+    expect($clinic->getTranslation('name', 'tr'))->toBe('Güncellenen Ad');
+});
+
+it('does not persist an empty translation so the fallback locale still shows', function () {
+    $admin = User::factory()->create();
+    $admin->assignRole('admin');
+
+    $city = seedCity();
+
+    Livewire::actingAs($admin)
+        ->test(ClinicForm::class)
+        ->set('name.en', 'Only English')
+        ->set('name.tr', '') // left blank
+        ->set('slug', 'only-english')
+        ->set('city_id', $city->id)
+        ->call('save');
+
+    $clinic = Clinic::where('slug', 'only-english')->firstOrFail();
+    // tr was blank, so it must not be stored — getTranslation falls back to en.
+    expect($clinic->getTranslations('name'))->toBe(['en' => 'Only English']);
+    expect($clinic->getTranslation('name', 'tr'))->toBe('Only English');
 });

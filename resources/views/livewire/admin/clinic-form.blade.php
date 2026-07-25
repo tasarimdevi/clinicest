@@ -6,9 +6,7 @@
                 <h2 class="text-sm font-semibold text-ink-900">{{ __('Basic info') }}</h2>
                 <div class="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
                     <div>
-                        <label class="block text-sm font-medium text-ink-700">{{ __('Name') }}</label>
-                        <input type="text" wire:model="name" class="mt-1.5 w-full rounded-md border-ink-300 text-sm">
-                        @error('name') <p class="mt-1 text-xs text-danger-500">{{ $message }}</p> @enderror
+                        <x-translatable-field field="name" :label="__('Name')" />
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-ink-700">{{ __('Slug') }}</label>
@@ -16,8 +14,7 @@
                         @error('slug') <p class="mt-1 text-xs text-danger-500">{{ $message }}</p> @enderror
                     </div>
                     <div class="sm:col-span-2">
-                        <label class="block text-sm font-medium text-ink-700">{{ __('About') }}</label>
-                        <textarea wire:model="about" rows="3" class="mt-1.5 w-full rounded-md border-ink-300 text-sm"></textarea>
+                        <x-translatable-field field="about" type="textarea" :label="__('About')" />
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-ink-700">{{ __('Founded year') }}</label>

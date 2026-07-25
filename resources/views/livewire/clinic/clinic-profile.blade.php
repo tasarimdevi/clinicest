@@ -26,14 +26,10 @@
         <form wire:submit="save" class="mt-4 space-y-4">
             <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div class="sm:col-span-2">
-                    <label class="block text-sm font-medium text-ink-700">{{ __('Clinic name') }}</label>
-                    <input type="text" wire:model="name" class="mt-1.5 w-full rounded-md border-ink-300 text-sm">
-                    @error('name') <p class="mt-1 text-xs text-danger-500">{{ $message }}</p> @enderror
+                    <x-translatable-field field="name" :label="__('Clinic name')" />
                 </div>
                 <div class="sm:col-span-2">
-                    <label class="block text-sm font-medium text-ink-700">{{ __('About') }}</label>
-                    <textarea wire:model="about" rows="3" class="mt-1.5 w-full rounded-md border-ink-300 text-sm"></textarea>
-                    @error('about') <p class="mt-1 text-xs text-danger-500">{{ $message }}</p> @enderror
+                    <x-translatable-field field="about" type="textarea" :label="__('About')" />
                 </div>
                 <div>
                     <label class="block text-sm font-medium text-ink-700">{{ __('Founded year') }}</label>

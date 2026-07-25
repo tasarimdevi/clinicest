@@ -45,9 +45,9 @@ it('lets a content editor create a draft post but not publish it', function () {
     Livewire::actingAs($editor)
         ->test(PostForm::class)
         ->set('kind', 'blog')
-        ->set('title', 'New Post')
+        ->set('title.en', 'New Post')
         ->set('slug', 'new-post')
-        ->set('body', '<p>Body</p>')
+        ->set('body.en', '<p>Body</p>')
         ->call('save');
 
     $post = Post::where('slug', 'new-post')->first();
@@ -116,7 +116,7 @@ it('does not let editing an existing post silently change its published status',
 
     Livewire::actingAs($admin)
         ->test(PostForm::class, ['post' => $post])
-        ->set('title', 'Stays Published Edited')
+        ->set('title.en', 'Stays Published Edited')
         ->call('save');
 
     expect($post->fresh()->status)->toBe('published');

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Livewire\Admin;
 
 use App\Enums\VerificationTier;
+use App\Livewire\Concerns\WithTranslations;
 use App\Models\City;
 use App\Models\Clinic;
 use Illuminate\Contracts\View\View;
@@ -17,13 +18,19 @@ use Livewire\Component;
  * The verification-tier control is authorized separately from the rest of
  * the form (clinics.verify vs clinics.manage) so a moderator who reaches
  * this page purely to verify a clinic can't also edit its profile.
+ *
+ * `name`/`about` are Spatie-translatable and edited per-locale (EN/TR) via
+ * WithTranslations + <x-translatable-field>; the rest are plain columns.
  */
 #[Layout('layouts.app', ['title' => 'Clinic'])]
 class ClinicForm extends Component
 {
+    use WithTranslations;
+
     public ?Clinic $clinic = null;
 
-    public string $name = '';
+    /** @var array<string, string> */
+    public array $name = [];
 
     public string $slug = '';
 
@@ -39,7 +46,8 @@ class ClinicForm extends Component
 
     public string $website = '';
 
-    public string $about = '';
+    /** @var array<string, string> */
+    public array $about = [];
 
     public ?int $founded_year = null;
 
@@ -63,6 +71,11 @@ class ClinicForm extends Component
      * non-null-but-empty model. Accepting the raw value and resolving it
      * manually avoids that container gotcha entirely.
      */
+    protected function translatableFields(): array
+    {
+        return ['name' => 'name', 'about' => 'about'];
+    }
+
     public function mount(mixed $clinic = null): void
     {
         $model = match (true) {
@@ -73,9 +86,11 @@ class ClinicForm extends Component
 
         $this->authorize($model ? 'update' : 'create', $model ?? Clinic::class);
 
+        $this->emptyTranslations(['name', 'about']);
+
         if ($model) {
             $this->clinic = $model;
-            $this->name = $model->getTranslation('name', 'en') ?? '';
+            $this->fillTranslations($model);
             $this->slug = $model->slug;
             $this->city_id = $model->city_id;
             $this->address = $model->address ?? '';
@@ -83,7 +98,6 @@ class ClinicForm extends Component
             $this->whatsapp = $model->whatsapp ?? '';
             $this->email = $model->email ?? '';
             $this->website = $model->website ?? '';
-            $this->about = $model->getTranslation('about', 'en') ?? '';
             $this->founded_year = $model->founded_year;
             $this->languages = $model->languages_json ?? [];
             $this->verification_tier = $model->verification_tier->value;
@@ -99,7 +113,10 @@ class ClinicForm extends Component
     protected function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
+            ...$this->translationRules([
+                'name' => ['required' => true, 'max' => 255],
+                'about' => ['max' => 2000],
+            ]),
             'slug' => ['required', 'string', 'max:255', 'alpha_dash', Rule::unique('clinics', 'slug')->ignore($this->clinic?->id)],
             'city_id' => ['required', Rule::exists(City::class, 'id')],
             'address' => ['nullable', 'string', 'max:255'],
@@ -107,7 +124,6 @@ class ClinicForm extends Component
             'whatsapp' => ['nullable', 'string', 'max:32'],
             'email' => ['nullable', 'email', 'max:255'],
             'website' => ['nullable', 'url', 'max:255'],
-            'about' => ['nullable', 'string', 'max:2000'],
             'founded_year' => ['nullable', 'integer', 'min:1900', 'max:'.date('Y')],
         ];
     }
@@ -117,15 +133,25 @@ class ClinicForm extends Component
         $this->authorize($this->clinic ? 'manage' : 'create', $this->clinic ?? Clinic::class);
 
         $validated = $this->validate();
-        $validated['languages_json'] = $this->languages;
-        $validated['is_active'] = $this->is_active;
-        $validated['is_featured'] = $this->is_featured;
 
-        if ($this->clinic) {
-            $this->clinic->update($validated);
-        } else {
-            $this->clinic = Clinic::create($validated);
-        }
+        $model = $this->clinic ?? new Clinic;
+        $model->fill([
+            'slug' => $validated['slug'],
+            'city_id' => $validated['city_id'],
+            'address' => $validated['address'] ?? null,
+            'phone' => $validated['phone'] ?? null,
+            'whatsapp' => $validated['whatsapp'] ?? null,
+            'email' => $validated['email'] ?? null,
+            'website' => $validated['website'] ?? null,
+            'founded_year' => $validated['founded_year'] ?? null,
+            'languages_json' => $this->languages,
+            'is_active' => $this->is_active,
+            'is_featured' => $this->is_featured,
+        ]);
+        $this->applyTranslations($model);
+        $model->save();
+
+        $this->clinic = $model;
 
         $this->redirect(route('admin.clinics.edit', $this->clinic), navigate: false);
     }
