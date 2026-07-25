@@ -34,6 +34,8 @@ class RolePermissionSeeder extends Seeder
             'appointments.view', 'appointments.manage',
             // Messages
             'messages.view', 'messages.manage',
+            // Documents
+            'documents.view', 'documents.manage',
             // Clinics
             'clinics.view', 'clinics.manage', 'clinics.verify',
             // Doctors
@@ -58,20 +60,26 @@ class RolePermissionSeeder extends Seeder
             // Clinic-portal roles never get access-admin — they operate
             // entirely within /clinic/{id} via EnsureClinicMember, not /admin.
             'patient' => [],
-            'clinic_owner' => ['clinics.manage', 'doctors.manage', 'leads.view', 'offers.view', 'offers.manage', 'appointments.view', 'appointments.manage', 'messages.view', 'messages.manage', 'billing.view'],
-            'clinic_manager' => ['clinics.view', 'doctors.manage', 'leads.view', 'offers.view', 'offers.manage', 'appointments.view', 'appointments.manage', 'messages.view', 'messages.manage'],
+            'clinic_owner' => ['clinics.manage', 'doctors.manage', 'leads.view', 'offers.view', 'offers.manage', 'appointments.view', 'appointments.manage', 'messages.view', 'messages.manage', 'documents.view', 'documents.manage', 'billing.view'],
+            'clinic_manager' => ['clinics.view', 'doctors.manage', 'leads.view', 'offers.view', 'offers.manage', 'appointments.view', 'appointments.manage', 'messages.view', 'messages.manage', 'documents.view', 'documents.manage'],
             // Unlike offers/appointments, clinic_staff DOES get messaging —
             // docs/09 §1 explicitly lists "respond to leads/messages" for
             // this role, distinct from its "(limited)" appointments access.
+            // Documents aren't listed for clinic_staff, so — same cut as
+            // offers/appointments — it gets neither.
             'clinic_staff' => ['leads.view', 'messages.view', 'messages.manage'],
             'doctor' => [],
             // Internal staff roles all need access-admin just to reach
             // /admin at all; their other permissions then scope what they
             // see once inside (docs/09-crm-admin-architecture.md §1).
-            'sales_agent' => ['access-admin', 'leads.view', 'leads.assign', 'leads.manage', 'offers.view', 'appointments.view', 'messages.view'],
+            'sales_agent' => ['access-admin', 'leads.view', 'leads.assign', 'leads.manage', 'offers.view', 'appointments.view', 'messages.view', 'documents.view'],
             'content_editor' => ['access-admin', 'content.view', 'content.edit'],
             'seo_manager' => ['access-admin', 'seo.manage', 'content.view'],
-            'moderator' => ['access-admin', 'reviews.moderate', 'clinics.verify'],
+            // documents.view lets moderator review a clinic's uploaded
+            // verification/certificate documents during the self-onboarding
+            // review workflow (docs/09 §3 "verification-doc uploads"),
+            // alongside its existing clinics.verify.
+            'moderator' => ['access-admin', 'reviews.moderate', 'clinics.verify', 'documents.view'],
             // leads.view lets finance see which lead/patient a commission
             // belongs to for reconciliation — not the broader leads.manage,
             // which would let them edit lead status/assignment.
@@ -81,6 +89,7 @@ class RolePermissionSeeder extends Seeder
                 'offers.view', 'offers.manage',
                 'appointments.view', 'appointments.manage',
                 'messages.view',
+                'documents.view', 'documents.manage',
                 'clinics.view', 'clinics.manage', 'clinics.verify',
                 'doctors.view', 'doctors.manage',
                 'content.view', 'content.edit', 'content.publish',

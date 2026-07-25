@@ -204,6 +204,7 @@ class LeadDetail extends Component
             'treatmentCaseStatuses' => TreatmentCaseStatus::cases(),
             'commissionStatuses' => CommissionStatus::cases(),
             'messages' => $this->lead->messages()->with(['clinic', 'sender'])->latest('created_at')->get(),
+            'documents' => $this->lead->documents()->with(['clinic', 'uploadedBy'])->latest()->get(),
         ]);
     }
 }

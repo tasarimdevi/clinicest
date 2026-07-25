@@ -75,7 +75,7 @@ class ClinicApplications extends Component
         return view('livewire.admin.clinic-applications', [
             'applications' => Clinic::query()
                 ->where('application_status', 'pending')
-                ->with(['city', 'owner'])
+                ->with(['city', 'owner', 'documents'])
                 ->oldest('applied_at')
                 ->get(),
         ]);

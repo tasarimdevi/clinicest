@@ -94,6 +94,11 @@ class Lead extends Model
         return $this->hasMany(Message::class);
     }
 
+    public function documents(): HasMany
+    {
+        return $this->hasMany(Document::class);
+    }
+
     public function activities(): HasMany
     {
         return $this->hasMany(LeadActivity::class);

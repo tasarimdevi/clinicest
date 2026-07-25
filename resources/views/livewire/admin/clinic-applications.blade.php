@@ -41,6 +41,16 @@
                     </a>
                 @endif
 
+                @if ($clinic->documents->isNotEmpty())
+                    <div class="mt-3 flex flex-wrap gap-2">
+                        @foreach ($clinic->documents as $document)
+                            <a href="{{ route('documents.download', $document) }}" class="rounded-full bg-ink-100 px-3 py-1.5 text-xs font-medium text-ink-700 hover:bg-ink-200">
+                                {{ $document->title }}
+                            </a>
+                        @endforeach
+                    </div>
+                @endif
+
                 @if ($rejecting[$clinic->id] ?? false)
                     <div class="mt-4 rounded-md border border-danger-500/30 bg-danger-500/5 p-4">
                         <label class="block text-sm font-medium text-ink-700">{{ __('Reason (sent to the applicant)') }}</label>

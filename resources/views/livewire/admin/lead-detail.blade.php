@@ -312,6 +312,30 @@
             </div>
         @endcan
 
+        {{-- Documents (read-only here — uploading happens from the clinic side) --}}
+        @can('viewAny', \App\Models\Document::class)
+            <div class="rounded-lg border border-ink-200 bg-white p-6 shadow-card">
+                <h3 class="text-sm font-semibold text-ink-900">{{ __('Documents') }}</h3>
+                <ul class="mt-4 divide-y divide-ink-100">
+                    @forelse ($documents as $document)
+                        <li class="flex items-center justify-between py-3 text-sm">
+                            <div>
+                                <p class="font-medium text-ink-900">{{ $document->title }}</p>
+                                <p class="text-xs text-ink-500">
+                                    {{ $document->clinic->getTranslation('name', app()->getLocale()) }}
+                                    &middot; {{ $document->type->label() }}
+                                    &middot; {{ $document->created_at->format('d M Y') }}
+                                </p>
+                            </div>
+                            <a href="{{ route('documents.download', $document) }}" class="font-medium text-brand-600 hover:underline">{{ __('Download') }}</a>
+                        </li>
+                    @empty
+                        <li class="py-3 text-sm text-ink-500">{{ __('No documents uploaded yet.') }}</li>
+                    @endforelse
+                </ul>
+            </div>
+        @endcan
+
         {{-- Activity timeline --}}
         <div class="rounded-lg border border-ink-200 bg-white p-6 shadow-card">
             <h3 class="text-sm font-semibold text-ink-900">{{ __('Activity') }}</h3>

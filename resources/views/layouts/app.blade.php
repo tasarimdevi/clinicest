@@ -33,10 +33,13 @@
                     ? ['label' => __('Content'), 'route' => 'admin.posts.index', 'pattern' => 'admin.posts.*']
                     : null,
             ])),
-            request()->routeIs('clinic.*') && $currentClinic => [
+            request()->routeIs('clinic.*') && $currentClinic => array_values(array_filter([
                 ['label' => __('Dashboard'), 'route' => 'clinic.dashboard', 'params' => [$currentClinic], 'pattern' => 'clinic.dashboard'],
                 ['label' => __('Lead Inbox'), 'route' => 'clinic.leads', 'params' => [$currentClinic], 'pattern' => 'clinic.leads'],
-            ],
+                $navUser?->can('documents.view')
+                    ? ['label' => __('Documents'), 'route' => 'clinic.documents.index', 'params' => [$currentClinic], 'pattern' => 'clinic.documents.*']
+                    : null,
+            ])),
             default => [
                 ['label' => __('Dashboard'), 'route' => 'patient.dashboard', 'pattern' => 'patient.dashboard'],
             ],
