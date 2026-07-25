@@ -4,17 +4,22 @@ declare(strict_types=1);
 
 use App\Livewire\Admin\BeforeAfterModeration;
 use App\Livewire\Admin\Billing;
+use App\Livewire\Admin\Categories;
 use App\Livewire\Admin\ClinicApplications;
 use App\Livewire\Admin\ClinicForm;
 use App\Livewire\Admin\Clinics;
 use App\Livewire\Admin\Dashboard;
 use App\Livewire\Admin\DoctorForm;
 use App\Livewire\Admin\Doctors;
+use App\Livewire\Admin\FaqForm;
+use App\Livewire\Admin\Faqs;
 use App\Livewire\Admin\LeadDetail;
 use App\Livewire\Admin\Leads;
 use App\Livewire\Admin\PostForm;
 use App\Livewire\Admin\Posts;
 use App\Livewire\Admin\ReviewModeration;
+use App\Livewire\Admin\TreatmentForm;
+use App\Livewire\Admin\Treatments;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -56,6 +61,20 @@ Route::middleware(['auth', 'can:access-admin'])->prefix('admin')->name('admin.')
         Route::get('/create', PostForm::class)->name('create');
         Route::get('/{post}/edit', PostForm::class)->name('edit');
     });
+
+    Route::prefix('treatments')->name('treatments.')->group(function () {
+        Route::get('/', Treatments::class)->name('index');
+        Route::get('/create', TreatmentForm::class)->name('create');
+        Route::get('/{treatment}/edit', TreatmentForm::class)->name('edit');
+    });
+
+    Route::prefix('faqs')->name('faqs.')->group(function () {
+        Route::get('/', Faqs::class)->name('index');
+        Route::get('/create', FaqForm::class)->name('create');
+        Route::get('/{faq}/edit', FaqForm::class)->name('edit');
+    });
+
+    Route::get('/categories', Categories::class)->name('categories.index');
 
     Route::get('/reviews', ReviewModeration::class)->name('reviews.index');
     Route::get('/before-after', BeforeAfterModeration::class)->name('before-after.index');

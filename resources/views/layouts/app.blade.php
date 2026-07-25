@@ -32,6 +32,15 @@
                 $navUser?->can('content.view')
                     ? ['label' => __('Content'), 'route' => 'admin.posts.index', 'pattern' => 'admin.posts.*']
                     : null,
+                $navUser?->can('content.view')
+                    ? ['label' => __('Treatments'), 'route' => 'admin.treatments.index', 'pattern' => 'admin.treatments.*']
+                    : null,
+                $navUser?->can('content.view')
+                    ? ['label' => __('FAQs'), 'route' => 'admin.faqs.index', 'pattern' => 'admin.faqs.*']
+                    : null,
+                $navUser?->can('content.view')
+                    ? ['label' => __('Categories'), 'route' => 'admin.categories.index', 'pattern' => 'admin.categories.*']
+                    : null,
                 $navUser?->can('reviews.moderate')
                     ? ['label' => __('Reviews'), 'route' => 'admin.reviews.index', 'pattern' => 'admin.reviews.*']
                     : null,
