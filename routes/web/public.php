@@ -2,15 +2,19 @@
 
 declare(strict_types=1);
 
+use App\Livewire\Public\AboutPage;
 use App\Livewire\Public\BeforeAfterIndex;
 use App\Livewire\Public\ClinicShow;
 use App\Livewire\Public\ClinicsIndex;
+use App\Livewire\Public\ContactPage;
 use App\Livewire\Public\CostShow;
 use App\Livewire\Public\CountryShow;
 use App\Livewire\Public\DoctorShow;
 use App\Livewire\Public\DoctorsIndex;
+use App\Livewire\Public\FaqPage;
 use App\Livewire\Public\GetQuote;
 use App\Livewire\Public\HomePage;
+use App\Livewire\Public\HowItWorksPage;
 use App\Livewire\Public\PlaceholderPage;
 use App\Livewire\Public\ReviewsIndex;
 use App\Livewire\Public\ReviewsShow;
@@ -66,14 +70,10 @@ Route::get('/reviews/{clinic:slug}', ReviewsShow::class)->name('reviews.show');
 Route::get('/blog', PlaceholderPage::class)
     ->name('blog.index')->defaults('title', 'Blog');
 
-Route::get('/how-it-works', PlaceholderPage::class)
-    ->name('how-it-works')->defaults('title', 'How It Works');
-Route::get('/about', PlaceholderPage::class)
-    ->name('about')->defaults('title', 'About');
-Route::get('/contact', PlaceholderPage::class)
-    ->name('contact')->defaults('title', 'Contact');
-Route::get('/faq', PlaceholderPage::class)
-    ->name('faq')->defaults('title', 'FAQ');
+Route::get('/how-it-works', HowItWorksPage::class)->name('how-it-works');
+Route::get('/about', AboutPage::class)->name('about');
+Route::get('/contact', ContactPage::class)->name('contact');
+Route::get('/faq', FaqPage::class)->name('faq');
 
 Route::get('/legal/privacy', PlaceholderPage::class)
     ->name('legal.privacy')->defaults('title', 'Privacy Policy');

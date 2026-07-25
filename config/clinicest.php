@@ -60,4 +60,13 @@ return [
     */
     'default_commission_rate' => (float) env('DEFAULT_COMMISSION_RATE', 12.5),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Contact inbox
+    |--------------------------------------------------------------------------
+    | Where /contact form submissions are sent. No ContactMessage model/admin
+    | inbox yet (docs/10-roadmap.md doesn't scope one) — mail is the record.
+    */
+    'contact_email' => env('CONTACT_EMAIL', env('MAIL_FROM_ADDRESS', 'hello@example.com')),
+
 ];

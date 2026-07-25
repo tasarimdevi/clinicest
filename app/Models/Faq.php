@@ -13,7 +13,7 @@ class Faq extends Model
 {
     use HasFactory, HasTranslations;
 
-    protected $fillable = ['faqable_type', 'faqable_id', 'question', 'answer', 'sort', 'status'];
+    protected $fillable = ['faqable_type', 'faqable_id', 'question', 'answer', 'category', 'sort', 'status'];
 
     public array $translatable = ['question', 'answer'];
 

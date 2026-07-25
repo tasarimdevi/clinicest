@@ -82,6 +82,7 @@
                     <h3 class="text-sm font-semibold text-ink-900">{{ __('Company') }}</h3>
                     <ul class="mt-4 space-y-2 text-sm text-ink-600">
                         <li><a href="{{ route('about') }}" class="hover:text-brand-700">{{ __('nav.about') }}</a></li>
+                        <li><a href="{{ route('how-it-works') }}" class="hover:text-brand-700">{{ __('nav.how_it_works') }}</a></li>
                         <li><a href="{{ route('contact') }}" class="hover:text-brand-700">{{ __('nav.contact') }}</a></li>
                     </ul>
                 </div>

@@ -158,6 +158,34 @@ class DemoDataSeeder extends Seeder
             'sort' => 2,
         ]);
 
+        // Global site FAQs (faqable left null) — powers the /faq hub's
+        // categorized accordions (docs/04-wireframes.md §13). Categories
+        // match the wireframe spec: Booking, Safety, Costs, Travel,
+        // Aftercare, Payments.
+        $globalFaqs = [
+            ['category' => 'Booking', 'q' => 'How do I book a consultation?', 'a' => 'Fill in the Get a Free Quote form with your treatment needs — a matched clinic reviews your case and replies within 24 hours with a written plan.'],
+            ['category' => 'Booking', 'q' => 'Is the consultation really free?', 'a' => 'Yes. There is no charge to submit your case or to receive a treatment plan and price from a matched clinic.'],
+            ['category' => 'Safety', 'q' => 'How are clinics verified?', 'a' => 'Every clinic passes a documented check covering practice licensing, sterilization standards, and dentist credentials before being listed — see How It Works for the full standard.'],
+            ['category' => 'Safety', 'q' => 'What happens if something goes wrong?', 'a' => 'Clinicest is a neutral broker between you and your clinic. If a treatment deviates from the agreed plan, contact us and we will help mediate with the clinic.'],
+            ['category' => 'Costs', 'q' => 'Why is treatment so much cheaper in Turkey?', 'a' => 'Lower clinic operating costs and a highly competitive private dental market — not lower-quality materials or training. See our Cost pages for like-for-like price comparisons.'],
+            ['category' => 'Costs', 'q' => 'Will the final price match the quote?', 'a' => 'Your matched clinic confirms an exact price in writing after reviewing your case. That confirmed price is what you pay — no on-site upsells.'],
+            ['category' => 'Travel', 'q' => 'How many trips do I need to make?', 'a' => 'Most treatments are completed in a single trip of 5-7 days. Complex cases (like some implant work) may need a short follow-up visit.'],
+            ['category' => 'Aftercare', 'q' => 'Who handles aftercare once I am home?', 'a' => 'Your clinic gives you a written aftercare plan to share with your home dentist, and stays reachable for any follow-up questions.'],
+            ['category' => 'Payments', 'q' => 'How do I pay the clinic?', 'a' => 'Payment terms are agreed directly with your matched clinic as part of your written treatment plan, before you travel.'],
+        ];
+
+        foreach ($globalFaqs as $i => $f) {
+            Faq::create([
+                'faqable_type' => null,
+                'faqable_id' => null,
+                'category' => $f['category'],
+                'question' => ['en' => $f['q']],
+                'answer' => ['en' => $f['a']],
+                'sort' => $i,
+                'status' => 'published',
+            ]);
+        }
+
         $clinic = Clinic::create([
             'slug' => 'istanbul-smile-clinic',
             'name' => ['en' => 'Istanbul Smile Clinic'],
