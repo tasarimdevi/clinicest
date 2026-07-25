@@ -52,6 +52,17 @@ use Illuminate\Support\Facades\Route;
 | config('clinicest.locales.supported') stays ['en'] so nothing 404s.
 */
 
+// Session-based locale switch — see config/clinicest.php's docblock. Not
+// the docs' planned /{locale}/ URL-prefix scheme (still Phase 4); this
+// just persists the choice to session, same as SetLocale already reads.
+Route::get('/locale/{locale}', function (string $locale) {
+    abort_unless(in_array($locale, config('clinicest.locales.supported', ['en']), true), 404);
+
+    session(['locale' => $locale]);
+
+    return redirect()->back();
+})->name('locale.switch');
+
 Route::get('/', HomePage::class)->name('home');
 
 Route::get('/treatments', TreatmentsIndex::class)->name('treatments.index');

@@ -8,18 +8,19 @@ return [
     |--------------------------------------------------------------------------
     | Locales
     |--------------------------------------------------------------------------
-    | English is served at the root (no prefix, canonical + x-default).
-    | Additional locales are meant to live under a path prefix, e.g. /tr/...
-    | (docs/06-seo-architecture.md §5, docs/08-laravel-architecture.md §3),
-    | but that prefix routing is not wired yet — see the TODO in
-    | routes/web/public.php. Translation files for 'tr' already exist under
-    | lang/tr/ as prep, but only 'en' is listed as supported until the
-    | locale-prefixed route group lands (docs/10-roadmap.md Phase 4).
-    | SetLocale middleware still resolves session/Accept-Language today.
+    | English is served at the root; there is no /tr/ URL prefix, hreflang,
+    | or per-locale canonical yet (docs/06-seo-architecture.md §5's full
+    | path-prefixed scheme is still Phase 4 — see the TODO in
+    | routes/web/public.php). What IS live: 'tr' is switchable at runtime
+    | via SetLocale (path segment -> session -> Accept-Language -> default)
+    | and a session-based switcher link (routes/web/public.php's
+    | 'locale.switch'). Translations: lang/tr/{home,nav}.php for the
+    | dotted-key groups already used across the app, lang/tr.json for
+    | every literal-string __() call in the public-facing views.
     */
     'locales' => [
         'default' => 'en',
-        'supported' => ['en'],
+        'supported' => ['en', 'tr'],
     ],
 
     /*

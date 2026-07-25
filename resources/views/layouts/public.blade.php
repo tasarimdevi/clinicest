@@ -34,6 +34,11 @@
             </nav>
 
             <div class="flex items-center gap-3">
+                <div class="hidden items-center gap-1 font-mono text-xs font-medium text-ink-400 lg:flex" role="group" aria-label="{{ __('Language') }}">
+                    <a href="{{ route('locale.switch', 'en') }}" class="{{ app()->getLocale() === 'en' ? 'text-gold-400' : 'hover:text-ink-100' }}">EN</a>
+                    <span aria-hidden="true">/</span>
+                    <a href="{{ route('locale.switch', 'tr') }}" class="{{ app()->getLocale() === 'tr' ? 'text-gold-400' : 'hover:text-ink-100' }}">TR</a>
+                </div>
                 <a href="{{ route('get-quote') }}"
                    class="hidden rounded-md bg-gold-500 px-4 py-2 text-sm font-semibold text-brand-950 shadow-card transition hover:bg-gold-400 sm:inline-flex">
                     {{ __('nav.get_quote') }}
@@ -51,6 +56,11 @@
             <a href="{{ route('clinics.index') }}" class="block py-2 text-sm font-medium text-ink-200">{{ __('nav.clinics') }}</a>
             <a href="{{ route('doctors.index') }}" class="block py-2 text-sm font-medium text-ink-200">{{ __('nav.doctors') }}</a>
             <a href="{{ route('reviews.index') }}" class="block py-2 text-sm font-medium text-ink-200">{{ __('nav.reviews') }}</a>
+            <div class="mt-3 flex items-center gap-2 border-t border-white/10 pt-3 font-mono text-xs font-medium text-ink-400">
+                <a href="{{ route('locale.switch', 'en') }}" class="{{ app()->getLocale() === 'en' ? 'text-gold-400' : '' }}">EN</a>
+                <span aria-hidden="true">/</span>
+                <a href="{{ route('locale.switch', 'tr') }}" class="{{ app()->getLocale() === 'tr' ? 'text-gold-400' : '' }}">TR</a>
+            </div>
         </nav>
     </header>
 
