@@ -100,6 +100,16 @@ class Clinic extends Model
         return $this->hasMany(Appointment::class);
     }
 
+    public function treatmentCases(): HasMany
+    {
+        return $this->hasMany(TreatmentCase::class);
+    }
+
+    public function commissions(): HasMany
+    {
+        return $this->hasMany(Commission::class);
+    }
+
     public function beforeAfterCases(): HasMany
     {
         return $this->hasMany(BeforeAfterCase::class);

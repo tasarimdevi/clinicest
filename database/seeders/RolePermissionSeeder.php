@@ -67,7 +67,10 @@ class RolePermissionSeeder extends Seeder
             'content_editor' => ['access-admin', 'content.view', 'content.edit'],
             'seo_manager' => ['access-admin', 'seo.manage', 'content.view'],
             'moderator' => ['access-admin', 'reviews.moderate', 'clinics.verify'],
-            'finance' => ['access-admin', 'billing.view', 'billing.manage', 'commissions.manage', 'invoices.manage'],
+            // leads.view lets finance see which lead/patient a commission
+            // belongs to for reconciliation — not the broader leads.manage,
+            // which would let them edit lead status/assignment.
+            'finance' => ['access-admin', 'leads.view', 'billing.view', 'billing.manage', 'commissions.manage', 'invoices.manage'],
             'admin' => [
                 'access-admin', 'leads.view', 'leads.assign', 'leads.manage',
                 'offers.view', 'offers.manage',

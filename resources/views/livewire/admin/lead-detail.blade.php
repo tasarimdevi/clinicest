@@ -146,6 +146,146 @@
             </div>
         @endcan
 
+        {{-- Treatment Case & Commission --}}
+        @can('viewAny', \App\Models\TreatmentCase::class)
+            <div class="rounded-lg border border-ink-200 bg-white p-6 shadow-card">
+                <h3 class="text-sm font-semibold text-ink-900">{{ __('Treatment Case') }}</h3>
+
+                @if ($treatmentCase)
+                    <div class="mt-4 flex items-start justify-between">
+                        <div>
+                            <p class="font-medium text-ink-900">{{ $treatmentCase->clinic->getTranslation('name', app()->getLocale()) }}</p>
+                            <p class="text-xs text-ink-500">
+                                @if ($treatmentCase->doctor) {{ $treatmentCase->doctor->full_name }} &middot; @endif
+                                {{ __('Arrival') }}: {{ $treatmentCase->arrival_date?->format('d M Y') ?? '—' }}
+                            </p>
+                        </div>
+                        <span class="font-mono text-sm font-semibold tabular-nums text-ink-900">
+                            {{ $treatmentCase->currency }} {{ number_format($treatmentCase->agreed_price / 100, 0) }}
+                        </span>
+                    </div>
+
+                    @can('update', $treatmentCase)
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            @foreach ($treatmentCaseStatuses as $s)
+                                <button wire:click="updateTreatmentCaseStatus('{{ $s->value }}')"
+                                        @class([
+                                            'rounded-full px-2.5 py-1 text-xs font-medium',
+                                            'bg-brand-700 text-white' => $treatmentCase->status === $s,
+                                            'bg-ink-100 text-ink-600 hover:bg-ink-200' => $treatmentCase->status !== $s,
+                                        ])>
+                                    {{ $s->label() }}
+                                </button>
+                            @endforeach
+                        </div>
+                    @else
+                        <span class="mt-3 inline-flex rounded-full bg-ink-100 px-2.5 py-1 text-xs font-medium text-ink-700">
+                            {{ $treatmentCase->status->label() }}
+                        </span>
+                    @endcan
+
+                    @if ($treatmentCase->notes)
+                        <p class="mt-3 text-sm text-ink-600">{{ $treatmentCase->notes }}</p>
+                    @endif
+
+                    @can('viewAny', \App\Models\Commission::class)
+                        <div class="mt-6 border-t border-ink-100 pt-4">
+                            <h4 class="text-sm font-semibold text-ink-900">{{ __('Commission') }}</h4>
+                            @if ($treatmentCase->commission)
+                                <div class="mt-2 flex items-center justify-between">
+                                    <p class="text-sm text-ink-600">
+                                        {{ $treatmentCase->commission->rate_pct }}% {{ __('of') }}
+                                        {{ $treatmentCase->commission->currency }} {{ number_format($treatmentCase->commission->base_amount / 100, 0) }}
+                                    </p>
+                                    <span class="font-mono text-sm font-semibold tabular-nums text-gold-600">
+                                        {{ $treatmentCase->commission->currency }} {{ number_format($treatmentCase->commission->amount / 100, 0) }}
+                                    </span>
+                                </div>
+
+                                @can('update', $treatmentCase->commission)
+                                    <div class="mt-3 flex flex-wrap gap-2">
+                                        @foreach ($commissionStatuses as $s)
+                                            <button wire:click="updateCommissionStatus('{{ $s->value }}')"
+                                                    @class([
+                                                        'rounded-full px-2.5 py-1 text-xs font-medium',
+                                                        'bg-brand-700 text-white' => $treatmentCase->commission->status === $s,
+                                                        'bg-ink-100 text-ink-600 hover:bg-ink-200' => $treatmentCase->commission->status !== $s,
+                                                    ])>
+                                                {{ $s->label() }}
+                                            </button>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <span class="mt-2 inline-flex rounded-full bg-ink-100 px-2.5 py-1 text-xs font-medium text-ink-700">
+                                        {{ $treatmentCase->commission->status->label() }}
+                                    </span>
+                                @endcan
+
+                                @if ($treatmentCase->commission->due_at)
+                                    <p class="mt-2 text-xs text-ink-500">{{ __('Due') }} {{ $treatmentCase->commission->due_at->format('d M Y') }}</p>
+                                @endif
+                            @else
+                                <p class="mt-2 text-sm text-ink-500">{{ __('Generated automatically once the case is marked completed.') }}</p>
+                            @endif
+                        </div>
+                    @endcan
+                @else
+                    @can('create', \App\Models\TreatmentCase::class)
+                        @if ($acceptedAssignments->isEmpty())
+                            <p class="mt-3 text-sm text-ink-500">{{ __('No clinic has accepted this lead yet.') }}</p>
+                        @else
+                            @if ($acceptedOffers->isNotEmpty())
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    @foreach ($acceptedOffers as $offer)
+                                        <button type="button" wire:click="loadFromOffer({{ $offer->id }})"
+                                                class="rounded-full bg-ink-100 px-3 py-1.5 text-xs font-medium text-ink-700 hover:bg-ink-200">
+                                            {{ __('Use offer:') }} {{ $offer->clinic->getTranslation('name', app()->getLocale()) }}
+                                            ({{ $offer->currency }} {{ number_format($offer->price_total / 100, 0) }})
+                                        </button>
+                                    @endforeach
+                                </div>
+                            @endif
+
+                            <form wire:submit="createTreatmentCase" class="mt-4 space-y-3">
+                                <div>
+                                    <label class="block text-sm font-medium text-ink-700">{{ __('Clinic') }}</label>
+                                    <select wire:model="tcClinicId" class="mt-1.5 w-full rounded-md border-ink-300 text-sm">
+                                        <option value="">{{ __('Select the treating clinic') }}</option>
+                                        @foreach ($acceptedAssignments as $assignment)
+                                            <option value="{{ $assignment->clinic_id }}">{{ $assignment->clinic->getTranslation('name', app()->getLocale()) }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('tcClinicId') <p class="mt-1 text-xs text-danger-500">{{ $message }}</p> @enderror
+                                </div>
+                                <div class="grid grid-cols-2 gap-3">
+                                    <div>
+                                        <label class="block text-sm font-medium text-ink-700">{{ __('Agreed price') }}</label>
+                                        <input type="number" step="0.01" min="0" wire:model="tcAgreedPrice" class="mt-1.5 w-full rounded-md border-ink-300 text-sm">
+                                        @error('tcAgreedPrice') <p class="mt-1 text-xs text-danger-500">{{ $message }}</p> @enderror
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-ink-700">{{ __('Currency') }}</label>
+                                        <input type="text" wire:model="tcCurrency" maxlength="3" class="mt-1.5 w-full rounded-md border-ink-300 text-sm uppercase">
+                                    </div>
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-ink-700">{{ __('Arrival date (optional)') }}</label>
+                                    <input type="date" wire:model="tcArrivalDate" class="mt-1.5 w-full rounded-md border-ink-300 text-sm">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-ink-700">{{ __('Notes (optional)') }}</label>
+                                    <textarea wire:model="tcNotes" rows="2" class="mt-1.5 w-full rounded-md border-ink-300 text-sm"></textarea>
+                                </div>
+                                <x-button type="submit" size="sm">{{ __('Create treatment case') }}</x-button>
+                            </form>
+                        @endif
+                    @else
+                        <p class="mt-3 text-sm text-ink-500">{{ __('No treatment case yet.') }}</p>
+                    @endcan
+                @endif
+            </div>
+        @endcan
+
         {{-- Activity timeline --}}
         <div class="rounded-lg border border-ink-200 bg-white p-6 shadow-card">
             <h3 class="text-sm font-semibold text-ink-900">{{ __('Activity') }}</h3>

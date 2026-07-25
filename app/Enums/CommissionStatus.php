@@ -11,4 +11,15 @@ enum CommissionStatus: string
     case Paid = 'paid';
     case Waived = 'waived';
     case Disputed = 'disputed';
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::Pending => 'Pending',
+            self::Invoiced => 'Invoiced',
+            self::Paid => 'Paid',
+            self::Waived => 'Waived',
+            self::Disputed => 'Disputed',
+        };
+    }
 }
