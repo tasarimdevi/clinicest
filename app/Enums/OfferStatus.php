@@ -11,4 +11,15 @@ enum OfferStatus: string
     case Accepted = 'accepted';
     case Rejected = 'rejected';
     case Expired = 'expired';
+
+    public function label(): string
+    {
+        return match ($this) {
+            self::Sent => 'Sent',
+            self::Viewed => 'Viewed',
+            self::Accepted => 'Accepted',
+            self::Rejected => 'Rejected',
+            self::Expired => 'Expired',
+        };
+    }
 }

@@ -73,6 +73,11 @@ class Lead extends Model
         return $this->hasMany(LeadAssignment::class);
     }
 
+    public function offers(): HasMany
+    {
+        return $this->hasMany(Offer::class);
+    }
+
     public function activities(): HasMany
     {
         return $this->hasMany(LeadActivity::class);

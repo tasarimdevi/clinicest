@@ -38,6 +38,17 @@
                                     <x-button wire:click="accept({{ $assignment->id }})" size="sm">{{ __('Accept') }}</x-button>
                                     <x-button wire:click="decline({{ $assignment->id }})" variant="ghost" size="sm">{{ __('Decline') }}</x-button>
                                 </div>
+                            @elseif ($assignment->status === 'accepted')
+                                @can('create', \App\Models\Offer::class)
+                                    <a href="{{ route('clinic.offers.create', ['clinic' => $clinic->id, 'lead' => $assignment->lead_id]) }}"
+                                       class="text-sm font-medium text-brand-700 hover:underline">
+                                        @if ($assignment->lead->offers->isNotEmpty())
+                                            {{ __(':count offer sent · Send another', ['count' => $assignment->lead->offers->count()]) }}
+                                        @else
+                                            {{ __('Send offer') }}
+                                        @endif
+                                    </a>
+                                @endcan
                             @endif
                         </td>
                     </tr>

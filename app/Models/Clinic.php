@@ -87,6 +87,11 @@ class Clinic extends Model
         return $this->hasMany(LeadAssignment::class);
     }
 
+    public function offers(): HasMany
+    {
+        return $this->hasMany(Offer::class);
+    }
+
     public function beforeAfterCases(): HasMany
     {
         return $this->hasMany(BeforeAfterCase::class);

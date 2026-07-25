@@ -54,6 +54,55 @@
             @endif
         </div>
 
+        {{-- Offers --}}
+        @can('viewAny', \App\Models\Offer::class)
+            <div class="rounded-lg border border-ink-200 bg-white p-6 shadow-card">
+                <h3 class="text-sm font-semibold text-ink-900">{{ __('Offers') }}</h3>
+                <ul class="mt-4 space-y-4">
+                    @forelse ($offers as $offer)
+                        <li class="rounded-md border border-ink-100 p-4">
+                            <div class="flex items-start justify-between">
+                                <div>
+                                    <p class="font-medium text-ink-900">{{ $offer->title }}</p>
+                                    <p class="text-xs text-ink-500">
+                                        {{ $offer->clinic->getTranslation('name', app()->getLocale()) }}
+                                        &middot; {{ $offer->created_at->format('d M Y H:i') }}
+                                        @if ($offer->valid_until)
+                                            &middot; {{ __('valid until :date', ['date' => $offer->valid_until->format('d M Y')]) }}
+                                        @endif
+                                    </p>
+                                </div>
+                                <span class="font-mono text-sm font-semibold tabular-nums text-ink-900">
+                                    {{ $offer->currency }} {{ number_format($offer->price_total / 100, 0) }}
+                                </span>
+                            </div>
+
+                            @can('update', $offer)
+                                <div class="mt-3 flex flex-wrap gap-2">
+                                    @foreach ($offerStatuses as $s)
+                                        <button wire:click="updateOfferStatus({{ $offer->id }}, '{{ $s->value }}')"
+                                                @class([
+                                                    'rounded-full px-2.5 py-1 text-xs font-medium',
+                                                    'bg-brand-700 text-white' => $offer->status === $s,
+                                                    'bg-ink-100 text-ink-600 hover:bg-ink-200' => $offer->status !== $s,
+                                                ])>
+                                            {{ $s->label() }}
+                                        </button>
+                                    @endforeach
+                                </div>
+                            @else
+                                <span class="mt-3 inline-flex rounded-full bg-ink-100 px-2.5 py-1 text-xs font-medium text-ink-700">
+                                    {{ $offer->status->label() }}
+                                </span>
+                            @endcan
+                        </li>
+                    @empty
+                        <li class="text-sm text-ink-500">{{ __('No offers sent yet.') }}</li>
+                    @endforelse
+                </ul>
+            </div>
+        @endcan
+
         {{-- Activity timeline --}}
         <div class="rounded-lg border border-ink-200 bg-white p-6 shadow-card">
             <h3 class="text-sm font-semibold text-ink-900">{{ __('Activity') }}</h3>

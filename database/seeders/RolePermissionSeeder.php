@@ -28,6 +28,8 @@ class RolePermissionSeeder extends Seeder
         $permissions = [
             // Leads / CRM
             'leads.view', 'leads.assign', 'leads.manage',
+            // Offers
+            'offers.view', 'offers.manage',
             // Clinics
             'clinics.view', 'clinics.manage', 'clinics.verify',
             // Doctors
@@ -52,20 +54,21 @@ class RolePermissionSeeder extends Seeder
             // Clinic-portal roles never get access-admin — they operate
             // entirely within /clinic/{id} via EnsureClinicMember, not /admin.
             'patient' => [],
-            'clinic_owner' => ['clinics.manage', 'doctors.manage', 'leads.view', 'billing.view'],
-            'clinic_manager' => ['clinics.view', 'doctors.manage', 'leads.view'],
+            'clinic_owner' => ['clinics.manage', 'doctors.manage', 'leads.view', 'offers.view', 'offers.manage', 'billing.view'],
+            'clinic_manager' => ['clinics.view', 'doctors.manage', 'leads.view', 'offers.view', 'offers.manage'],
             'clinic_staff' => ['leads.view'],
             'doctor' => [],
             // Internal staff roles all need access-admin just to reach
             // /admin at all; their other permissions then scope what they
             // see once inside (docs/09-crm-admin-architecture.md §1).
-            'sales_agent' => ['access-admin', 'leads.view', 'leads.assign', 'leads.manage'],
+            'sales_agent' => ['access-admin', 'leads.view', 'leads.assign', 'leads.manage', 'offers.view'],
             'content_editor' => ['access-admin', 'content.view', 'content.edit'],
             'seo_manager' => ['access-admin', 'seo.manage', 'content.view'],
             'moderator' => ['access-admin', 'reviews.moderate', 'clinics.verify'],
             'finance' => ['access-admin', 'billing.view', 'billing.manage', 'commissions.manage', 'invoices.manage'],
             'admin' => [
                 'access-admin', 'leads.view', 'leads.assign', 'leads.manage',
+                'offers.view', 'offers.manage',
                 'clinics.view', 'clinics.manage', 'clinics.verify',
                 'doctors.view', 'doctors.manage',
                 'content.view', 'content.edit', 'content.publish',

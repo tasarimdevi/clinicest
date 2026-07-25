@@ -6,6 +6,7 @@ namespace App\Livewire\Admin;
 
 use App\Actions\Leads\AssignLeadToClinics;
 use App\Enums\LeadStatus;
+use App\Enums\OfferStatus;
 use App\Models\Clinic;
 use App\Models\Lead;
 use Illuminate\Contracts\View\View;
@@ -60,6 +61,15 @@ class LeadDetail extends Component
         $this->lead->refresh();
     }
 
+    public function updateOfferStatus(int $offerId, string $status): void
+    {
+        $offer = $this->lead->offers()->whereKey($offerId)->firstOrFail();
+
+        $this->authorize('update', $offer);
+
+        $offer->update(['status' => OfferStatus::from($status)]);
+    }
+
     public function render(): View
     {
         return view('livewire.admin.lead-detail', [
@@ -67,6 +77,8 @@ class LeadDetail extends Component
             'statuses' => LeadStatus::cases(),
             'activities' => $this->lead->activities()->latest('created_at')->get(),
             'assignments' => $this->lead->assignments()->with('clinic')->get(),
+            'offers' => $this->lead->offers()->with('clinic')->latest()->get(),
+            'offerStatuses' => OfferStatus::cases(),
         ]);
     }
 }
