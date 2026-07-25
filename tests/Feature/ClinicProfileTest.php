@@ -9,6 +9,8 @@ use App\Models\Country;
 use App\Models\Treatment;
 use App\Models\User;
 use Database\Seeders\RolePermissionSeeder;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 
 beforeEach(function () {
@@ -143,4 +145,98 @@ it('does not let a user manage a clinic they do not belong to', function () {
     $this->actingAs($ownerB)
         ->get(route('clinic.profile', $clinicA))
         ->assertForbidden();
+});
+
+it('lets a clinic owner upload a gallery photo, which becomes the cover automatically', function () {
+    Storage::fake('public');
+    [$clinic, $owner] = seedProfileClinic();
+
+    Livewire::actingAs($owner)
+        ->test(ClinicProfile::class, ['clinic' => $clinic])
+        ->set('newMedia', UploadedFile::fake()->image('front-desk.jpg'))
+        ->set('newMediaCaption', 'Our front desk')
+        ->call('uploadMedia')
+        ->assertHasNoErrors();
+
+    $media = $clinic->media()->first();
+    expect($media)->not->toBeNull();
+    expect($media->is_cover)->toBeTrue();
+    expect($media->caption)->toBe('Our front desk');
+    Storage::disk('public')->assertExists($media->path);
+});
+
+it('does not change the cover when a second photo is uploaded', function () {
+    Storage::fake('public');
+    [$clinic, $owner] = seedProfileClinic();
+
+    $component = Livewire::actingAs($owner)->test(ClinicProfile::class, ['clinic' => $clinic]);
+
+    $component->set('newMedia', UploadedFile::fake()->image('one.jpg'))->call('uploadMedia');
+    $component->set('newMedia', UploadedFile::fake()->image('two.jpg'))->call('uploadMedia');
+
+    expect($clinic->media()->where('is_cover', true)->count())->toBe(1);
+    expect($clinic->media()->count())->toBe(2);
+});
+
+it('rejects a non-image upload for the gallery', function () {
+    Storage::fake('public');
+    [$clinic, $owner] = seedProfileClinic();
+
+    Livewire::actingAs($owner)
+        ->test(ClinicProfile::class, ['clinic' => $clinic])
+        ->set('newMedia', UploadedFile::fake()->create('doc.pdf', 100))
+        ->call('uploadMedia')
+        ->assertHasErrors(['newMedia']);
+
+    expect($clinic->media()->count())->toBe(0);
+});
+
+it('lets a clinic owner change the cover photo', function () {
+    Storage::fake('public');
+    [$clinic, $owner] = seedProfileClinic();
+
+    $component = Livewire::actingAs($owner)->test(ClinicProfile::class, ['clinic' => $clinic]);
+    $component->set('newMedia', UploadedFile::fake()->image('one.jpg'))->call('uploadMedia');
+    $component->set('newMedia', UploadedFile::fake()->image('two.jpg'))->call('uploadMedia');
+
+    $second = $clinic->media()->orderBy('sort')->skip(1)->firstOrFail();
+
+    $component->call('setCoverMedia', $second->id)->assertHasNoErrors();
+
+    expect($second->fresh()->is_cover)->toBeTrue();
+    expect($clinic->media()->where('is_cover', true)->count())->toBe(1);
+});
+
+it('deletes a gallery photo and promotes another to cover if the deleted one was the cover', function () {
+    Storage::fake('public');
+    [$clinic, $owner] = seedProfileClinic();
+
+    $component = Livewire::actingAs($owner)->test(ClinicProfile::class, ['clinic' => $clinic]);
+    $component->set('newMedia', UploadedFile::fake()->image('one.jpg'))->call('uploadMedia');
+    $component->set('newMedia', UploadedFile::fake()->image('two.jpg'))->call('uploadMedia');
+
+    $cover = $clinic->media()->where('is_cover', true)->firstOrFail();
+    $path = $cover->path;
+
+    $component->call('deleteMedia', $cover->id)->assertHasNoErrors();
+
+    Storage::disk('public')->assertMissing($path);
+    expect($clinic->media()->count())->toBe(1);
+    expect($clinic->media()->where('is_cover', true)->count())->toBe(1);
+});
+
+it('shows the clinic gallery on the public clinic profile page', function () {
+    Storage::fake('public');
+    [$clinic, $owner] = seedProfileClinic();
+
+    Livewire::actingAs($owner)
+        ->test(ClinicProfile::class, ['clinic' => $clinic])
+        ->set('newMedia', UploadedFile::fake()->image('lobby.jpg'))
+        ->call('uploadMedia');
+
+    $media = $clinic->media()->firstOrFail();
+
+    $this->get(route('clinics.show', $clinic->slug))
+        ->assertOk()
+        ->assertSee($media->url, false);
 });

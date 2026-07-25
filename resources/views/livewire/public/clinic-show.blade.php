@@ -33,6 +33,17 @@
                 <p class="mt-6 max-w-2xl text-ink-700">{{ $about }}</p>
             @endif
 
+            {{-- Gallery --}}
+            @if ($media->isNotEmpty())
+                <div class="mt-6 grid grid-cols-4 gap-2 sm:grid-cols-6">
+                    @foreach ($media as $item)
+                        <a href="{{ $item->url }}" target="_blank" rel="noopener" class="aspect-square overflow-hidden rounded-md">
+                            <img src="{{ $item->url }}" alt="{{ $item->alt ?: $clinic->getTranslation('name', app()->getLocale()) }}" loading="lazy" class="h-full w-full object-cover transition hover:opacity-90">
+                        </a>
+                    @endforeach
+                </div>
+            @endif
+
             <dl class="mt-6 grid grid-cols-2 gap-4 text-sm sm:grid-cols-3">
                 @if ($clinic->founded_year)
                     <div><dt class="text-ink-400">{{ __('Founded') }}</dt><dd class="font-mono font-medium text-ink-900">{{ $clinic->founded_year }}</dd></div>

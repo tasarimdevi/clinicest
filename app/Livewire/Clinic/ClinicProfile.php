@@ -4,12 +4,15 @@ declare(strict_types=1);
 
 namespace App\Livewire\Clinic;
 
+use App\Actions\Media\UploadClinicMedia;
 use App\Models\Clinic;
 use App\Models\Treatment;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 /**
  * See docs/09-crm-admin-architecture.md §3 "profile editor" — the last
@@ -31,7 +34,13 @@ use Livewire\Component;
 #[Layout('layouts.app', ['title' => 'Clinic Profile'])]
 class ClinicProfile extends Component
 {
+    use WithFileUploads;
+
     public Clinic $clinic;
+
+    public $newMedia = null;
+
+    public string $newMediaCaption = '';
 
     public string $name = '';
 
@@ -174,6 +183,48 @@ class ClinicProfile extends Component
         unset($this->prices[$treatmentId]);
     }
 
+    public function uploadMedia(UploadClinicMedia $uploadClinicMedia): void
+    {
+        $this->authorize('manage', $this->clinic);
+
+        $this->validate([
+            'newMedia' => ['required', 'image', 'max:5120'],
+            'newMediaCaption' => ['nullable', 'string', 'max:255'],
+        ]);
+
+        $uploadClinicMedia->handle($this->clinic, $this->newMedia, $this->newMediaCaption ?: null);
+
+        $this->reset(['newMedia', 'newMediaCaption']);
+    }
+
+    public function setCoverMedia(int $mediaId): void
+    {
+        $this->authorize('manage', $this->clinic);
+
+        $media = $this->clinic->media()->findOrFail($mediaId);
+
+        $this->clinic->media()->where('id', '!=', $media->id)->update(['is_cover' => false]);
+        $media->update(['is_cover' => true]);
+    }
+
+    public function deleteMedia(int $mediaId): void
+    {
+        $this->authorize('manage', $this->clinic);
+
+        $media = $this->clinic->media()->findOrFail($mediaId);
+        $wasCover = $media->is_cover;
+
+        Storage::disk('public')->delete($media->path);
+        $media->delete();
+
+        // Keep the gallery from ever having zero covers while photos still
+        // exist — promote whatever's now first rather than leaving every
+        // remaining photo un-highlighted.
+        if ($wasCover) {
+            $this->clinic->media()->orderBy('sort')->first()?->update(['is_cover' => true]);
+        }
+    }
+
     public function render(): View
     {
         $offeredIds = $this->clinic->treatments()->pluck('treatments.id');
@@ -181,6 +232,7 @@ class ClinicProfile extends Component
         return view('livewire.clinic.clinic-profile', [
             'offeredTreatments' => $this->clinic->treatments()->orderBy('sort')->get(),
             'availableTreatments' => Treatment::where('status', 'published')->whereNotIn('id', $offeredIds)->orderBy('sort')->get(),
+            'media' => $this->clinic->media()->orderByDesc('is_cover')->orderBy('sort')->get(),
         ]);
     }
 }

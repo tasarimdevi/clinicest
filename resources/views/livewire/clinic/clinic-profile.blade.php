@@ -84,6 +84,49 @@
     </div>
 
     <div class="rounded-lg border border-ink-200 bg-white p-6 shadow-card">
+        <h2 class="text-sm font-semibold text-ink-900">{{ __('Gallery') }}</h2>
+        <p class="mt-1 text-xs text-ink-500">{{ __('Shown on your public profile. The starred photo is your cover photo.') }}</p>
+
+        <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            @foreach ($media as $item)
+                <div class="group relative aspect-square overflow-hidden rounded-md border border-ink-200">
+                    <img src="{{ $item->url }}" alt="{{ $item->alt }}" class="h-full w-full object-cover">
+                    @if ($item->is_cover)
+                        <span class="absolute left-1.5 top-1.5 rounded-full bg-gold-500 px-1.5 py-0.5 text-[10px] font-semibold text-brand-950">★</span>
+                    @endif
+                    <div class="absolute inset-0 flex items-end justify-center gap-1.5 bg-black/50 p-2 opacity-0 transition group-hover:opacity-100">
+                        @unless ($item->is_cover)
+                            <button type="button" wire:click="setCoverMedia({{ $item->id }})" class="rounded bg-white/90 px-2 py-1 text-[11px] font-medium text-ink-800 hover:bg-white">
+                                {{ __('Set cover') }}
+                            </button>
+                        @endunless
+                        <button type="button" wire:click="deleteMedia({{ $item->id }})" wire:confirm="{{ __('Delete this photo?') }}"
+                                class="rounded bg-white/90 px-2 py-1 text-[11px] font-medium text-danger-600 hover:bg-white">
+                            {{ __('Delete') }}
+                        </button>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+
+        <form wire:submit="uploadMedia" class="mt-4 flex flex-wrap items-end gap-3 border-t border-ink-100 pt-4">
+            <div>
+                <label class="block text-sm font-medium text-ink-700">{{ __('Add a photo') }}</label>
+                <input type="file" wire:model="newMedia" accept="image/*" class="mt-1.5 text-sm">
+                @error('newMedia') <p class="mt-1 text-xs text-danger-500">{{ $message }}</p> @enderror
+                <div wire:loading wire:target="newMedia" class="mt-1 text-xs text-ink-400">{{ __('Uploading…') }}</div>
+            </div>
+            <div class="flex-1">
+                <label class="block text-sm font-medium text-ink-700">{{ __('Caption (optional)') }}</label>
+                <input type="text" wire:model="newMediaCaption" class="mt-1.5 w-full rounded-md border-ink-300 text-sm">
+            </div>
+            <x-button type="submit" size="sm" wire:loading.attr="disabled" wire:target="uploadMedia">
+                {{ __('Upload') }}
+            </x-button>
+        </form>
+    </div>
+
+    <div class="rounded-lg border border-ink-200 bg-white p-6 shadow-card">
         <h2 class="text-sm font-semibold text-ink-900">{{ __('Treatments & pricing') }}</h2>
         <ul class="mt-4 divide-y divide-ink-100">
             @forelse ($offeredTreatments as $treatment)
