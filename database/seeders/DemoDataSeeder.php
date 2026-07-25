@@ -12,6 +12,8 @@ use App\Models\Country;
 use App\Models\CountryTreatment;
 use App\Models\Doctor;
 use App\Models\Faq;
+use App\Models\Post;
+use App\Models\PostCategory;
 use App\Models\Review;
 use App\Models\Treatment;
 use App\Models\TreatmentCategory;
@@ -300,6 +302,76 @@ class DemoDataSeeder extends Seeder
             'patient_country_id' => $de->id,
             'consent_confirmed' => true,
             'is_published' => true,
+        ]);
+
+        // Guide + Blog content. Byline is credited to the editorial team,
+        // not a fabricated individual — and medical_reviewer_* is left
+        // null throughout, since no real dentist reviewed this demo copy.
+        // See the posts migration docblock for why.
+        $costCategory = PostCategory::create(['name' => ['en' => 'Cost'], 'slug' => 'cost', 'sort' => 1]);
+        $safetyCategory = PostCategory::create(['name' => ['en' => 'Safety'], 'slug' => 'safety', 'sort' => 2]);
+        $storiesCategory = PostCategory::create(['name' => ['en' => 'Patient Stories'], 'slug' => 'patient-stories', 'sort' => 3]);
+
+        Post::create([
+            'kind' => 'guide',
+            'is_pillar' => true,
+            'slug' => 'dental-tourism-in-turkey-the-complete-guide',
+            'title' => ['en' => 'Dental Tourism in Turkey: The Complete Guide'],
+            'excerpt' => ['en' => 'Everything to know before booking dental treatment in Turkey — cost, safety, choosing a clinic, and what to expect from your trip.'],
+            'body' => ['en' => '<p>Turkey has become one of the world\'s most visited destinations for dental treatment, and for one clear reason: patients from the UK, Germany, and Ireland routinely pay 50-70% less for the same procedures they would get at home, without compromising on the equipment or training behind the chair.</p><p>This guide is the starting point. Each section below links to a deeper article — read them in any order, or jump straight to what matters most for your case.</p><h2>What this guide covers</h2><p>We cover realistic costs by treatment, what "verified" actually means for a clinic, how to plan the trip itself, and the honest trade-offs of treating abroad. Nothing here replaces a conversation with a dentist about your specific case — use this guide to walk into that conversation informed.</p>'],
+            'author_name' => 'Clinicest Editorial Team',
+            'status' => 'published',
+            'published_at' => now()->subDays(45),
+        ]);
+
+        Post::create([
+            'kind' => 'guide',
+            'category_id' => $costCategory->id,
+            'treatment_id' => $treatments['dental-implants']->id,
+            'slug' => 'how-much-does-dental-treatment-cost-in-turkey',
+            'title' => ['en' => 'How Much Does Dental Treatment Cost in Turkey?'],
+            'excerpt' => ['en' => 'A realistic breakdown of what UK, German, and Irish patients actually pay for implants, veneers, and full-arch work in Turkey versus at home.'],
+            'body' => ['en' => '<p>The honest answer is: it depends on the treatment, the clinic\'s verification tier, and how many teeth are involved — but the pattern holds across almost every procedure we track. Turkey prices consistently land 50-70% below UK and German private-clinic rates for comparable work.</p><h2>Why the gap is so large</h2><p>It isn\'t lower-quality materials. The gap comes mostly from operating costs — clinic rent, staff wages, and overheads are structurally lower in Istanbul than in London or Berlin, and the private dental market in Turkey is intensely competitive, which keeps margins tight even at well-equipped clinics.</p><h2>Getting an exact number</h2><p>Every treatment and cost page on this site shows a real price range, not a "from" teaser hiding a much higher final bill. Your matched clinic reviews your specific case and confirms an exact price in writing before you commit to anything.</p>'],
+            'author_name' => 'Clinicest Editorial Team',
+            'status' => 'published',
+            'published_at' => now()->subDays(40),
+        ]);
+
+        Post::create([
+            'kind' => 'guide',
+            'category_id' => $safetyCategory->id,
+            'slug' => 'is-it-safe-to-get-dental-work-done-in-turkey',
+            'title' => ['en' => 'Is It Safe to Get Dental Work Done in Turkey?'],
+            'excerpt' => ['en' => 'What "verified clinic" actually means, what to check yourself, and the honest risks of treating abroad.'],
+            'body' => ['en' => '<p>Safety is the first question almost every patient asks, and it deserves a direct answer: yes, provided you choose a clinic that has actually been checked, not just one with a nice website.</p><h2>What verification actually checks</h2><p>A Clinicest-verified clinic has a confirmed practice license, a documented sterilization standard, and named dentists whose credentials have been checked — not just claimed. See our "How It Works" page for the full checklist behind each badge tier.</p><h2>What to still check yourself</h2><p>Ask your matched clinic directly about the specific materials and implant brands they plan to use, and get your treatment plan in writing before you travel. A good clinic will welcome these questions, not deflect them.</p><h2>The honest trade-off</h2><p>Treating abroad means your usual dentist isn\'t the one doing follow-up care. Ask your matched clinic what aftercare support looks like once you\'re home, and keep your own dentist in the loop.</p>'],
+            'author_name' => 'Clinicest Editorial Team',
+            'status' => 'published',
+            'published_at' => now()->subDays(35),
+        ]);
+
+        Post::create([
+            'kind' => 'blog',
+            'category_id' => $storiesCategory->id,
+            'treatment_id' => $treatments['all-on-4']->id,
+            'slug' => 'what-to-pack-for-your-dental-trip-to-istanbul',
+            'title' => ['en' => 'What to Pack for Your Dental Trip to Istanbul'],
+            'excerpt' => ['en' => 'A practical packing and planning checklist for patients travelling to Istanbul for treatment.'],
+            'body' => ['en' => '<p>Most trips for implant or veneer work run 5-7 days, and a little planning goes a long way toward keeping the trip stress-free.</p><h2>Before you fly</h2><p>Bring copies of any prior dental x-rays or records, a list of current medications, and your written treatment plan from your matched clinic. Soft, easy-to-chew snacks for the first couple of days post-treatment are worth packing too — Istanbul\'s food is wonderful, but your mouth will thank you for easing back in.</p><h2>During your stay</h2><p>Most patients based their whole trip around 1-2 clinic visits with recovery days in between — leave room in the schedule rather than over-booking sightseeing on procedure days.</p>'],
+            'author_name' => 'Clinicest Editorial Team',
+            'status' => 'published',
+            'published_at' => now()->subDays(10),
+        ]);
+
+        Post::create([
+            'kind' => 'blog',
+            'category_id' => $storiesCategory->id,
+            'slug' => 'questions-to-ask-before-choosing-a-clinic',
+            'title' => ['en' => 'Ten Questions to Ask Before Choosing a Clinic'],
+            'excerpt' => ['en' => 'A short checklist to bring to your first conversation with a matched clinic.'],
+            'body' => ['en' => '<p>A good clinic will answer all of these clearly and without hesitation. If one dodges a question, treat that as useful information.</p><h2>The essentials</h2><p>Ask about the exact materials and implant brand being used, the dentist\'s specific experience with your procedure, what happens if a complication arises after you\'ve flown home, and whether the quoted price is genuinely final or has common add-ons.</p><h2>Logistics</h2><p>Confirm how many trips the treatment realistically needs, what the clinic\'s response time has been for other patients, and whether airport transfer and accommodation help is included or arranged separately.</p>'],
+            'author_name' => 'Clinicest Editorial Team',
+            'status' => 'published',
+            'published_at' => now()->subDays(4),
         ]);
     }
 }

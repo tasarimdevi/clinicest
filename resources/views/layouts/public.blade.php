@@ -84,6 +84,7 @@
                         <li><a href="{{ route('about') }}" class="hover:text-brand-700">{{ __('nav.about') }}</a></li>
                         <li><a href="{{ route('how-it-works') }}" class="hover:text-brand-700">{{ __('nav.how_it_works') }}</a></li>
                         <li><a href="{{ route('contact') }}" class="hover:text-brand-700">{{ __('nav.contact') }}</a></li>
+                        <li><a href="{{ route('blog.index') }}" class="hover:text-brand-700">{{ __('Blog') }}</a></li>
                     </ul>
                 </div>
                 <div>
@@ -91,6 +92,7 @@
                     <ul class="mt-4 space-y-2 text-sm text-ink-600">
                         <li><a href="{{ route('faq') }}" class="hover:text-brand-700">{{ __('nav.faq') }}</a></li>
                         <li><a href="{{ route('cost-estimator') }}" class="hover:text-brand-700">{{ __('AI Cost Estimator') }}</a></li>
+                        <li><a href="{{ route('guide.index') }}" class="hover:text-brand-700">{{ __('nav.guide') }}</a></li>
                     </ul>
                 </div>
                 <div>

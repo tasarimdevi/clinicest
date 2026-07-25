@@ -26,6 +26,9 @@
                 $navUser?->can('doctors.view')
                     ? ['label' => __('Doctors'), 'route' => 'admin.doctors.index', 'pattern' => 'admin.doctors.*']
                     : null,
+                $navUser?->can('content.view')
+                    ? ['label' => __('Content'), 'route' => 'admin.posts.index', 'pattern' => 'admin.posts.*']
+                    : null,
             ])),
             request()->routeIs('clinic.*') && $currentClinic => [
                 ['label' => __('Dashboard'), 'route' => 'clinic.dashboard', 'params' => [$currentClinic], 'pattern' => 'clinic.dashboard'],

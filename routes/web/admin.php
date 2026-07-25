@@ -9,6 +9,8 @@ use App\Livewire\Admin\DoctorForm;
 use App\Livewire\Admin\Doctors;
 use App\Livewire\Admin\LeadDetail;
 use App\Livewire\Admin\Leads;
+use App\Livewire\Admin\PostForm;
+use App\Livewire\Admin\Posts;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,10 +19,11 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 | See docs/09-crm-admin-architecture.md §4 (admin panel) and
 | docs/04-wireframes.md §16. CRM lead inbox, clinic directory + verification
-| workflow, and doctor directory are built out below — content, SEO, media,
-| users, billing remain Phase 2+ (docs/10-roadmap.md). Gated on the
-| 'access-admin' permission, seeded by RolePermissionSeeder; each sub-area
-| then narrows further via its own policy (LeadPolicy, ClinicPolicy, DoctorPolicy).
+| workflow, doctor directory, and content (Guide/Blog) are built out below —
+| SEO tooling, media library, users, billing remain Phase 2+
+| (docs/10-roadmap.md). Gated on the 'access-admin' permission, seeded by
+| RolePermissionSeeder; each sub-area then narrows further via its own
+| policy (LeadPolicy, ClinicPolicy, DoctorPolicy, PostPolicy).
 */
 
 Route::middleware(['auth', 'can:access-admin'])->prefix('admin')->name('admin.')->group(function () {
@@ -41,5 +44,11 @@ Route::middleware(['auth', 'can:access-admin'])->prefix('admin')->name('admin.')
         Route::get('/', Doctors::class)->name('index');
         Route::get('/create', DoctorForm::class)->name('create');
         Route::get('/{doctor}/edit', DoctorForm::class)->name('edit');
+    });
+
+    Route::prefix('posts')->name('posts.')->group(function () {
+        Route::get('/', Posts::class)->name('index');
+        Route::get('/create', PostForm::class)->name('create');
+        Route::get('/{post}/edit', PostForm::class)->name('edit');
     });
 });

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Services;
 
 use App\Models\Clinic;
+use App\Models\Post;
 use App\Models\Treatment;
 
 /**
@@ -65,6 +66,31 @@ class SchemaService
                 'ratingValue' => (string) $clinic->rating_avg,
                 'reviewCount' => $clinic->rating_count,
             ];
+        }
+
+        return $data;
+    }
+
+    /**
+     * docs/04-wireframes.md §11-12: blog posts use Article/BlogPosting,
+     * guide pillar/cluster pages use Article/MedicalWebPage.
+     */
+    public function article(Post $post): array
+    {
+        $data = [
+            '@context' => 'https://schema.org',
+            '@type' => $post->kind === 'blog' ? 'BlogPosting' : 'MedicalWebPage',
+            'headline' => $post->getTranslation('title', app()->getLocale()),
+            'datePublished' => $post->published_at?->toIso8601String(),
+            'dateModified' => $post->updated_at->toIso8601String(),
+        ];
+
+        if ($post->author_name) {
+            $data['author'] = ['@type' => 'Person', 'name' => $post->author_name];
+        }
+
+        if ($post->medical_reviewer_name) {
+            $data['reviewedBy'] = ['@type' => 'Person', 'name' => $post->medical_reviewer_name];
         }
 
         return $data;

@@ -5,6 +5,8 @@ declare(strict_types=1);
 use App\Livewire\Public\AboutPage;
 use App\Livewire\Public\AiCostEstimator;
 use App\Livewire\Public\BeforeAfterIndex;
+use App\Livewire\Public\BlogIndex;
+use App\Livewire\Public\BlogShow;
 use App\Livewire\Public\ClinicShow;
 use App\Livewire\Public\ClinicsIndex;
 use App\Livewire\Public\ContactPage;
@@ -15,9 +17,10 @@ use App\Livewire\Public\DoctorsIndex;
 use App\Livewire\Public\FaqPage;
 use App\Livewire\Public\GdprPage;
 use App\Livewire\Public\GetQuote;
+use App\Livewire\Public\GuideArticleShow;
+use App\Livewire\Public\GuidePillarPage;
 use App\Livewire\Public\HomePage;
 use App\Livewire\Public\HowItWorksPage;
-use App\Livewire\Public\PlaceholderPage;
 use App\Livewire\Public\PrivacyPolicyPage;
 use App\Livewire\Public\ReviewsIndex;
 use App\Livewire\Public\ReviewsShow;
@@ -59,8 +62,8 @@ Route::get('/clinics/{clinic:slug}', ClinicShow::class)->name('clinics.show');
 Route::get('/doctors', DoctorsIndex::class)->name('doctors.index');
 Route::get('/doctors/{doctor:slug}', DoctorShow::class)->name('doctors.show');
 
-Route::get('/dental-tourism-turkey', PlaceholderPage::class)
-    ->name('guide.index')->defaults('title', 'Dental Tourism Guide');
+Route::get('/dental-tourism-turkey', GuidePillarPage::class)->name('guide.index');
+Route::get('/dental-tourism-turkey/{post:slug}', GuideArticleShow::class)->name('guide.show');
 
 Route::get('/countries/{country:slug}', CountryShow::class)->name('countries.show');
 
@@ -73,8 +76,8 @@ Route::get('/before-after', BeforeAfterIndex::class)->name('before-after.index')
 Route::get('/reviews', ReviewsIndex::class)->name('reviews.index');
 Route::get('/reviews/{clinic:slug}', ReviewsShow::class)->name('reviews.show');
 
-Route::get('/blog', PlaceholderPage::class)
-    ->name('blog.index')->defaults('title', 'Blog');
+Route::get('/blog', BlogIndex::class)->name('blog.index');
+Route::get('/blog/{post:slug}', BlogShow::class)->name('blog.show');
 
 Route::get('/how-it-works', HowItWorksPage::class)->name('how-it-works');
 Route::get('/about', AboutPage::class)->name('about');
