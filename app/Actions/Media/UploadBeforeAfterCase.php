@@ -8,6 +8,7 @@ use App\Models\BeforeAfterCase;
 use App\Models\Clinic;
 use App\Models\User;
 use App\Notifications\BeforeAfterPendingModeration;
+use App\Services\ImageProcessor;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
@@ -25,6 +26,8 @@ use Illuminate\Support\Facades\Notification;
  */
 class UploadBeforeAfterCase
 {
+    public function __construct(private readonly ImageProcessor $processor) {}
+
     /**
      * @param  array{treatment_id: int, doctor_id: int|null, title: string, description: string|null, patient_country_id: int|null}  $data
      */
@@ -37,8 +40,8 @@ class UploadBeforeAfterCase
                 'title' => ['en' => $data['title']],
                 'description' => $data['description'] ? ['en' => $data['description']] : null,
                 'patient_country_id' => $data['patient_country_id'] ?? null,
-                'before_media_path' => $before->store("before-after/{$clinic->id}", 'public'),
-                'after_media_path' => $after->store("before-after/{$clinic->id}", 'public'),
+                'before_media_path' => $this->processor->storeOptimized($before, "before-after/{$clinic->id}", 'public')['path'],
+                'after_media_path' => $this->processor->storeOptimized($after, "before-after/{$clinic->id}", 'public')['path'],
                 'consent_confirmed' => true,
                 'is_published' => false,
             ]);

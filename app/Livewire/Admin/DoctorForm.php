@@ -6,8 +6,8 @@ namespace App\Livewire\Admin;
 
 use App\Models\Clinic;
 use App\Models\Doctor;
+use App\Services\ImageProcessor;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -86,7 +86,7 @@ class DoctorForm extends Component
         ];
     }
 
-    public function save(): void
+    public function save(ImageProcessor $processor): void
     {
         $this->authorize($this->doctor ? 'update' : 'create', $this->doctor ?? Doctor::class);
 
@@ -102,14 +102,16 @@ class DoctorForm extends Component
         }
 
         // Stored after the create/update so a new doctor already has an id
-        // for the path. Replacing a photo deletes the old file rather than
-        // orphaning it on the public disk.
+        // for the path. Downscaled+compressed (no WebP variant — avatars
+        // render tiny, compression is enough). Replacing a photo deletes
+        // the old file rather than orphaning it on the public disk.
         if ($this->photo) {
             $old = $this->doctor->photo_path;
-            $this->doctor->update(['photo_path' => $this->photo->store("doctor-photos/{$this->doctor->id}", 'public')]);
+            $optimized = $processor->storeOptimized($this->photo, "doctor-photos/{$this->doctor->id}", 'public');
+            $this->doctor->update(['photo_path' => $optimized['path']]);
 
             if ($old) {
-                Storage::disk('public')->delete($old);
+                $processor->delete($old);
             }
 
             $this->reset('photo');

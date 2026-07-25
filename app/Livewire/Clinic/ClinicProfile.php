@@ -7,8 +7,8 @@ namespace App\Livewire\Clinic;
 use App\Actions\Media\UploadClinicMedia;
 use App\Models\Clinic;
 use App\Models\Treatment;
+use App\Services\ImageProcessor;
 use Illuminate\Contracts\View\View;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -207,14 +207,14 @@ class ClinicProfile extends Component
         $media->update(['is_cover' => true]);
     }
 
-    public function deleteMedia(int $mediaId): void
+    public function deleteMedia(int $mediaId, ImageProcessor $processor): void
     {
         $this->authorize('manage', $this->clinic);
 
         $media = $this->clinic->media()->findOrFail($mediaId);
         $wasCover = $media->is_cover;
 
-        Storage::disk('public')->delete($media->path);
+        $processor->delete($media->path, $media->variants_json ?? []);
         $media->delete();
 
         // Keep the gallery from ever having zero covers while photos still
@@ -225,6 +225,36 @@ class ClinicProfile extends Component
         }
     }
 
+    /**
+     * Reorder via up/down swaps rather than drag-and-drop — no extra JS
+     * dependency (SortableJS etc.), and `sort` already drives display
+     * order on both the editor and the public page. $direction is -1 (up)
+     * or 1 (down); swapping the two rows' sort values moves the photo one
+     * position and is a no-op at the ends.
+     */
+    public function moveMedia(int $mediaId, int $direction): void
+    {
+        $this->authorize('manage', $this->clinic);
+
+        $ordered = $this->clinic->media()->orderBy('sort')->orderBy('id')->get();
+        $index = $ordered->search(fn ($m) => $m->id === $mediaId);
+
+        if ($index === false) {
+            return;
+        }
+
+        $swapWith = $ordered->get($index + $direction);
+
+        if ($swapWith === null) {
+            return;
+        }
+
+        $current = $ordered->get($index);
+        [$current->sort, $swapWith->sort] = [$swapWith->sort, $current->sort];
+        $current->save();
+        $swapWith->save();
+    }
+
     public function render(): View
     {
         $offeredIds = $this->clinic->treatments()->pluck('treatments.id');
@@ -232,7 +262,7 @@ class ClinicProfile extends Component
         return view('livewire.clinic.clinic-profile', [
             'offeredTreatments' => $this->clinic->treatments()->orderBy('sort')->get(),
             'availableTreatments' => Treatment::where('status', 'published')->whereNotIn('id', $offeredIds)->orderBy('sort')->get(),
-            'media' => $this->clinic->media()->orderByDesc('is_cover')->orderBy('sort')->get(),
+            'media' => $this->clinic->media()->orderBy('sort')->orderBy('id')->get(),
         ]);
     }
 }

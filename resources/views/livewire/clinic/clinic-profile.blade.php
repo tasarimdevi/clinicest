@@ -85,16 +85,22 @@
 
     <div class="rounded-lg border border-ink-200 bg-white p-6 shadow-card">
         <h2 class="text-sm font-semibold text-ink-900">{{ __('Gallery') }}</h2>
-        <p class="mt-1 text-xs text-ink-500">{{ __('Shown on your public profile. The starred photo is your cover photo.') }}</p>
+        <p class="mt-1 text-xs text-ink-500">{{ __('Shown on your public profile. The starred photo is your cover photo. Use the arrows to reorder.') }}</p>
 
         <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
             @foreach ($media as $item)
-                <div class="group relative aspect-square overflow-hidden rounded-md border border-ink-200">
-                    <img src="{{ $item->url }}" alt="{{ $item->alt }}" class="h-full w-full object-cover">
+                <div wire:key="media-{{ $item->id }}" class="group relative aspect-square overflow-hidden rounded-md border border-ink-200">
+                    <img src="{{ $item->thumb_url }}" alt="{{ $item->alt }}" class="h-full w-full object-cover">
                     @if ($item->is_cover)
                         <span class="absolute left-1.5 top-1.5 rounded-full bg-gold-500 px-1.5 py-0.5 text-[10px] font-semibold text-brand-950">★</span>
                     @endif
-                    <div class="absolute inset-0 flex items-end justify-center gap-1.5 bg-black/50 p-2 opacity-0 transition group-hover:opacity-100">
+                    <div class="absolute inset-x-0 top-0 flex justify-end gap-1 p-1.5 opacity-0 transition group-hover:opacity-100">
+                        <button type="button" wire:click="moveMedia({{ $item->id }}, -1)" @disabled($loop->first)
+                                class="rounded bg-white/90 px-1.5 py-0.5 text-[11px] font-medium text-ink-800 hover:bg-white disabled:opacity-40" aria-label="{{ __('Move left') }}">←</button>
+                        <button type="button" wire:click="moveMedia({{ $item->id }}, 1)" @disabled($loop->last)
+                                class="rounded bg-white/90 px-1.5 py-0.5 text-[11px] font-medium text-ink-800 hover:bg-white disabled:opacity-40" aria-label="{{ __('Move right') }}">→</button>
+                    </div>
+                    <div class="absolute inset-x-0 bottom-0 flex items-end justify-center gap-1.5 bg-black/50 p-2 opacity-0 transition group-hover:opacity-100">
                         @unless ($item->is_cover)
                             <button type="button" wire:click="setCoverMedia({{ $item->id }})" class="rounded bg-white/90 px-2 py-1 text-[11px] font-medium text-ink-800 hover:bg-white">
                                 {{ __('Set cover') }}

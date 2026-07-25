@@ -13,12 +13,13 @@ class ClinicMedia extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['clinic_id', 'type', 'path', 'alt', 'caption', 'is_cover', 'sort'];
+    protected $fillable = ['clinic_id', 'type', 'path', 'variants_json', 'width', 'height', 'alt', 'caption', 'is_cover', 'sort'];
 
     protected function casts(): array
     {
         return [
             'is_cover' => 'boolean',
+            'variants_json' => 'array',
         ];
     }
 
@@ -28,13 +29,28 @@ class ClinicMedia extends Model
     }
 
     /**
-     * Stored on the public disk (storage:link), so this is a plain public
-     * URL — no signed/authorized download like Document's private disk.
+     * Stored on the public disk (storage:link), so these are plain public
+     * URLs — no signed/authorized download like Document's private disk.
+     * `url` is the canonical JPEG fallback; `webpUrl`/`thumbUrl` are the
+     * optimized variants (null for rows predating ImageProcessor, so the
+     * <picture> element degrades to the JPEG).
      */
     protected function url(): Attribute
     {
+        return Attribute::make(get: fn () => asset('storage/'.$this->path));
+    }
+
+    protected function webpUrl(): Attribute
+    {
         return Attribute::make(
-            get: fn () => asset('storage/'.$this->path),
+            get: fn () => isset($this->variants_json['webp']) ? asset('storage/'.$this->variants_json['webp']) : null,
+        );
+    }
+
+    protected function thumbUrl(): Attribute
+    {
+        return Attribute::make(
+            get: fn () => isset($this->variants_json['thumb']) ? asset('storage/'.$this->variants_json['thumb']) : $this->url,
         );
     }
 }

@@ -38,7 +38,14 @@
                 <div class="mt-6 grid grid-cols-4 gap-2 sm:grid-cols-6">
                     @foreach ($media as $item)
                         <a href="{{ $item->url }}" target="_blank" rel="noopener" class="aspect-square overflow-hidden rounded-md">
-                            <img src="{{ $item->url }}" alt="{{ $item->alt ?: $clinic->getTranslation('name', app()->getLocale()) }}" loading="lazy" class="h-full w-full object-cover transition hover:opacity-90">
+                            <picture>
+                                @if ($item->webp_url)
+                                    <source srcset="{{ $item->webp_url }}" type="image/webp">
+                                @endif
+                                <img src="{{ $item->url }}" alt="{{ $item->alt ?: $clinic->getTranslation('name', app()->getLocale()) }}"
+                                     @if ($item->width) width="{{ $item->width }}" height="{{ $item->height }}" @endif
+                                     loading="lazy" class="h-full w-full object-cover transition hover:opacity-90">
+                            </picture>
                         </a>
                     @endforeach
                 </div>

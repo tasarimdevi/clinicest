@@ -165,6 +165,62 @@ it('lets a clinic owner upload a gallery photo, which becomes the cover automati
     Storage::disk('public')->assertExists($media->path);
 });
 
+it('generates webp + thumbnail variants and records dimensions when a gallery photo is uploaded', function () {
+    Storage::fake('public');
+    [$clinic, $owner] = seedProfileClinic();
+
+    Livewire::actingAs($owner)
+        ->test(ClinicProfile::class, ['clinic' => $clinic])
+        ->set('newMedia', UploadedFile::fake()->image('wide.jpg', 3000, 2000))
+        ->call('uploadMedia')
+        ->assertHasNoErrors();
+
+    $media = $clinic->media()->first();
+    expect($media->width)->toBe(1600);
+    expect($media->height)->toBe(1067);
+    expect($media->variants_json)->toHaveKeys(['webp', 'thumb']);
+    expect($media->webp_url)->toContain('/storage/');
+    Storage::disk('public')->assertExists($media->variants_json['webp']);
+    Storage::disk('public')->assertExists($media->variants_json['thumb']);
+});
+
+it('deletes variant files too when a gallery photo is removed', function () {
+    Storage::fake('public');
+    [$clinic, $owner] = seedProfileClinic();
+
+    $component = Livewire::actingAs($owner)->test(ClinicProfile::class, ['clinic' => $clinic]);
+    $component->set('newMedia', UploadedFile::fake()->image('one.jpg'))->call('uploadMedia');
+
+    $media = $clinic->media()->firstOrFail();
+    $paths = [$media->path, $media->variants_json['webp'], $media->variants_json['thumb']];
+
+    $component->call('deleteMedia', $media->id);
+
+    foreach ($paths as $path) {
+        Storage::disk('public')->assertMissing($path);
+    }
+});
+
+it('lets a clinic owner reorder gallery photos with the move arrows', function () {
+    Storage::fake('public');
+    [$clinic, $owner] = seedProfileClinic();
+
+    $component = Livewire::actingAs($owner)->test(ClinicProfile::class, ['clinic' => $clinic]);
+    $component->set('newMedia', UploadedFile::fake()->image('first.jpg'))->call('uploadMedia');
+    $component->set('newMedia', UploadedFile::fake()->image('second.jpg'))->call('uploadMedia');
+
+    $first = $clinic->media()->orderBy('sort')->orderBy('id')->first();
+    $second = $clinic->media()->orderBy('sort')->orderBy('id')->skip(1)->first();
+    expect($first->sort)->toBeLessThan($second->sort);
+
+    // Move the second photo up one position — it should now sort first.
+    $component->call('moveMedia', $second->id, -1);
+
+    $ordered = $clinic->media()->orderBy('sort')->orderBy('id')->pluck('id')->all();
+    expect($ordered[0])->toBe($second->id);
+    expect($ordered[1])->toBe($first->id);
+});
+
 it('does not change the cover when a second photo is uploaded', function () {
     Storage::fake('public');
     [$clinic, $owner] = seedProfileClinic();
