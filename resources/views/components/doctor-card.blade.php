@@ -2,6 +2,9 @@
 
 <a href="{{ route('doctors.show', $doctor->slug) }}"
    class="group flex flex-col gap-1.5 rounded-lg border border-ink-200 bg-white p-5 shadow-card transition hover:-translate-y-0.5 hover:shadow-raised">
+    @if ($doctor->photo_url)
+        <img src="{{ $doctor->photo_url }}" alt="{{ $doctor->full_name }}" loading="lazy" class="mb-1.5 h-14 w-14 rounded-full object-cover">
+    @endif
     <h3 class="font-serif text-base font-medium text-ink-900 group-hover:text-brand-600">
         {{ $doctor->full_name }}
     </h3>

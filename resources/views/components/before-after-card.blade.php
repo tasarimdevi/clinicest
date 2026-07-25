@@ -9,8 +9,8 @@
 <div class="overflow-hidden rounded-lg border border-ink-200 bg-white shadow-card">
     <div class="grid grid-cols-2">
         @if ($case->hasPhotos())
-            <img src="{{ $case->before_media_path }}" alt="{{ __('Before') }}" class="aspect-square w-full object-cover" loading="lazy">
-            <img src="{{ $case->after_media_path }}" alt="{{ __('After') }}" class="aspect-square w-full object-cover" loading="lazy">
+            <img src="{{ $case->before_url }}" alt="{{ __('Before') }}" class="aspect-square w-full object-cover" loading="lazy">
+            <img src="{{ $case->after_url }}" alt="{{ __('After') }}" class="aspect-square w-full object-cover" loading="lazy">
         @else
             <div class="col-span-2 flex aspect-[2/1] items-center justify-center bg-ink-50 text-sm text-ink-400">
                 {{ __('Photos pending') }}

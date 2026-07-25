@@ -40,6 +40,23 @@
                     <label class="block text-sm font-medium text-ink-700">{{ __('Bio') }}</label>
                     <textarea wire:model="bio" rows="3" class="mt-1.5 w-full rounded-md border-ink-300 text-sm"></textarea>
                 </div>
+                <div class="sm:col-span-2">
+                    <label class="block text-sm font-medium text-ink-700">{{ __('Profile photo') }}</label>
+                    <div class="mt-2 flex items-center gap-4">
+                        @if ($doctor?->photo_url)
+                            <img src="{{ $doctor->photo_url }}" alt="{{ $doctor->full_name }}" class="h-16 w-16 rounded-full object-cover">
+                        @else
+                            <div class="flex h-16 w-16 items-center justify-center rounded-full bg-ink-100 text-lg font-semibold text-ink-400">
+                                {{ Str::of($full_name)->explode(' ')->map(fn ($p) => Str::substr($p, 0, 1))->take(2)->implode('') ?: '—' }}
+                            </div>
+                        @endif
+                        <div>
+                            <input type="file" wire:model="photo" accept="image/*" class="text-sm">
+                            @error('photo') <p class="mt-1 text-xs text-danger-500">{{ $message }}</p> @enderror
+                            <div wire:loading wire:target="photo" class="mt-1 text-xs text-ink-400">{{ __('Uploading…') }}</div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

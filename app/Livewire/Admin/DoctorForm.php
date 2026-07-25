@@ -7,14 +7,20 @@ namespace App\Livewire\Admin;
 use App\Models\Clinic;
 use App\Models\Doctor;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
+use Livewire\WithFileUploads;
 
 #[Layout('layouts.app', ['title' => 'Doctor'])]
 class DoctorForm extends Component
 {
+    use WithFileUploads;
+
     public ?Doctor $doctor = null;
+
+    public $photo = null;
 
     public string $full_name = '';
 
@@ -76,6 +82,7 @@ class DoctorForm extends Component
             'specialty' => ['nullable', 'string', 'max:255'],
             'bio' => ['nullable', 'string', 'max:2000'],
             'years_experience' => ['nullable', 'integer', 'min:0', 'max:80'],
+            'photo' => ['nullable', 'image', 'max:5120'],
         ];
     }
 
@@ -86,11 +93,26 @@ class DoctorForm extends Component
         $validated = $this->validate();
         $validated['languages_json'] = $this->languages;
         $validated['is_featured'] = $this->is_featured;
+        unset($validated['photo']);
 
         if ($this->doctor) {
             $this->doctor->update($validated);
         } else {
             $this->doctor = Doctor::create($validated);
+        }
+
+        // Stored after the create/update so a new doctor already has an id
+        // for the path. Replacing a photo deletes the old file rather than
+        // orphaning it on the public disk.
+        if ($this->photo) {
+            $old = $this->doctor->photo_path;
+            $this->doctor->update(['photo_path' => $this->photo->store("doctor-photos/{$this->doctor->id}", 'public')]);
+
+            if ($old) {
+                Storage::disk('public')->delete($old);
+            }
+
+            $this->reset('photo');
         }
 
         $this->redirect(route('admin.doctors.edit', $this->doctor), navigate: false);

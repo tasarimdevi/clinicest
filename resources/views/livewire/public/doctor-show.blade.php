@@ -5,12 +5,19 @@
         ['name' => $doctor->full_name],
     ]" />
 
-    <h1 class="font-serif text-3xl font-medium text-ink-900 sm:text-4xl">{{ $doctor->full_name }}</h1>
+    <div class="flex items-start gap-5">
+        @if ($doctor->photo_url)
+            <img src="{{ $doctor->photo_url }}" alt="{{ $doctor->full_name }}" class="h-24 w-24 shrink-0 rounded-full object-cover shadow-card">
+        @endif
+        <div>
+            <h1 class="font-serif text-3xl font-medium text-ink-900 sm:text-4xl">{{ $doctor->full_name }}</h1>
 
-    <p class="mt-2 text-lg text-ink-600">
-        @if ($title = $doctor->getTranslation('title', app()->getLocale())) {{ $title }} @endif
-        @if ($specialty = $doctor->getTranslation('specialty', app()->getLocale())) &middot; {{ $specialty }} @endif
-    </p>
+            <p class="mt-2 text-lg text-ink-600">
+                @if ($title = $doctor->getTranslation('title', app()->getLocale())) {{ $title }} @endif
+                @if ($specialty = $doctor->getTranslation('specialty', app()->getLocale())) &middot; {{ $specialty }} @endif
+            </p>
+        </div>
+    </div>
 
     @if ($doctor->clinic)
         <p class="mt-1 text-ink-500">

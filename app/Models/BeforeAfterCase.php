@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -60,5 +61,29 @@ class BeforeAfterCase extends Model
     public function hasPhotos(): bool
     {
         return $this->before_media_path !== null && $this->after_media_path !== null;
+    }
+
+    /**
+     * Public-disk URLs. A path may be a bare storage path (clinic upload)
+     * or already an absolute URL (legacy/seed data) — an already-absolute
+     * value is returned as-is so both keep working.
+     */
+    protected function beforeUrl(): Attribute
+    {
+        return Attribute::make(get: fn () => $this->resolveMediaUrl($this->before_media_path));
+    }
+
+    protected function afterUrl(): Attribute
+    {
+        return Attribute::make(get: fn () => $this->resolveMediaUrl($this->after_media_path));
+    }
+
+    protected function resolveMediaUrl(?string $path): ?string
+    {
+        if ($path === null) {
+            return null;
+        }
+
+        return Str::startsWith($path, ['http://', 'https://']) ? $path : asset('storage/'.$path);
     }
 }
