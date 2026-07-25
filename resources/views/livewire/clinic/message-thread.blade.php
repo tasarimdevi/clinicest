@@ -15,7 +15,8 @@
                             &middot; {{ ucfirst($message->channel) }}
                             &middot; {{ $message->created_at->format('d M Y H:i') }}
                             @if ($message->sender)
-                                &middot; {{ $message->sender->name }}
+                                {{-- Sender is a User (staff) or a Lead (patient, via the portal) --}}
+                                &middot; {{ $message->sender->name ?? $message->sender->full_name ?? '' }}
                             @endif
                         </p>
                     </div>

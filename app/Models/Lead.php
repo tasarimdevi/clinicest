@@ -99,6 +99,11 @@ class Lead extends Model
         return $this->hasMany(Document::class);
     }
 
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
     public function activities(): HasMany
     {
         return $this->hasMany(LeadActivity::class);

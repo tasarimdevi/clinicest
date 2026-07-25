@@ -12,6 +12,7 @@ use App\Livewire\Admin\LeadDetail;
 use App\Livewire\Admin\Leads;
 use App\Livewire\Admin\PostForm;
 use App\Livewire\Admin\Posts;
+use App\Livewire\Admin\ReviewModeration;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -53,4 +54,6 @@ Route::middleware(['auth', 'can:access-admin'])->prefix('admin')->name('admin.')
         Route::get('/create', PostForm::class)->name('create');
         Route::get('/{post}/edit', PostForm::class)->name('edit');
     });
+
+    Route::get('/reviews', ReviewModeration::class)->name('reviews.index');
 });

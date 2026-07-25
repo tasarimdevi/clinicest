@@ -10,6 +10,9 @@
             <p class="mt-2 text-sm text-ink-600">
                 {{ __('Our team will match you with verified clinics and follow up within 24 hours.') }}
             </p>
+            <p class="mt-2 text-sm text-ink-600">
+                {{ __("We've emailed you a personal link to track your request, review offers, and message your clinic — no account needed.") }}
+            </p>
         </div>
 
         @if ($estimate && $estimate['source'] !== null)

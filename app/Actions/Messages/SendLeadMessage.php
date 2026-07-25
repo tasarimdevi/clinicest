@@ -8,7 +8,7 @@ use App\Mail\LeadMessageMail;
 use App\Models\Clinic;
 use App\Models\Lead;
 use App\Models\Message;
-use App\Models\User;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 
@@ -21,13 +21,19 @@ use Illuminate\Support\Facades\Mail;
  * call, a WhatsApp exchange, or an email reply received outside this
  * system), so nothing about the conversation gets lost even without a
  * real WhatsApp/email bridge. See the messages migration docblock.
+ *
+ * $sender is a Model, not strictly a User: a clinic/admin reply is
+ * authored by a User, but the patient portal has no account behind it
+ * (magic-link access, see PatientPortal) — a patient's own reply is
+ * attributed to their Lead itself via the same polymorphic sender
+ * column, which already supported any model.
  */
 class SendLeadMessage
 {
     /**
      * @param  array{direction: string, channel: string, body: string}  $data
      */
-    public function handle(Lead $lead, Clinic $clinic, array $data, User $sender): Message
+    public function handle(Lead $lead, Clinic $clinic, array $data, Model $sender): Message
     {
         return DB::transaction(function () use ($lead, $clinic, $data, $sender) {
             $message = Message::create([

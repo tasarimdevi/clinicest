@@ -32,6 +32,9 @@
                 $navUser?->can('content.view')
                     ? ['label' => __('Content'), 'route' => 'admin.posts.index', 'pattern' => 'admin.posts.*']
                     : null,
+                $navUser?->can('reviews.moderate')
+                    ? ['label' => __('Reviews'), 'route' => 'admin.reviews.index', 'pattern' => 'admin.reviews.*']
+                    : null,
             ])),
             request()->routeIs('clinic.*') && $currentClinic => array_values(array_filter([
                 ['label' => __('Dashboard'), 'route' => 'clinic.dashboard', 'params' => [$currentClinic], 'pattern' => 'clinic.dashboard'],

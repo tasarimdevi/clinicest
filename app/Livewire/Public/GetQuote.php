@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Livewire\Public;
 
 use App\Actions\Leads\CreateLead;
+use App\Mail\PatientPortalLinkMail;
 use App\Models\Clinic;
 use App\Models\Country;
 use App\Models\Lead;
 use App\Models\Treatment;
 use App\Services\CostEstimatorService;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -103,6 +105,8 @@ class GetQuote extends Component
                 'user_agent' => request()->userAgent(),
             ],
         ]);
+
+        Mail::to($lead->email)->send(new PatientPortalLinkMail($lead));
 
         $this->submitted = true;
         $this->reset(['full_name', 'email', 'whatsapp', 'message', 'consent']);
