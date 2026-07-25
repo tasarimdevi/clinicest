@@ -62,6 +62,7 @@ class LeadInbox extends Component
                 'lead.primaryTreatment',
                 'lead.offers' => fn ($q) => $q->where('clinic_id', $this->clinic->id),
                 'lead.appointments' => fn ($q) => $q->where('clinic_id', $this->clinic->id),
+                'lead.messages' => fn ($q) => $q->where('clinic_id', $this->clinic->id),
             ])
             ->latest('assigned_at')
             ->paginate(20);

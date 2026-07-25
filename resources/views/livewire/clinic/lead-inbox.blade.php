@@ -60,6 +60,16 @@
                                             @endif
                                         </a>
                                     @endcan
+                                    @can('viewAny', \App\Models\Message::class)
+                                        <a href="{{ route('clinic.messages.index', ['clinic' => $clinic->id, 'lead' => $assignment->lead_id]) }}"
+                                           class="text-sm font-medium text-brand-700 hover:underline">
+                                            @if ($assignment->lead->messages->isNotEmpty())
+                                                {{ __(':count message · View', ['count' => $assignment->lead->messages->count()]) }}
+                                            @else
+                                                {{ __('Messages') }}
+                                            @endif
+                                        </a>
+                                    @endcan
                                 </div>
                             @endif
                         </td>

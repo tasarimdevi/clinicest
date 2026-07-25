@@ -286,6 +286,32 @@
             </div>
         @endcan
 
+        {{-- Messages (read-only here — composing happens from the clinic side) --}}
+        @can('viewAny', \App\Models\Message::class)
+            <div class="rounded-lg border border-ink-200 bg-white p-6 shadow-card">
+                <h3 class="text-sm font-semibold text-ink-900">{{ __('Messages') }}</h3>
+                <ul class="mt-4 space-y-3">
+                    @forelse ($messages as $message)
+                        <li class="rounded-md border border-ink-100 p-3 text-sm">
+                            <div class="flex items-center justify-between">
+                                <span class="font-medium text-ink-900">
+                                    {{ $message->clinic->getTranslation('name', app()->getLocale()) }}
+                                    <span class="ml-1 font-normal text-ink-500">
+                                        &middot; {{ $message->direction === 'outbound' ? __('to patient') : __('from patient') }}
+                                        &middot; {{ ucfirst($message->channel) }}
+                                    </span>
+                                </span>
+                                <span class="text-xs text-ink-500">{{ $message->created_at->format('d M Y H:i') }}</span>
+                            </div>
+                            <p class="mt-1 text-ink-700">{{ $message->body }}</p>
+                        </li>
+                    @empty
+                        <li class="text-sm text-ink-500">{{ __('No messages yet.') }}</li>
+                    @endforelse
+                </ul>
+            </div>
+        @endcan
+
         {{-- Activity timeline --}}
         <div class="rounded-lg border border-ink-200 bg-white p-6 shadow-card">
             <h3 class="text-sm font-semibold text-ink-900">{{ __('Activity') }}</h3>

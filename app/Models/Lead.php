@@ -89,6 +89,11 @@ class Lead extends Model
         return $this->hasOne(TreatmentCase::class);
     }
 
+    public function messages(): HasMany
+    {
+        return $this->hasMany(Message::class);
+    }
+
     public function activities(): HasMany
     {
         return $this->hasMany(LeadActivity::class);
