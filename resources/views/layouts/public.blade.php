@@ -90,6 +90,7 @@
                     <h3 class="text-sm font-semibold text-ink-900">{{ __('Trust') }}</h3>
                     <ul class="mt-4 space-y-2 text-sm text-ink-600">
                         <li><a href="{{ route('faq') }}" class="hover:text-brand-700">{{ __('nav.faq') }}</a></li>
+                        <li><a href="{{ route('cost-estimator') }}" class="hover:text-brand-700">{{ __('AI Cost Estimator') }}</a></li>
                     </ul>
                 </div>
                 <div>

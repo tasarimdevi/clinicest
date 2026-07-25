@@ -88,6 +88,20 @@
         </div>
     </section>
 
+    {{-- AI Cost Estimator teaser --}}
+    <section class="mx-auto max-w-7xl px-4 pb-16 sm:px-6 lg:px-8">
+        <div class="flex flex-col items-start justify-between gap-4 rounded-2xl border border-gold-300/50 bg-gold-50 px-8 py-8 sm:flex-row sm:items-center">
+            <div>
+                <p class="font-mono text-xs font-semibold uppercase tracking-widest text-gold-600">{{ __('AI-assisted') }}</p>
+                <h2 class="mt-1 font-serif text-xl font-medium text-ink-900">{{ __('Not sure what it will cost?') }}</h2>
+                <p class="mt-1 text-sm text-ink-600">{{ __('Get an instant, honest price band for any treatment in seconds.') }}</p>
+            </div>
+            <x-button :href="route('cost-estimator')" as="a" variant="secondary" size="lg" class="flex-shrink-0">
+                {{ __('Try the AI Cost Estimator') }}
+            </x-button>
+        </div>
+    </section>
+
     {{-- Featured clinics --}}
     <section class="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
         <h2 class="font-serif text-2xl font-medium text-ink-900 sm:text-3xl">{{ __('home.featured_clinics_title') }}</h2>

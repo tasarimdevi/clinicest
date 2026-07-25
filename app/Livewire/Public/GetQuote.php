@@ -9,6 +9,7 @@ use App\Models\Clinic;
 use App\Models\Country;
 use App\Models\Lead;
 use App\Models\Treatment;
+use App\Services\CostEstimatorService;
 use Illuminate\Validation\Rule;
 use Livewire\Attributes\Layout;
 use Livewire\Component;
@@ -107,11 +108,21 @@ class GetQuote extends Component
         $this->reset(['full_name', 'email', 'whatsapp', 'message', 'consent']);
     }
 
-    public function render()
+    public function render(CostEstimatorService $estimator)
     {
+        $estimate = null;
+
+        if ($this->submitted && $this->primary_treatment_id) {
+            $treatment = Treatment::find($this->primary_treatment_id);
+            $country = $this->country_id ? Country::find($this->country_id) : null;
+
+            $estimate = $treatment ? $estimator->estimate($treatment, $country) : null;
+        }
+
         return view('livewire.public.get-quote', [
             'treatments' => Treatment::query()->where('status', 'published')->orderBy('sort')->get(),
             'countries' => Country::query()->where('is_target', true)->orderBy('name')->get(),
+            'estimate' => $estimate,
         ]);
     }
 }

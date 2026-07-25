@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Livewire\Public\AboutPage;
+use App\Livewire\Public\AiCostEstimator;
 use App\Livewire\Public\BeforeAfterIndex;
 use App\Livewire\Public\ClinicShow;
 use App\Livewire\Public\ClinicsIndex;
@@ -61,6 +62,8 @@ Route::get('/dental-tourism-turkey', PlaceholderPage::class)
 Route::get('/countries/{country:slug}', CountryShow::class)->name('countries.show');
 
 Route::get('/cost/{treatment:slug}', CostShow::class)->name('cost.show');
+
+Route::get('/cost-estimator', AiCostEstimator::class)->name('cost-estimator');
 
 Route::get('/before-after', BeforeAfterIndex::class)->name('before-after.index');
 

@@ -11,6 +11,32 @@
                 {{ __('Our team will match you with verified clinics and follow up within 24 hours.') }}
             </p>
         </div>
+
+        @if ($estimate && $estimate['source'] !== null)
+            <div class="mt-6 rounded-lg border border-ink-200 bg-white p-6 shadow-card">
+                <p class="font-mono text-xs font-semibold uppercase tracking-wide text-gold-600">{{ __('AI-assisted estimate') }}</p>
+                <p class="mt-2 text-sm text-ink-600">{{ __('While you wait, here is an instant price band for your case:') }}</p>
+                <div class="mt-4 grid grid-cols-1 gap-4 {{ $estimate['local_min'] !== null ? 'sm:grid-cols-2' : '' }}">
+                    @if ($estimate['local_min'] !== null)
+                        <div class="rounded-md bg-ink-50 p-4">
+                            <p class="font-mono text-xs uppercase tracking-wide text-ink-400">{{ __('At home') }}</p>
+                            <p class="mt-1 font-mono text-lg font-semibold tabular-nums text-ink-900">
+                                {{ $estimate['currency'] }} {{ number_format($estimate['local_min'] / 100, 0) }}–{{ number_format($estimate['local_max'] / 100, 0) }}
+                            </p>
+                        </div>
+                    @endif
+                    <div class="rounded-md bg-teal-50 p-4">
+                        <p class="font-mono text-xs uppercase tracking-wide text-teal-600">{{ __('In Turkey') }}</p>
+                        <p class="mt-1 font-mono text-lg font-semibold tabular-nums text-teal-600">
+                            {{ $estimate['currency'] }} {{ number_format($estimate['turkey_min'] / 100, 0) }}–{{ number_format($estimate['turkey_max'] / 100, 0) }}
+                        </p>
+                    </div>
+                </div>
+                <p class="mt-3 text-xs text-ink-500">
+                    {{ __('This is an instant estimate, not your final quote — your matched clinic will confirm an exact price in writing.') }}
+                </p>
+            </div>
+        @endif
     @else
         <form wire:submit="submit" class="mt-8 space-y-5">
             <div>
