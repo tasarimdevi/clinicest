@@ -12,7 +12,7 @@ class Commission extends Model
 {
     protected $fillable = [
         'treatment_case_id', 'clinic_id', 'base_amount', 'rate_pct', 'amount',
-        'currency', 'status', 'due_at', 'paid_at', 'notes',
+        'currency', 'status', 'invoice_id', 'due_at', 'paid_at', 'notes',
     ];
 
     protected function casts(): array
@@ -33,5 +33,10 @@ class Commission extends Model
     public function clinic(): BelongsTo
     {
         return $this->belongsTo(Clinic::class);
+    }
+
+    public function invoice(): BelongsTo
+    {
+        return $this->belongsTo(Invoice::class);
     }
 }

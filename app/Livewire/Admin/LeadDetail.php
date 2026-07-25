@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Livewire\Admin;
 
+use App\Actions\Billing\GenerateInvoice;
 use App\Actions\Commissions\GenerateCommission;
 use App\Actions\Leads\AssignLeadToClinics;
 use App\Enums\AppointmentStatus;
@@ -179,10 +180,19 @@ class LeadDetail extends Component
 
         $this->authorize('update', $commission);
 
-        $commission->update([
-            'status' => $status,
-            'paid_at' => $status === 'paid' ? ($commission->paid_at ?? now()) : $commission->paid_at,
-        ]);
+        // Moving a commission to 'invoiced' now generates a real Invoice
+        // (billable = this commission) and links it, rather than being a
+        // bare status flag as before — see the commissions.invoice_id
+        // migration. Idempotent: an already-invoiced commission isn't
+        // re-billed.
+        if ($status === 'invoiced' && $commission->invoice_id === null) {
+            $invoice = app(GenerateInvoice::class)->handle($commission->clinic, $commission);
+            $commission->invoice_id = $invoice->id;
+        }
+
+        $commission->status = $status;
+        $commission->paid_at = $status === 'paid' ? ($commission->paid_at ?? now()) : $commission->paid_at;
+        $commission->save();
     }
 
     public function render(): View

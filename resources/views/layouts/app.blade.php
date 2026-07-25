@@ -38,6 +38,9 @@
                 $navUser?->can('reviews.moderate')
                     ? ['label' => __('Before / After'), 'route' => 'admin.before-after.index', 'pattern' => 'admin.before-after.*']
                     : null,
+                $navUser?->can('billing.view')
+                    ? ['label' => __('Billing'), 'route' => 'admin.billing.index', 'pattern' => 'admin.billing.*']
+                    : null,
             ])),
             request()->routeIs('clinic.*') && $currentClinic => array_values(array_filter([
                 ['label' => __('Dashboard'), 'route' => 'clinic.dashboard', 'params' => [$currentClinic], 'pattern' => 'clinic.dashboard'],
@@ -50,6 +53,9 @@
                     : null,
                 $navUser?->can('clinics.manage')
                     ? ['label' => __('Before / After'), 'route' => 'clinic.before-after', 'params' => [$currentClinic], 'pattern' => 'clinic.before-after']
+                    : null,
+                $navUser?->can('billing.view')
+                    ? ['label' => __('Billing'), 'route' => 'clinic.billing', 'params' => [$currentClinic], 'pattern' => 'clinic.billing']
                     : null,
             ])),
             default => [

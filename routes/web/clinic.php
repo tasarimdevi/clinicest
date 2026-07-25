@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Livewire\Clinic\AppointmentScheduler;
 use App\Livewire\Clinic\ClinicBeforeAfter;
+use App\Livewire\Clinic\ClinicBilling;
 use App\Livewire\Clinic\ClinicDocuments;
 use App\Livewire\Clinic\ClinicProfile;
 use App\Livewire\Clinic\Dashboard;
@@ -34,4 +35,5 @@ Route::middleware(['auth', 'clinic.member'])->prefix('clinic/{clinic}')->name('c
     Route::get('/leads/{lead}/appointments', AppointmentScheduler::class)->name('appointments.index');
     Route::get('/leads/{lead}/messages', MessageThread::class)->name('messages.index');
     Route::get('/documents', ClinicDocuments::class)->name('documents.index');
+    Route::get('/billing', ClinicBilling::class)->name('billing');
 });
