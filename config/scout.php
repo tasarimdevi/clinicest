@@ -1,5 +1,11 @@
 <?php
 
+use App\Models\City;
+use App\Models\Clinic;
+use App\Models\Doctor;
+use App\Models\Post;
+use App\Models\Treatment;
+
 return [
 
     /*
@@ -139,10 +145,30 @@ return [
     'meilisearch' => [
         'host' => env('MEILISEARCH_HOST', 'http://localhost:7700'),
         'key' => env('MEILISEARCH_KEY'),
+        /*
+         * Facets from docs/05-database-schema-erd.md §4: treatment, city,
+         * verification_tier, language, price_band, rating. Synced to the
+         * real Meilisearch instance via `php artisan scout:sync-index-settings`
+         * (no-op under the `collection`/`database`/`null` test drivers).
+         */
         'index-settings' => [
-            // 'users' => [
-            //     'filterableAttributes'=> ['id', 'name', 'email'],
-            // ],
+            Clinic::class => [
+                'filterableAttributes' => ['city_id', 'verification_tier', 'treatment_ids', 'languages', 'rating_avg'],
+                'sortableAttributes' => ['rating_avg'],
+            ],
+            Doctor::class => [
+                'filterableAttributes' => ['clinic_id', 'languages', 'rating_avg'],
+                'sortableAttributes' => ['rating_avg'],
+            ],
+            Treatment::class => [
+                'filterableAttributes' => ['category_id', 'is_featured'],
+            ],
+            Post::class => [
+                'filterableAttributes' => ['category_id', 'kind', 'is_pillar'],
+            ],
+            City::class => [
+                'filterableAttributes' => ['country_id'],
+            ],
         ],
     ],
 

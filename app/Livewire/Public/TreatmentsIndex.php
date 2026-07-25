@@ -12,7 +12,12 @@ use Livewire\Attributes\Url;
 use Livewire\Component;
 
 /**
- * See docs/04-wireframes.md §2 — the treatments hub.
+ * See docs/04-wireframes.md §2 — the treatments hub. Free-text `search`
+ * goes through the Meilisearch-backed `treatments` Scout index (name,
+ * summary, category name) instead of a `name LIKE` query — see
+ * Treatment::toSearchableArray(). Scout's result order is Meilisearch's
+ * relevance ranking rather than the `sort` column, which only applies
+ * on the unfiltered/no-search path.
  */
 #[Layout('layouts.public')]
 class TreatmentsIndex extends Component
@@ -25,12 +30,17 @@ class TreatmentsIndex extends Component
 
     public function render(): View
     {
-        $treatments = Treatment::query()
-            ->where('status', 'published')
-            ->when($this->category !== '', fn ($q) => $q->where('category_id', $this->category))
-            ->when($this->search !== '', fn ($q) => $q->where('name', 'like', "%{$this->search}%"))
-            ->orderBy('sort')
-            ->get();
+        if ($this->search !== '') {
+            $treatments = Treatment::search($this->search)
+                ->when($this->category !== '', fn ($q) => $q->where('category_id', (int) $this->category))
+                ->get();
+        } else {
+            $treatments = Treatment::query()
+                ->where('status', 'published')
+                ->when($this->category !== '', fn ($q) => $q->where('category_id', $this->category))
+                ->orderBy('sort')
+                ->get();
+        }
 
         return view('livewire.public.treatments-index', [
             'treatments' => $treatments,
