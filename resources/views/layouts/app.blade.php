@@ -110,6 +110,19 @@
                 </div>
 
                 <div class="flex items-center gap-4">
+                    <div class="flex items-center gap-1 text-sm font-medium">
+                        @foreach (config('clinicest.locales.supported', ['en']) as $locale)
+                            @if (! $loop->first)
+                                <span class="text-ink-300">|</span>
+                            @endif
+                            <a href="{{ route('settings.locale', $locale) }}"
+                               @class([
+                                   'px-1 uppercase',
+                                   'text-brand-700' => app()->getLocale() === $locale,
+                                   'text-ink-400 hover:text-brand-700' => app()->getLocale() !== $locale,
+                               ])>{{ $locale }}</a>
+                        @endforeach
+                    </div>
                     <livewire:notification-bell />
                     <a href="{{ route('settings.notifications') }}" class="hidden text-sm text-ink-500 hover:text-brand-700 sm:inline">{{ auth()->user()?->name }}</a>
                     <form method="POST" action="{{ route('logout') }}">
