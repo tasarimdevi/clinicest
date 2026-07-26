@@ -1,0 +1,88 @@
+name: CI
+
+# Runs the full quality gate on every push to main and on every PR that
+# targets it. Two independent jobs so a formatting nit and a real test
+# failure surface separately (and in parallel). The test job mirrors the
+# testing env baked into phpunit.xml (sqlite :memory:, collection Scout,
+# array cache/mail, sync queue), so no external services are needed.
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+# A newer push to the same branch/PR cancels the in-flight run — no point
+# spending minutes on a commit that's already been superseded.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  tests:
+    name: Tests (Pest)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          # gd: intervention/image (ImageProcessingTest); sqlite/pdo_sqlite:
+          # the in-memory test database.
+          extensions: mbstring, bcmath, intl, gd, pdo, sqlite3, pdo_sqlite
+          coverage: none
+          tools: composer:v2
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Prepare environment file
+        run: |
+          cp .env.example .env
+          php artisan key:generate
+
+      - name: Install npm dependencies
+        run: npm ci
+
+      # HTTP feature tests render the full Blade layout, which calls @vite —
+      # without a built manifest that throws ViteManifestNotFoundException,
+      # so the front-end must be built before the suite runs.
+      - name: Build front-end assets
+        run: npm run build
+
+      - name: Run tests
+        run: php artisan test
+
+  code-style:
+    name: Code style (Pint)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+          tools: composer:v2
+
+      - name: Install Composer dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      # --test fails the job on any deviation instead of rewriting files.
+      - name: Check formatting
+        run: vendor/bin/pint --test
