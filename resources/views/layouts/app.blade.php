@@ -54,6 +54,9 @@
             request()->routeIs('clinic.*') && $currentClinic => array_values(array_filter([
                 ['label' => __('Dashboard'), 'route' => 'clinic.dashboard', 'params' => [$currentClinic], 'pattern' => 'clinic.dashboard'],
                 ['label' => __('Lead Inbox'), 'route' => 'clinic.leads', 'params' => [$currentClinic], 'pattern' => 'clinic.leads'],
+                $navUser?->can('clinics.manage')
+                    ? ['label' => __('Analytics'), 'route' => 'clinic.analytics', 'params' => [$currentClinic], 'pattern' => 'clinic.analytics']
+                    : null,
                 $navUser?->can('documents.view')
                     ? ['label' => __('Documents'), 'route' => 'clinic.documents.index', 'params' => [$currentClinic], 'pattern' => 'clinic.documents.*']
                     : null,

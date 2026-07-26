@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use App\Livewire\Clinic\AppointmentScheduler;
+use App\Livewire\Clinic\ClinicAnalytics;
 use App\Livewire\Clinic\ClinicBeforeAfter;
 use App\Livewire\Clinic\ClinicBilling;
 use App\Livewire\Clinic\ClinicDocuments;
@@ -28,6 +29,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth', 'clinic.member'])->prefix('clinic/{clinic}')->name('clinic.')->group(function () {
     Route::get('/', Dashboard::class)->name('dashboard');
+    Route::get('/analytics', ClinicAnalytics::class)->name('analytics');
     Route::get('/profile', ClinicProfile::class)->name('profile');
     Route::get('/before-after', ClinicBeforeAfter::class)->name('before-after');
     Route::get('/leads', LeadInbox::class)->name('leads');
