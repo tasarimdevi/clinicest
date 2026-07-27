@@ -70,6 +70,12 @@ class HomePage extends Component
 
             'stats' => $this->trustStats(),
             'heroImage' => $this->marketingImage('hero'),
+            // One photo per "Why Turkey" card (1-indexed, matching the
+            // why-turkey-N.webp filenames) — null entries fall back to the
+            // icon-only card treatment, same graceful-degradation pattern
+            // as the hero image.
+            'whyTurkeyImages' => collect(range(1, 6))
+                ->mapWithKeys(fn ($n) => [$n => $this->marketingImage("why-turkey-{$n}")]),
         ]);
     }
 

@@ -308,14 +308,34 @@
                 ['wt_5_t', 'wt_5_d', 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'],
                 ['wt_6_t', 'wt_6_d', 'M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z'],
             ] as $i => $card)
-                @php $a = $accents[$i % 3]; @endphp
+                @php $a = $accents[$i % 3]; $photo = $whyTurkeyImages[$i + 1] ?? null; @endphp
                 <x-reveal :delay="$i * 60"
-                    class="cx-lift group rounded-2xl border border-ink-200 bg-white p-7 shadow-card transition-colors hover:shadow-raised {{ $a['border'] }}">
-                    <div class="flex h-12 w-12 items-center justify-center rounded-xl {{ $a['bg'] }} {{ $a['text'] }} shadow-card transition {{ $a['hover'] }}">
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $card[2] }}"/></svg>
-                    </div>
-                    <h3 class="mt-5 text-lg font-semibold text-ink-900">{{ __('home.'.$card[0]) }}</h3>
-                    <p class="mt-2 text-sm leading-relaxed text-ink-600">{{ __('home.'.$card[1]) }}</p>
+                    class="cx-lift group overflow-hidden rounded-2xl border border-ink-200 bg-white shadow-card transition-colors hover:shadow-raised {{ $a['border'] }}">
+                    @if ($photo)
+                        {{-- Photo + a floating icon badge overlapping its bottom
+                             edge — same "elevated badge over photo" pattern as
+                             x-clinic-card, so the section gains real imagery
+                             without losing the icon accent identity. --}}
+                        <div class="relative aspect-[4/3] w-full overflow-hidden">
+                            <img src="{{ $photo }}" alt="" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy">
+                            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/10 to-transparent"></div>
+                        </div>
+                        <div class="relative px-7 pb-7 pt-9">
+                            <div class="absolute -top-6 left-7 flex h-12 w-12 items-center justify-center rounded-xl {{ $a['bg'] }} {{ $a['text'] }} shadow-raised ring-4 ring-white transition {{ $a['hover'] }}">
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $card[2] }}"/></svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-ink-900">{{ __('home.'.$card[0]) }}</h3>
+                            <p class="mt-2 text-sm leading-relaxed text-ink-600">{{ __('home.'.$card[1]) }}</p>
+                        </div>
+                    @else
+                        <div class="p-7">
+                            <div class="flex h-12 w-12 items-center justify-center rounded-xl {{ $a['bg'] }} {{ $a['text'] }} shadow-card transition {{ $a['hover'] }}">
+                                <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $card[2] }}"/></svg>
+                            </div>
+                            <h3 class="mt-5 text-lg font-semibold text-ink-900">{{ __('home.'.$card[0]) }}</h3>
+                            <p class="mt-2 text-sm leading-relaxed text-ink-600">{{ __('home.'.$card[1]) }}</p>
+                        </div>
+                    @endif
                 </x-reveal>
             @endforeach
         </div>
