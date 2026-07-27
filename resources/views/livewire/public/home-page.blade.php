@@ -345,11 +345,29 @@
     <section class="relative overflow-hidden border-y border-ink-200 bg-gradient-to-br from-brand-700 via-brand-900 to-brand-950 py-20 text-ink-50">
         <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_60%_at_90%_0%,rgba(199,155,87,0.32),transparent_55%),radial-gradient(70%_60%_at_5%_100%,rgba(99,114,222,0.45),transparent_55%)]"></div>
         <div class="animate-cx-float-slow pointer-events-none absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-brand-400/25 blur-3xl"></div>
-        <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div class="max-w-2xl">
-                <p class="font-mono text-xs font-semibold uppercase tracking-widest text-gold-300">{{ __('nav.how_it_works') }}</p>
-                <h2 class="mt-3 font-serif text-3xl font-medium sm:text-4xl">{{ __('home.how_it_works_title') }}</h2>
-                <p class="mt-4 text-lg text-ink-300">{{ __('home.how_it_works_subtitle') }}</p>
+        <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8" x-data="{ active: 1 }">
+            <div class="flex flex-col gap-10 lg:flex-row lg:items-start lg:justify-between">
+                <div class="max-w-2xl">
+                    <p class="font-mono text-xs font-semibold uppercase tracking-widest text-gold-300">{{ __('nav.how_it_works') }}</p>
+                    <h2 class="mt-3 font-serif text-3xl font-medium sm:text-4xl">{{ __('home.how_it_works_title') }}</h2>
+                    <p class="mt-4 text-lg text-ink-300">{{ __('home.how_it_works_subtitle') }}</p>
+                </div>
+
+                {{-- Hover/tap preview — swaps photo per step (hidden below lg,
+                     where there's no hover and the steps stack vertically). --}}
+                <div class="relative hidden aspect-[4/3] w-full max-w-sm shrink-0 overflow-hidden rounded-2xl border border-white/15 shadow-hero lg:block">
+                    @foreach ($howItWorksImages as $n => $img)
+                        @if ($img)
+                            <img src="{{ $img }}" alt=""
+                                 class="absolute inset-0 h-full w-full object-cover"
+                                 x-show="active === {{ $n }}"
+                                 x-transition:enter="transition-opacity duration-500"
+                                 x-transition:enter-start="opacity-0"
+                                 x-transition:enter-end="opacity-100">
+                        @endif
+                    @endforeach
+                    <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-950/50 via-transparent to-transparent"></div>
+                </div>
             </div>
 
             <div class="relative mt-14">
@@ -363,11 +381,14 @@
                         ['hiw_5_t', 'hiw_5_d', 'M2.5 19l19-7-19-7v5l13 2-13 2z'],
                         ['hiw_6_t', 'hiw_6_d', 'M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z'],
                     ] as $i => $step)
-                        <x-reveal :delay="$i * 70" class="relative text-center lg:text-left">
-                            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full border border-gold-400/50 bg-brand-900 text-gold-300 shadow-hero lg:mx-0">
+                        @php $n = $i + 1; @endphp
+                        <x-reveal :delay="$i * 70" class="relative cursor-pointer text-center lg:text-left"
+                            @mouseenter="active = {{ $n }}" @click="active = {{ $n }}" @focus="active = {{ $n }}" tabindex="0">
+                            <div class="mx-auto flex h-14 w-14 items-center justify-center rounded-full border shadow-hero transition lg:mx-0"
+                                 :class="active === {{ $n }} ? 'border-gold-300 bg-gold-500 text-brand-950' : 'border-gold-400/50 bg-brand-900 text-gold-300'">
                                 <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.6"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $step[2] }}"/></svg>
                             </div>
-                            <span class="mt-4 block font-mono text-[0.68rem] font-semibold tracking-widest text-gold-300">STEP {{ str_pad((string) ($i + 1), 2, '0', STR_PAD_LEFT) }}</span>
+                            <span class="mt-4 block font-mono text-[0.68rem] font-semibold tracking-widest text-gold-300">STEP {{ str_pad((string) $n, 2, '0', STR_PAD_LEFT) }}</span>
                             <h3 class="mt-1 text-base font-semibold text-ink-50">{{ __('home.'.$step[0]) }}</h3>
                             <p class="mt-1.5 text-sm text-ink-300">{{ __('home.'.$step[1]) }}</p>
                         </x-reveal>

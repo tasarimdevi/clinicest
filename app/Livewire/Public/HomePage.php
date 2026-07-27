@@ -76,6 +76,10 @@ class HomePage extends Component
             // as the hero image.
             'whyTurkeyImages' => collect(range(1, 6))
                 ->mapWithKeys(fn ($n) => [$n => $this->marketingImage("why-turkey-{$n}")]),
+            // One photo per How-It-Works step (1-indexed, hiw-N.webp),
+            // swapped into the hover-preview panel next to the step rail.
+            'howItWorksImages' => collect(range(1, 6))
+                ->mapWithKeys(fn ($n) => [$n => $this->marketingImage("hiw-{$n}")]),
         ]);
     }
 
