@@ -14,10 +14,10 @@ Bosphorus-navy + clinical porcelain base, antique-brass for premium/verification
 
 ```
 colors: {
-  brand: {                 // harbor blue — 950/900 double as the hero/header ground
-    50:'#EEF3FA', 100:'#DCE7F5', 200:'#B9CEEB', 300:'#8FB0DE',
-    400:'#5F8CCB', 500:'#3D6DB2', 600:'#2C5EA8', 700:'#204577',
-    800:'#1A3760', 900:'#142A4C', 950:'#0B1E3A',
+  brand: {                 // vivid royal blue — 950/900 double as the hero/header ground
+    50:'#EEF0FB', 100:'#DDE0F8', 200:'#BCC2F1', 300:'#929CE8',
+    400:'#6372DE', 500:'#3548D4', 600:'#2637B5', 700:'#1F2D93',
+    800:'#1A257A', 900:'#161F67', 950:'#131C5C',
   },
   gold: {                  // antique brass — verification/premium accent (use sparingly)
     50:'#FBF3E7', 100:'#F5E4C7', 300:'#E3BE87',
