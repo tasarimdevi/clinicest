@@ -31,11 +31,11 @@
         </div>
     </div>
 
-    <div class="mt-8 grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-ink-200 bg-ink-200 sm:grid-cols-2 lg:grid-cols-3">
+    <div class="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         @forelse ($treatments as $treatment)
             <x-treatment-card :treatment="$treatment" />
         @empty
-            <p class="col-span-full bg-white p-6 text-sm text-ink-500">{{ __('No treatments match these filters.') }}</p>
+            <p class="col-span-full text-sm text-ink-500">{{ __('No treatments match these filters.') }}</p>
         @endforelse
     </div>
 

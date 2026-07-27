@@ -412,11 +412,11 @@
             </a>
         </div>
 
-        <x-reveal class="mt-10 grid grid-cols-1 gap-px overflow-hidden rounded-2xl border border-ink-200 bg-ink-200 sm:grid-cols-2 lg:grid-cols-3">
+        <x-reveal class="mt-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             @forelse ($featuredTreatments as $treatment)
                 <x-treatment-card :treatment="$treatment" />
             @empty
-                <p class="col-span-full bg-white p-6 text-sm text-ink-500">{{ __('home.treatments_empty') }}</p>
+                <p class="col-span-full text-sm text-ink-500">{{ __('home.treatments_empty') }}</p>
             @endforelse
         </x-reveal>
     </section>

@@ -131,7 +131,7 @@
         @if ($related->isNotEmpty())
             <div class="mt-14">
                 <h2 class="font-serif text-xl font-medium text-ink-900">{{ __('Related treatments') }}</h2>
-                <div class="mt-6 grid grid-cols-1 gap-px overflow-hidden rounded-lg border border-ink-200 bg-ink-200 sm:grid-cols-3">
+                <div class="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-3">
                     @foreach ($related as $rel)
                         <x-treatment-card :treatment="$rel" />
                     @endforeach
