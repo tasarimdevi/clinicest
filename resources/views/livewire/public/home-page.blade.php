@@ -24,13 +24,15 @@
             <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-brand-950 via-brand-950/60 to-brand-950/20"></div>
             <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-950/95 via-transparent to-brand-950/10"></div>
         @else
-            {{-- Cinematic fallback ground: layered navy→teal gradient + dot grid
-                 + soft glows, used until a real photo is placed. --}}
-            <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-brand-800 via-brand-900 to-brand-950"></div>
-            <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_15%_-10%,rgba(62,150,131,0.45),transparent_55%),radial-gradient(90%_70%_at_100%_10%,rgba(199,155,87,0.32),transparent_50%)]"></div>
+            {{-- Cinematic fallback ground: vivid royal-blue gradient + dot grid
+                 + soft glows, used until a real photo is placed. Glow is
+                 brand-blue (rgba(95,140,203,...) = brand-400), not teal —
+                 a teal wash this large reads as blue-green, not "vivid blue". --}}
+            <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-brand-700 via-brand-900 to-brand-950"></div>
+            <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_15%_-10%,rgba(95,140,203,0.55),transparent_55%),radial-gradient(90%_70%_at_100%_10%,rgba(199,155,87,0.32),transparent_50%)]"></div>
         @endif
         <div class="pointer-events-none absolute inset-0 opacity-[0.14]" style="background-image: radial-gradient(circle, rgba(255,255,255,0.22) 1px, transparent 1px); background-size: 24px 24px;"></div>
-        <div class="animate-cx-float pointer-events-none absolute -left-24 top-24 h-96 w-96 rounded-full bg-teal-400/25 blur-3xl"></div>
+        <div class="animate-cx-float pointer-events-none absolute -left-24 top-24 h-96 w-96 rounded-full bg-brand-400/30 blur-3xl"></div>
         <div class="animate-cx-float-slow pointer-events-none absolute -right-28 top-1/3 h-[28rem] w-[28rem] rounded-full bg-gold-400/20 blur-3xl"></div>
 
         <div class="relative mx-auto grid max-w-7xl items-center gap-14 px-4 pb-20 pt-16 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10 lg:px-8 lg:pb-28 lg:pt-24">
@@ -244,8 +246,8 @@
     {{-- A rich, vivid navy band rather than a flat grey grid — the page's
          second "color beat" after the hero, so the scroll doesn't go dark→
          flat-grey→white→flat-grey with nothing alive in between. --}}
-    <section class="relative overflow-hidden bg-gradient-to-br from-brand-800 via-brand-900 to-brand-950 py-14 text-ink-50">
-        <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_140%_at_0%_50%,rgba(62,150,131,0.4),transparent_60%),radial-gradient(80%_140%_at_100%_50%,rgba(199,155,87,0.3),transparent_60%)]"></div>
+    <section class="relative overflow-hidden bg-gradient-to-br from-brand-700 via-brand-900 to-brand-950 py-14 text-ink-50">
+        <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_140%_at_0%_50%,rgba(95,140,203,0.5),transparent_60%),radial-gradient(80%_140%_at_100%_50%,rgba(199,155,87,0.3),transparent_60%)]"></div>
         <div class="pointer-events-none absolute inset-0 opacity-[0.1]" style="background-image: radial-gradient(circle, rgba(255,255,255,0.25) 1px, transparent 1px); background-size: 22px 22px;"></div>
 
         {{-- Cells are transparent (not a solid fill) so the gradient/glow
@@ -320,9 +322,9 @@
     </section>
 
     {{-- ═══════════════════ HOW IT WORKS ═══════════════════ --}}
-    <section class="relative overflow-hidden border-y border-ink-200 bg-gradient-to-br from-brand-800 via-brand-900 to-brand-950 py-20 text-ink-50">
-        <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_60%_at_90%_0%,rgba(199,155,87,0.32),transparent_55%),radial-gradient(70%_60%_at_5%_100%,rgba(62,150,131,0.35),transparent_55%)]"></div>
-        <div class="animate-cx-float-slow pointer-events-none absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-teal-400/20 blur-3xl"></div>
+    <section class="relative overflow-hidden border-y border-ink-200 bg-gradient-to-br from-brand-700 via-brand-900 to-brand-950 py-20 text-ink-50">
+        <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_60%_at_90%_0%,rgba(199,155,87,0.32),transparent_55%),radial-gradient(70%_60%_at_5%_100%,rgba(95,140,203,0.45),transparent_55%)]"></div>
+        <div class="animate-cx-float-slow pointer-events-none absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-brand-400/25 blur-3xl"></div>
         <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="max-w-2xl">
                 <p class="font-mono text-xs font-semibold uppercase tracking-widest text-gold-300">{{ __('nav.how_it_works') }}</p>
@@ -658,9 +660,9 @@
 
     {{-- ══════════════════════ FINAL CTA ══════════════════════ --}}
     <section class="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
-        <div class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-brand-800 via-brand-900 to-brand-950 px-6 py-16 text-center text-ink-50 shadow-hero sm:px-16 sm:py-20">
-            <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_120%_at_50%_-10%,rgba(199,155,87,0.4),transparent_55%),radial-gradient(80%_120%_at_50%_120%,rgba(62,150,131,0.4),transparent_55%)]"></div>
-            <div class="animate-cx-float pointer-events-none absolute -left-16 top-10 h-64 w-64 rounded-full bg-teal-400/20 blur-3xl"></div>
+        <div class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-brand-700 via-brand-900 to-brand-950 px-6 py-16 text-center text-ink-50 shadow-hero sm:px-16 sm:py-20">
+            <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_120%_at_50%_-10%,rgba(199,155,87,0.4),transparent_55%),radial-gradient(80%_120%_at_50%_120%,rgba(95,140,203,0.5),transparent_55%)]"></div>
+            <div class="animate-cx-float pointer-events-none absolute -left-16 top-10 h-64 w-64 rounded-full bg-brand-400/25 blur-3xl"></div>
             <div class="relative">
                 <p class="font-mono text-xs font-semibold uppercase tracking-widest text-gold-300">{{ __('home.final_cta_eyebrow') }}</p>
                 <h2 class="mx-auto mt-4 max-w-2xl font-serif text-4xl font-medium leading-tight sm:text-5xl">{{ __('home.final_cta_title') }}</h2>
