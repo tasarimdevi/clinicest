@@ -15,21 +15,23 @@
     <section class="relative overflow-hidden bg-brand-950 text-ink-50">
         @if ($heroImage)
             {{-- Real photo, dropped at public/images/home/hero.{webp|jpg|png}
-                 (see HomePage::marketingImage). A navy wash + bottom fade keeps
-                 the hero copy at full WCAG contrast regardless of the photo's
-                 own tones — never rely on the image being dark enough alone. --}}
+                 (see HomePage::marketingImage). A lighter wash than before —
+                 heavy enough for WCAG text contrast on the left, but the photo
+                 (and a teal/gold color wash on top of it) now actually reads
+                 as a photo instead of being crushed to near-black. --}}
             <img src="{{ $heroImage }}" alt=""
                  class="absolute inset-0 h-full w-full object-cover" fetchpriority="high">
-            <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-brand-950 via-brand-950/85 to-brand-950/50"></div>
-            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-950 via-transparent to-brand-950/30"></div>
+            <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-brand-950 via-brand-950/60 to-brand-950/20"></div>
+            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-950/95 via-transparent to-brand-950/10"></div>
         @else
             {{-- Cinematic fallback ground: layered navy→teal gradient + dot grid
                  + soft glows, used until a real photo is placed. --}}
-            <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_15%_-10%,rgba(62,150,131,0.28),transparent_55%),radial-gradient(90%_70%_at_100%_10%,rgba(199,155,87,0.18),transparent_50%)]"></div>
+            <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-brand-800 via-brand-900 to-brand-950"></div>
+            <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_15%_-10%,rgba(62,150,131,0.45),transparent_55%),radial-gradient(90%_70%_at_100%_10%,rgba(199,155,87,0.32),transparent_50%)]"></div>
         @endif
         <div class="pointer-events-none absolute inset-0 opacity-[0.14]" style="background-image: radial-gradient(circle, rgba(255,255,255,0.22) 1px, transparent 1px); background-size: 24px 24px;"></div>
-        <div class="animate-cx-float pointer-events-none absolute -left-24 top-24 h-96 w-96 rounded-full bg-teal-500/15 blur-3xl"></div>
-        <div class="animate-cx-float-slow pointer-events-none absolute -right-28 top-1/3 h-[28rem] w-[28rem] rounded-full bg-gold-500/10 blur-3xl"></div>
+        <div class="animate-cx-float pointer-events-none absolute -left-24 top-24 h-96 w-96 rounded-full bg-teal-400/25 blur-3xl"></div>
+        <div class="animate-cx-float-slow pointer-events-none absolute -right-28 top-1/3 h-[28rem] w-[28rem] rounded-full bg-gold-400/20 blur-3xl"></div>
 
         <div class="relative mx-auto grid max-w-7xl items-center gap-14 px-4 pb-20 pt-16 sm:px-6 lg:grid-cols-[1.05fr_0.95fr] lg:gap-10 lg:px-8 lg:pb-28 lg:pt-24">
             {{-- Left: editorial copy --}}
@@ -242,11 +244,15 @@
     {{-- A rich, vivid navy band rather than a flat grey grid — the page's
          second "color beat" after the hero, so the scroll doesn't go dark→
          flat-grey→white→flat-grey with nothing alive in between. --}}
-    <section class="relative overflow-hidden bg-brand-950 py-14 text-ink-50">
-        <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_140%_at_0%_50%,rgba(62,150,131,0.22),transparent_60%),radial-gradient(80%_140%_at_100%_50%,rgba(199,155,87,0.16),transparent_60%)]"></div>
+    <section class="relative overflow-hidden bg-gradient-to-br from-brand-800 via-brand-900 to-brand-950 py-14 text-ink-50">
+        <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_140%_at_0%_50%,rgba(62,150,131,0.4),transparent_60%),radial-gradient(80%_140%_at_100%_50%,rgba(199,155,87,0.3),transparent_60%)]"></div>
         <div class="pointer-events-none absolute inset-0 opacity-[0.1]" style="background-image: radial-gradient(circle, rgba(255,255,255,0.25) 1px, transparent 1px); background-size: 22px 22px;"></div>
 
-        <div class="relative mx-auto grid max-w-7xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 sm:grid-cols-4">
+        {{-- Cells are transparent (not a solid fill) so the gradient/glow
+             above shows through everywhere — a solid bg here would sit on
+             top and hide the whole effect. gap-px + bg-white/15 on the grid
+             draws the hairline dividers instead. --}}
+        <div class="relative mx-auto grid max-w-7xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/15 sm:grid-cols-4">
             @php
                 $statCards = [
                     ['v' => $stats['clinics'] ?: 40, 'suffix' => '+', 'dec' => 0, 'label' => __('home.stats_clinics')],
@@ -256,7 +262,7 @@
                 ];
             @endphp
             @foreach ($statCards as $s)
-                <div class="bg-brand-950 px-6 py-8 text-center">
+                <div class="bg-brand-900/40 px-6 py-8 text-center backdrop-blur-sm">
                     <p class="font-mono text-4xl font-bold tabular-nums text-gold-300 sm:text-5xl">
                         @if ($s['v'] !== null)
                             <x-count-up :to="$s['v']" :suffix="$s['suffix']" :decimals="$s['dec']" />
@@ -282,10 +288,13 @@
             // Rotating accent per card (teal / gold / brand) instead of a
             // single monochrome icon color — reads as more varied/alive
             // across a 6-card grid, per the reference's colorful icon set.
+            // Bold, solid badge colors BY DEFAULT (not hover-only — a pale
+            // -50 tint only visible on :hover reads as flat/monochrome in a
+            // static view, which is exactly what looked "lifeless" before).
             $accents = [
-                ['bg' => 'bg-teal-50', 'text' => 'text-teal-600', 'ring' => 'ring-teal-100', 'hover' => 'group-hover:bg-teal-500', 'border' => 'hover:border-teal-200'],
-                ['bg' => 'bg-gold-50', 'text' => 'text-gold-600', 'ring' => 'ring-gold-100', 'hover' => 'group-hover:bg-gold-500', 'border' => 'hover:border-gold-300'],
-                ['bg' => 'bg-brand-50', 'text' => 'text-brand-700', 'ring' => 'ring-brand-100', 'hover' => 'group-hover:bg-brand-600', 'border' => 'hover:border-brand-200'],
+                ['bg' => 'bg-teal-500', 'text' => 'text-white', 'hover' => 'group-hover:bg-teal-600', 'border' => 'hover:border-teal-200'],
+                ['bg' => 'bg-gold-500', 'text' => 'text-brand-950', 'hover' => 'group-hover:bg-gold-600', 'border' => 'hover:border-gold-300'],
+                ['bg' => 'bg-brand-600', 'text' => 'text-white', 'hover' => 'group-hover:bg-brand-700', 'border' => 'hover:border-brand-200'],
             ];
         @endphp
         <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -300,7 +309,7 @@
                 @php $a = $accents[$i % 3]; @endphp
                 <x-reveal :delay="$i * 60"
                     class="cx-lift group rounded-2xl border border-ink-200 bg-white p-7 shadow-card transition-colors hover:shadow-raised {{ $a['border'] }}">
-                    <div class="flex h-12 w-12 items-center justify-center rounded-xl {{ $a['bg'] }} {{ $a['text'] }} ring-1 {{ $a['ring'] }} transition {{ $a['hover'] }} group-hover:text-white">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-xl {{ $a['bg'] }} {{ $a['text'] }} shadow-card transition {{ $a['hover'] }}">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $card[2] }}"/></svg>
                     </div>
                     <h3 class="mt-5 text-lg font-semibold text-ink-900">{{ __('home.'.$card[0]) }}</h3>
@@ -311,9 +320,9 @@
     </section>
 
     {{-- ═══════════════════ HOW IT WORKS ═══════════════════ --}}
-    <section class="relative overflow-hidden border-y border-ink-200 bg-brand-950 py-20 text-ink-50">
-        <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_60%_at_90%_0%,rgba(199,155,87,0.16),transparent_55%),radial-gradient(70%_60%_at_5%_100%,rgba(62,150,131,0.18),transparent_55%)]"></div>
-        <div class="animate-cx-float-slow pointer-events-none absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-teal-500/10 blur-3xl"></div>
+    <section class="relative overflow-hidden border-y border-ink-200 bg-gradient-to-br from-brand-800 via-brand-900 to-brand-950 py-20 text-ink-50">
+        <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_60%_at_90%_0%,rgba(199,155,87,0.32),transparent_55%),radial-gradient(70%_60%_at_5%_100%,rgba(62,150,131,0.35),transparent_55%)]"></div>
+        <div class="animate-cx-float-slow pointer-events-none absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-teal-400/20 blur-3xl"></div>
         <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="max-w-2xl">
                 <p class="font-mono text-xs font-semibold uppercase tracking-widest text-gold-300">{{ __('nav.how_it_works') }}</p>
@@ -600,9 +609,9 @@
             </div>
             @php
                 $teAccents = [
-                    ['text' => 'text-teal-600', 'hoverBorder' => 'hover:border-teal-200', 'hoverBg' => 'hover:bg-teal-50/40'],
-                    ['text' => 'text-gold-600', 'hoverBorder' => 'hover:border-gold-300', 'hoverBg' => 'hover:bg-gold-50/50'],
-                    ['text' => 'text-brand-700', 'hoverBorder' => 'hover:border-brand-200', 'hoverBg' => 'hover:bg-brand-50/50'],
+                    ['bg' => 'bg-teal-500', 'text' => 'text-white', 'hoverBorder' => 'hover:border-teal-200', 'hoverBg' => 'hover:bg-teal-50/40'],
+                    ['bg' => 'bg-gold-500', 'text' => 'text-brand-950', 'hoverBorder' => 'hover:border-gold-300', 'hoverBg' => 'hover:bg-gold-50/50'],
+                    ['bg' => 'bg-brand-600', 'text' => 'text-white', 'hoverBorder' => 'hover:border-brand-200', 'hoverBg' => 'hover:bg-brand-50/50'],
                 ];
             @endphp
             <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -616,7 +625,7 @@
                 ] as $i => $card)
                     @php $ta = $teAccents[$i % 3]; @endphp
                     <x-reveal :delay="$i * 50" class="flex items-start gap-4 rounded-2xl border border-ink-200 bg-ink-50/60 p-5 transition {{ $ta['hoverBorder'] }} {{ $ta['hoverBg'] }}">
-                        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white {{ $ta['text'] }} shadow-card ring-1 ring-ink-100">
+                        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl {{ $ta['bg'] }} {{ $ta['text'] }} shadow-card">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $card[2] }}"/></svg>
                         </div>
                         <div>
@@ -649,9 +658,9 @@
 
     {{-- ══════════════════════ FINAL CTA ══════════════════════ --}}
     <section class="mx-auto max-w-7xl px-4 pb-24 sm:px-6 lg:px-8">
-        <div class="relative overflow-hidden rounded-[2rem] bg-brand-950 px-6 py-16 text-center text-ink-50 shadow-hero sm:px-16 sm:py-20">
-            <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_120%_at_50%_-10%,rgba(199,155,87,0.25),transparent_55%),radial-gradient(80%_120%_at_50%_120%,rgba(62,150,131,0.25),transparent_55%)]"></div>
-            <div class="animate-cx-float pointer-events-none absolute -left-16 top-10 h-64 w-64 rounded-full bg-teal-500/10 blur-3xl"></div>
+        <div class="relative overflow-hidden rounded-[2rem] bg-gradient-to-br from-brand-800 via-brand-900 to-brand-950 px-6 py-16 text-center text-ink-50 shadow-hero sm:px-16 sm:py-20">
+            <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(90%_120%_at_50%_-10%,rgba(199,155,87,0.4),transparent_55%),radial-gradient(80%_120%_at_50%_120%,rgba(62,150,131,0.4),transparent_55%)]"></div>
+            <div class="animate-cx-float pointer-events-none absolute -left-16 top-10 h-64 w-64 rounded-full bg-teal-400/20 blur-3xl"></div>
             <div class="relative">
                 <p class="font-mono text-xs font-semibold uppercase tracking-widest text-gold-300">{{ __('home.final_cta_eyebrow') }}</p>
                 <h2 class="mx-auto mt-4 max-w-2xl font-serif text-4xl font-medium leading-tight sm:text-5xl">{{ __('home.final_cta_title') }}</h2>
