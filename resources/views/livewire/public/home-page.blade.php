@@ -53,7 +53,7 @@
 
                     <div class="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
                         <a href="{{ route('get-quote') }}"
-                           class="cx-lift group inline-flex items-center justify-center gap-2 rounded-xl bg-gold-500 px-7 py-4 text-base font-semibold text-brand-950 shadow-hero transition hover:bg-gold-400">
+                           class="cx-lift cx-shimmer group inline-flex items-center justify-center gap-2 rounded-xl bg-gold-500 px-7 py-4 text-base font-semibold text-brand-950 shadow-hero transition hover:bg-gold-400">
                             {{ __('home.hero_cta') }}
                             <svg class="h-4 w-4 transition-transform group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5-5 5M6 12h12"/></svg>
                         </a>
@@ -239,8 +239,14 @@
     </section>
 
     {{-- ══════════════════════ STATS BAND ══════════════════════ --}}
-    <section class="bg-ink-50">
-        <div class="mx-auto grid max-w-7xl grid-cols-2 gap-px overflow-hidden border-x border-ink-200 bg-ink-200 px-0 sm:grid-cols-4">
+    {{-- A rich, vivid navy band rather than a flat grey grid — the page's
+         second "color beat" after the hero, so the scroll doesn't go dark→
+         flat-grey→white→flat-grey with nothing alive in between. --}}
+    <section class="relative overflow-hidden bg-brand-950 py-14 text-ink-50">
+        <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(80%_140%_at_0%_50%,rgba(62,150,131,0.22),transparent_60%),radial-gradient(80%_140%_at_100%_50%,rgba(199,155,87,0.16),transparent_60%)]"></div>
+        <div class="pointer-events-none absolute inset-0 opacity-[0.1]" style="background-image: radial-gradient(circle, rgba(255,255,255,0.25) 1px, transparent 1px); background-size: 22px 22px;"></div>
+
+        <div class="relative mx-auto grid max-w-7xl grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/10 bg-white/10 sm:grid-cols-4">
             @php
                 $statCards = [
                     ['v' => $stats['clinics'] ?: 40, 'suffix' => '+', 'dec' => 0, 'label' => __('home.stats_clinics')],
@@ -250,15 +256,15 @@
                 ];
             @endphp
             @foreach ($statCards as $s)
-                <div class="bg-ink-50 px-6 py-10 text-center">
-                    <p class="font-mono text-4xl font-bold tabular-nums text-brand-800 sm:text-5xl">
+                <div class="bg-brand-950 px-6 py-8 text-center">
+                    <p class="font-mono text-4xl font-bold tabular-nums text-gold-300 sm:text-5xl">
                         @if ($s['v'] !== null)
                             <x-count-up :to="$s['v']" :suffix="$s['suffix']" :decimals="$s['dec']" />
                         @else
                             {{ $s['text'] }}
                         @endif
                     </p>
-                    <p class="mt-2 text-sm text-ink-500">{{ $s['label'] }}</p>
+                    <p class="mt-2 text-sm text-ink-300">{{ $s['label'] }}</p>
                 </div>
             @endforeach
         </div>
@@ -272,6 +278,16 @@
             <p class="mt-4 text-lg text-ink-600">{{ __('home.why_turkey_subtitle') }}</p>
         </div>
 
+        @php
+            // Rotating accent per card (teal / gold / brand) instead of a
+            // single monochrome icon color — reads as more varied/alive
+            // across a 6-card grid, per the reference's colorful icon set.
+            $accents = [
+                ['bg' => 'bg-teal-50', 'text' => 'text-teal-600', 'ring' => 'ring-teal-100', 'hover' => 'group-hover:bg-teal-500', 'border' => 'hover:border-teal-200'],
+                ['bg' => 'bg-gold-50', 'text' => 'text-gold-600', 'ring' => 'ring-gold-100', 'hover' => 'group-hover:bg-gold-500', 'border' => 'hover:border-gold-300'],
+                ['bg' => 'bg-brand-50', 'text' => 'text-brand-700', 'ring' => 'ring-brand-100', 'hover' => 'group-hover:bg-brand-600', 'border' => 'hover:border-brand-200'],
+            ];
+        @endphp
         <div class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             @foreach ([
                 ['wt_1_t', 'wt_1_d', 'M12 1v22M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6'],
@@ -281,9 +297,10 @@
                 ['wt_5_t', 'wt_5_d', 'M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z'],
                 ['wt_6_t', 'wt_6_d', 'M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z'],
             ] as $i => $card)
+                @php $a = $accents[$i % 3]; @endphp
                 <x-reveal :delay="$i * 60"
-                    class="cx-lift group rounded-2xl border border-ink-200 bg-white p-7 shadow-card hover:shadow-raised">
-                    <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-teal-50 text-teal-600 ring-1 ring-teal-100 transition group-hover:bg-teal-500 group-hover:text-white">
+                    class="cx-lift group rounded-2xl border border-ink-200 bg-white p-7 shadow-card transition-colors hover:shadow-raised {{ $a['border'] }}">
+                    <div class="flex h-12 w-12 items-center justify-center rounded-xl {{ $a['bg'] }} {{ $a['text'] }} ring-1 {{ $a['ring'] }} transition {{ $a['hover'] }} group-hover:text-white">
                         <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $card[2] }}"/></svg>
                     </div>
                     <h3 class="mt-5 text-lg font-semibold text-ink-900">{{ __('home.'.$card[0]) }}</h3>
@@ -294,8 +311,10 @@
     </section>
 
     {{-- ═══════════════════ HOW IT WORKS ═══════════════════ --}}
-    <section class="border-y border-ink-200 bg-brand-950 py-20 text-ink-50">
-        <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section class="relative overflow-hidden border-y border-ink-200 bg-brand-950 py-20 text-ink-50">
+        <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(70%_60%_at_90%_0%,rgba(199,155,87,0.16),transparent_55%),radial-gradient(70%_60%_at_5%_100%,rgba(62,150,131,0.18),transparent_55%)]"></div>
+        <div class="animate-cx-float-slow pointer-events-none absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-teal-500/10 blur-3xl"></div>
+        <div class="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div class="max-w-2xl">
                 <p class="font-mono text-xs font-semibold uppercase tracking-widest text-gold-300">{{ __('nav.how_it_works') }}</p>
                 <h2 class="mt-3 font-serif text-3xl font-medium sm:text-4xl">{{ __('home.how_it_works_title') }}</h2>
@@ -479,6 +498,9 @@
             </div>
 
             @if ($reviews->isNotEmpty())
+                @php
+                    $avatarAccents = ['bg-teal-100 text-teal-700', 'bg-gold-100 text-gold-700', 'bg-brand-100 text-brand-800'];
+                @endphp
                 <div class="mt-10 columns-1 gap-6 sm:columns-2 lg:columns-3 [&>*]:mb-6 [&>*]:break-inside-avoid">
                     @foreach ($reviews as $review)
                         <x-reveal :delay="$loop->index * 50" class="cx-lift rounded-2xl border border-ink-200 bg-white p-6 shadow-card hover:shadow-raised">
@@ -495,7 +517,7 @@
                             @endif
                             <p class="mt-2 text-sm leading-relaxed text-ink-600">{{ \Illuminate\Support\Str::limit($review->body, 240) }}</p>
                             <div class="mt-4 flex items-center gap-3 border-t border-ink-100 pt-4">
-                                <div class="flex h-9 w-9 items-center justify-center rounded-full bg-brand-100 font-serif text-sm font-medium text-brand-800">
+                                <div class="flex h-9 w-9 items-center justify-center rounded-full {{ $avatarAccents[$loop->index % 3] }} font-serif text-sm font-medium">
                                     {{ \Illuminate\Support\Str::substr($review->reviewer_name, 0, 1) }}
                                 </div>
                                 <div class="min-w-0">
@@ -576,6 +598,13 @@
                 <h2 class="mt-3 font-serif text-3xl font-medium text-ink-900 sm:text-4xl">{{ __('home.travel_title') }}</h2>
                 <p class="mt-4 text-ink-600">{{ __('home.travel_subtitle') }}</p>
             </div>
+            @php
+                $teAccents = [
+                    ['text' => 'text-teal-600', 'hoverBorder' => 'hover:border-teal-200', 'hoverBg' => 'hover:bg-teal-50/40'],
+                    ['text' => 'text-gold-600', 'hoverBorder' => 'hover:border-gold-300', 'hoverBg' => 'hover:bg-gold-50/50'],
+                    ['text' => 'text-brand-700', 'hoverBorder' => 'hover:border-brand-200', 'hoverBg' => 'hover:bg-brand-50/50'],
+                ];
+            @endphp
             <div class="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
                 @foreach ([
                     ['te_1_t', 'te_1_d', 'M2.5 19l19-7-19-7v5l13 2-13 2z'],
@@ -585,8 +614,9 @@
                     ['te_5_t', 'te_5_d', 'M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z'],
                     ['te_6_t', 'te_6_d', 'M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7'],
                 ] as $i => $card)
-                    <x-reveal :delay="$i * 50" class="flex items-start gap-4 rounded-2xl border border-ink-200 bg-ink-50/60 p-5 transition hover:border-teal-200 hover:bg-teal-50/40">
-                        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white text-teal-600 shadow-card ring-1 ring-ink-100">
+                    @php $ta = $teAccents[$i % 3]; @endphp
+                    <x-reveal :delay="$i * 50" class="flex items-start gap-4 rounded-2xl border border-ink-200 bg-ink-50/60 p-5 transition {{ $ta['hoverBorder'] }} {{ $ta['hoverBg'] }}">
+                        <div class="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white {{ $ta['text'] }} shadow-card ring-1 ring-ink-100">
                             <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.7"><path stroke-linecap="round" stroke-linejoin="round" d="{{ $card[2] }}"/></svg>
                         </div>
                         <div>
