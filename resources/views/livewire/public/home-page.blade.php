@@ -13,10 +13,20 @@
 
     {{-- ══════════════════════════ HERO ══════════════════════════ --}}
     <section class="relative overflow-hidden bg-brand-950 text-ink-50">
-        {{-- Cinematic ground: layered navy→teal gradient + dot grid + soft glows.
-             To use a real photo, drop it at public/images/home/hero.webp and
-             render an <img>/background above this layer with a brand-950/70 wash. --}}
-        <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_15%_-10%,rgba(62,150,131,0.28),transparent_55%),radial-gradient(90%_70%_at_100%_10%,rgba(199,155,87,0.18),transparent_50%)]"></div>
+        @if ($heroImage)
+            {{-- Real photo, dropped at public/images/home/hero.{webp|jpg|png}
+                 (see HomePage::marketingImage). A navy wash + bottom fade keeps
+                 the hero copy at full WCAG contrast regardless of the photo's
+                 own tones — never rely on the image being dark enough alone. --}}
+            <img src="{{ $heroImage }}" alt=""
+                 class="absolute inset-0 h-full w-full object-cover" fetchpriority="high">
+            <div class="pointer-events-none absolute inset-0 bg-gradient-to-r from-brand-950 via-brand-950/85 to-brand-950/50"></div>
+            <div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-brand-950 via-transparent to-brand-950/30"></div>
+        @else
+            {{-- Cinematic fallback ground: layered navy→teal gradient + dot grid
+                 + soft glows, used until a real photo is placed. --}}
+            <div class="pointer-events-none absolute inset-0 bg-[radial-gradient(120%_80%_at_15%_-10%,rgba(62,150,131,0.28),transparent_55%),radial-gradient(90%_70%_at_100%_10%,rgba(199,155,87,0.18),transparent_50%)]"></div>
+        @endif
         <div class="pointer-events-none absolute inset-0 opacity-[0.14]" style="background-image: radial-gradient(circle, rgba(255,255,255,0.22) 1px, transparent 1px); background-size: 24px 24px;"></div>
         <div class="animate-cx-float pointer-events-none absolute -left-24 top-24 h-96 w-96 rounded-full bg-teal-500/15 blur-3xl"></div>
         <div class="animate-cx-float-slow pointer-events-none absolute -right-28 top-1/3 h-[28rem] w-[28rem] rounded-full bg-gold-500/10 blur-3xl"></div>

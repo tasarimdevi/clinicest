@@ -69,7 +69,29 @@ class HomePage extends Component
                 ->get(),
 
             'stats' => $this->trustStats(),
+            'heroImage' => $this->marketingImage('hero'),
         ]);
+    }
+
+    /**
+     * Resolves a static marketing photo dropped in public/images/home/ —
+     * e.g. public/images/home/hero.webp. Unlike clinic/doctor photos (real
+     * uploads via ClinicMedia/Doctor::photo_path, already wired), the hero
+     * background isn't tied to a model, so it's a simple file-exists lookup
+     * with a graceful null when nothing has been placed yet: the view then
+     * keeps its gradient-only background instead of a broken <img>.
+     */
+    protected function marketingImage(string $name): ?string
+    {
+        foreach (['webp', 'jpg', 'jpeg', 'png'] as $ext) {
+            $relative = "images/home/{$name}.{$ext}";
+
+            if (file_exists(public_path($relative))) {
+                return asset($relative);
+            }
+        }
+
+        return null;
     }
 
     /**
