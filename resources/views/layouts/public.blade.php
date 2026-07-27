@@ -135,9 +135,13 @@
     </footer>
 
     <a href="https://wa.me/" target="_blank" rel="noopener"
-       class="fixed bottom-5 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-success-500 text-white shadow-raised transition hover:scale-105"
+       class="group fixed bottom-20 right-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-success-500 text-white shadow-raised transition hover:scale-105 sm:bottom-5"
        aria-label="WhatsApp">
-        <svg class="h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2z"/></svg>
+        <span class="animate-cx-ping absolute inline-flex h-full w-full rounded-full bg-success-500"></span>
+        <svg class="relative h-7 w-7" fill="currentColor" viewBox="0 0 24 24"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.29-1.39a9.9 9.9 0 0 0 4.75 1.21h.01c5.46 0 9.9-4.45 9.9-9.91C21.96 6.45 17.5 2 12.04 2z"/></svg>
+        <span class="pointer-events-none absolute right-16 hidden whitespace-nowrap rounded-lg bg-brand-950 px-3 py-1.5 text-sm font-medium text-ink-50 opacity-0 shadow-hero transition group-hover:opacity-100 sm:block">
+            {{ __('home.hero_whatsapp') }}
+        </span>
     </a>
 
     <div class="fixed inset-x-0 bottom-0 z-30 flex gap-2 border-t border-ink-200 bg-white p-3 shadow-raised sm:hidden">
