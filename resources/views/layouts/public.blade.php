@@ -35,12 +35,17 @@
     <header x-data="{ mobileOpen: false }"
         class="sticky top-0 z-40 border-b border-white/10 bg-brand-950/90 backdrop-blur-xl">
         <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-            <a href="{{ route('home') }}" class="flex items-center gap-2.5 font-serif text-xl font-medium tracking-tight text-ink-50">
-                <svg class="h-7 w-7 shrink-0" viewBox="0 0 100 100" aria-hidden="true">
-                    <circle cx="50" cy="37" r="5.5" class="fill-white"/>
-                    <path d="M31 49 Q50 72 69 49" fill="none" stroke-width="9" stroke-linecap="round" class="stroke-gold-400"/>
-                </svg>
-                Clinicest
+            <a href="{{ route('home') }}" class="flex items-center gap-3">
+                <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/15">
+                    <svg class="h-6 w-6" viewBox="0 0 100 100" aria-hidden="true">
+                        <circle cx="50" cy="35" r="6" class="fill-white"/>
+                        <path d="M29 47 Q50 73 71 47" fill="none" stroke-width="10" stroke-linecap="round" class="stroke-gold-400"/>
+                    </svg>
+                </span>
+                <span class="flex flex-col leading-tight">
+                    <span class="font-serif text-xl font-medium tracking-tight text-ink-50">Clinicest</span>
+                    <span class="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-gold-400">{{ __('İstanbul Dental Care') }}</span>
+                </span>
             </a>
 
             <nav class="hidden items-center gap-8 lg:flex">
