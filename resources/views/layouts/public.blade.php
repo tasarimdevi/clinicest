@@ -37,8 +37,8 @@
         <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
             <a href="{{ route('home') }}" class="flex items-center gap-2.5 font-serif text-xl font-medium tracking-tight text-ink-50">
                 <svg class="h-7 w-7 shrink-0" viewBox="0 0 100 100" aria-hidden="true">
-                    <circle cx="50" cy="37" r="5.5" fill="#FFFFFF"/>
-                    <path d="M31 49 Q50 72 69 49" fill="none" stroke="#C9A15A" stroke-width="9" stroke-linecap="round"/>
+                    <circle cx="50" cy="37" r="5.5" class="fill-white"/>
+                    <path d="M31 49 Q50 72 69 49" fill="none" stroke-width="9" stroke-linecap="round" class="stroke-gold-400"/>
                 </svg>
                 Clinicest
             </a>

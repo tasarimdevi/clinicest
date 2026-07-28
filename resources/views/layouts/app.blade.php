@@ -85,8 +85,8 @@
             <div class="flex h-16 items-center gap-2 border-b border-ink-100 px-6">
                 <a href="{{ route('home') }}" class="flex items-center gap-2 text-lg font-semibold tracking-tight text-brand-900">
                     <svg class="h-6 w-6 shrink-0" viewBox="0 0 100 100" aria-hidden="true">
-                        <circle cx="50" cy="37" r="5.5" fill="#C9A15A"/>
-                        <path d="M31 49 Q50 72 69 49" fill="none" stroke="#0D1B3E" stroke-width="9" stroke-linecap="round"/>
+                        <circle cx="50" cy="37" r="5.5" class="fill-gold-400"/>
+                        <path d="M31 49 Q50 72 69 49" fill="none" stroke-width="9" stroke-linecap="round" class="stroke-brand-950"/>
                     </svg>
                     Clinicest
                 </a>

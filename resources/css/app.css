@@ -16,30 +16,32 @@
     --font-serif: 'Iowan Old Style', 'Palatino Linotype', 'URW Palladio L', 'Book Antiqua', Georgia, serif;
     --font-mono: 'SF Mono', 'Cascadia Code', Consolas, 'Courier New', monospace;
 
-    /* Brand — vivid royal blue (H233/S65%, anchored on #131b5c).
-       600 = primary actions, 900/950 = hero/header ground. Replaces an
-       earlier, more desaturated/greener "harbor blue" ramp (H216) that
-       read as flat/muted rather than vivid. */
-    --color-brand-50: #eef0fb;
-    --color-brand-100: #dde0f8;
-    --color-brand-200: #bcc2f1;
-    --color-brand-300: #929ce8;
-    --color-brand-400: #6372de;
-    --color-brand-500: #3548d4;
-    --color-brand-600: #2637b5;
-    --color-brand-700: #1f2d93;
-    --color-brand-800: #1a257a;
-    --color-brand-900: #161f67;
-    --color-brand-950: #131c5c;
+    /* Brand — vivid royal blue (H223/S65%, anchored on the logo navy
+       #0D1B3E at 950). 600 = primary actions, 900/950 = hero/header
+       ground, and 950 matches the brand logo mark exactly. Re-hued
+       from an earlier H233 ramp to align with the 2026 logo refresh. */
+    --color-brand-50: #f0f4fc;
+    --color-brand-100: #e1e8f9;
+    --color-brand-200: #c0cef2;
+    --color-brand-300: #93ace8;
+    --color-brand-400: #6185de;
+    --color-brand-500: #2c5cd3;
+    --color-brand-600: #244bad;
+    --color-brand-700: #1d3c89;
+    --color-brand-800: #162d67;
+    --color-brand-900: #10224e;
+    --color-brand-950: #0d1b3e;
 
-    /* Gold — antique brass, verification/premium accent only, never body buttons */
-    --color-gold-50: #fbf3e7;
-    --color-gold-100: #f5e4c7;
-    --color-gold-300: #e3be87;
-    --color-gold-400: #c79b57;
-    --color-gold-500: #a97833;
-    --color-gold-600: #8f6529;
-    --color-gold-700: #6e4d1e;
+    /* Gold — antique brass, verification/premium accent only, never
+       body buttons. 400 matches the brand logo mark's gold (#C9A15A)
+       exactly. */
+    --color-gold-50: #f9f5ee;
+    --color-gold-100: #f0e5d1;
+    --color-gold-300: #dcc293;
+    --color-gold-400: #c9a15a;
+    --color-gold-500: #aa8037;
+    --color-gold-600: #8e6c2f;
+    --color-gold-700: #6d5324;
 
     /* Teal — clinical verification / positive-savings accent */
     --color-teal-50: #e9f5f2;
