@@ -9,10 +9,12 @@ use App\Models\City;
 use App\Models\Clinic;
 use App\Models\Treatment;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Throwable;
 
 /**
  * See docs/04-wireframes.md §4 — the clinic directory. City-scoped routes
@@ -54,11 +56,27 @@ class ClinicsIndex extends Component
     public function render(): View
     {
         if ($this->search !== '') {
-            $clinics = Clinic::search($this->search)
-                ->when($this->treatment !== '', fn ($q) => $q->where('treatment_ids', (int) $this->treatment))
-                ->when($this->city !== '', fn ($q) => $q->where('city_id', (int) $this->city))
-                ->when($this->tier !== '', fn ($q) => $q->where('verification_tier', $this->tier))
-                ->paginate(12);
+            try {
+                $clinics = Clinic::search($this->search)
+                    ->when($this->treatment !== '', fn ($q) => $q->where('treatment_ids', (int) $this->treatment))
+                    ->when($this->city !== '', fn ($q) => $q->where('city_id', (int) $this->city))
+                    ->when($this->tier !== '', fn ($q) => $q->where('verification_tier', $this->tier))
+                    ->paginate(12);
+            } catch (Throwable $e) {
+                // Meilisearch unreachable — degrade to a plain DB query
+                // rather than 500ing the page; see docs/06-seo-architecture.md.
+                Log::warning('Scout search unavailable, falling back to DB query', ['exception' => $e->getMessage()]);
+                $clinics = Clinic::query()
+                    ->with(['city', 'media'])
+                    ->where('is_active', true)
+                    ->where('name', 'like', "%{$this->search}%")
+                    ->when($this->treatment !== '', fn ($q) => $q->whereHas('treatments', fn ($t) => $t->where('treatments.id', $this->treatment)))
+                    ->when($this->city !== '', fn ($q) => $q->where('city_id', $this->city))
+                    ->when($this->tier !== '', fn ($q) => $q->where('verification_tier', $this->tier))
+                    ->orderByDesc('is_featured')
+                    ->orderByDesc('rating_avg')
+                    ->paginate(12);
+            }
         } else {
             $clinics = Clinic::query()
                 ->with(['city', 'media'])

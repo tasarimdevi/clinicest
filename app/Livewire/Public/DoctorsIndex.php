@@ -7,10 +7,12 @@ namespace App\Livewire\Public;
 use App\Models\Clinic;
 use App\Models\Doctor;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 use Livewire\WithPagination;
+use Throwable;
 
 /**
  * See docs/04-wireframes.md §6 — the doctor directory. Free-text `search`
@@ -39,9 +41,23 @@ class DoctorsIndex extends Component
     public function render(): View
     {
         if ($this->search !== '') {
-            $doctors = Doctor::search($this->search)
-                ->when($this->clinic !== '', fn ($q) => $q->where('clinic_id', (int) $this->clinic))
-                ->paginate(12);
+            try {
+                $doctors = Doctor::search($this->search)
+                    ->when($this->clinic !== '', fn ($q) => $q->where('clinic_id', (int) $this->clinic))
+                    ->paginate(12);
+            } catch (Throwable $e) {
+                // Meilisearch unreachable — degrade to a plain DB query
+                // rather than 500ing the page; see docs/06-seo-architecture.md.
+                Log::warning('Scout search unavailable, falling back to DB query', ['exception' => $e->getMessage()]);
+                $doctors = Doctor::query()
+                    ->with('clinic')
+                    ->whereHas('clinic', fn ($q) => $q->where('is_active', true))
+                    ->where('full_name', 'like', "%{$this->search}%")
+                    ->when($this->clinic !== '', fn ($q) => $q->where('clinic_id', (int) $this->clinic))
+                    ->orderByDesc('is_featured')
+                    ->orderBy('full_name')
+                    ->paginate(12);
+            }
         } else {
             $doctors = Doctor::query()
                 ->with('clinic')

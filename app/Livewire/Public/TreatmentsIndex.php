@@ -7,9 +7,11 @@ namespace App\Livewire\Public;
 use App\Models\Treatment;
 use App\Models\TreatmentCategory;
 use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Log;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Url;
 use Livewire\Component;
+use Throwable;
 
 /**
  * See docs/04-wireframes.md §2 — the treatments hub. Free-text `search`
@@ -31,9 +33,21 @@ class TreatmentsIndex extends Component
     public function render(): View
     {
         if ($this->search !== '') {
-            $treatments = Treatment::search($this->search)
-                ->when($this->category !== '', fn ($q) => $q->where('category_id', (int) $this->category))
-                ->get();
+            try {
+                $treatments = Treatment::search($this->search)
+                    ->when($this->category !== '', fn ($q) => $q->where('category_id', (int) $this->category))
+                    ->get();
+            } catch (Throwable $e) {
+                // Meilisearch unreachable — degrade to a plain DB query
+                // rather than 500ing the page; see docs/06-seo-architecture.md.
+                Log::warning('Scout search unavailable, falling back to DB query', ['exception' => $e->getMessage()]);
+                $treatments = Treatment::query()
+                    ->where('status', 'published')
+                    ->where('name', 'like', "%{$this->search}%")
+                    ->when($this->category !== '', fn ($q) => $q->where('category_id', (int) $this->category))
+                    ->orderBy('sort')
+                    ->get();
+            }
         } else {
             $treatments = Treatment::query()
                 ->where('status', 'published')
