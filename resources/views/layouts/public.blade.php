@@ -36,7 +36,7 @@
         class="sticky top-0 z-40 border-b border-white/10 bg-brand-950/90 backdrop-blur-xl">
         <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
             <a href="{{ route('home') }}" class="flex items-center gap-3">
-                <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-white/15">
+                <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-gold-400/25">
                     <svg class="h-6 w-6" viewBox="0 0 100 100" aria-hidden="true">
                         <circle cx="50" cy="35" r="6" class="fill-white"/>
                         <path d="M29 47 Q50 73 71 47" fill="none" stroke-width="10" stroke-linecap="round" class="stroke-gold-400"/>

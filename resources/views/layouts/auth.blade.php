@@ -15,10 +15,12 @@
     <div class="w-full max-w-sm px-4">
         <div class="mb-8 flex items-center justify-center gap-2.5 text-center">
             <a href="{{ route('home') }}" class="flex items-center gap-2.5 text-2xl font-semibold tracking-tight text-brand-900">
-                <svg class="h-7 w-7 shrink-0" viewBox="0 0 100 100" aria-hidden="true">
-                    <circle cx="50" cy="37" r="5.5" class="fill-gold-400"/>
-                    <path d="M31 49 Q50 72 69 49" fill="none" stroke-width="9" stroke-linecap="round" class="stroke-brand-950"/>
-                </svg>
+                <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[#E8E3D8]">
+                    <svg class="h-6 w-6" viewBox="0 0 100 100" aria-hidden="true">
+                        <circle cx="50" cy="37" r="5.5" class="fill-gold-400"/>
+                        <path d="M31 49 Q50 72 69 49" fill="none" stroke-width="9" stroke-linecap="round" class="stroke-brand-950"/>
+                    </svg>
+                </span>
                 Clinicest
             </a>
         </div>
