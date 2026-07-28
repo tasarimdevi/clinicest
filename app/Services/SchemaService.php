@@ -43,12 +43,23 @@ class SchemaService
 
     public function medicalProcedure(Treatment $treatment): array
     {
-        return [
+        $data = [
             '@context' => 'https://schema.org',
             '@type' => 'MedicalProcedure',
             'name' => $treatment->getTranslation('name', app()->getLocale()),
             'description' => $treatment->getTranslation('summary', app()->getLocale()),
         ];
+
+        if ($treatment->base_price_min && $treatment->base_price_max) {
+            $data['offers'] = [
+                '@type' => 'AggregateOffer',
+                'priceCurrency' => $treatment->currency,
+                'lowPrice' => (string) round($treatment->base_price_min / 100, 2),
+                'highPrice' => (string) round($treatment->base_price_max / 100, 2),
+            ];
+        }
+
+        return $data;
     }
 
     public function medicalClinic(Clinic $clinic): array

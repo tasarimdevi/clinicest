@@ -159,4 +159,9 @@
             </x-button>
         </div>
     </div>
+
+    <script type="application/ld+json">{!! json_encode(app(\App\Services\SchemaService::class)->breadcrumbs([
+        ['name' => __('nav.home'), 'url' => route('home')],
+        ['name' => $country->name],
+    ]), JSON_UNESCAPED_SLASHES) !!}</script>
 </div>

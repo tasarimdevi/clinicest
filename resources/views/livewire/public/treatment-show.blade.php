@@ -52,7 +52,7 @@
                     <p class="mt-3">{{ $summary }}</p>
                 @endif
                 @if ($body = $treatment->getTranslation('body', app()->getLocale()))
-                    <p class="mt-3">{{ $body }}</p>
+                    <div class="mt-3">{!! $body !!}</div>
                 @endif
             </div>
         @endif
