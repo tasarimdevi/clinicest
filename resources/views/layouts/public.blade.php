@@ -12,6 +12,8 @@
     <title>{{ $title ?? config('app.name') }}</title>
     <meta name="description" content="{{ $description ?? '' }}">
 
+    <link rel="icon" type="image/svg+xml" href="{{ asset('favicon.svg') }}">
+
     <link rel="canonical" href="{{ $seo->canonicalForRequest(request()) }}">
     @foreach ($localeAlternates as $hreflang => $href)
         <link rel="alternate" hreflang="{{ $hreflang }}" href="{{ $href }}">
@@ -33,8 +35,12 @@
     <header x-data="{ mobileOpen: false }"
         class="sticky top-0 z-40 border-b border-white/10 bg-brand-950/90 backdrop-blur-xl">
         <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-            <a href="{{ route('home') }}" class="font-serif text-xl font-medium tracking-tight text-ink-50">
-                Clin<span class="text-gold-400">i</span>cest
+            <a href="{{ route('home') }}" class="flex items-center gap-2.5 font-serif text-xl font-medium tracking-tight text-ink-50">
+                <svg class="h-7 w-7 shrink-0" viewBox="0 0 100 100" aria-hidden="true">
+                    <circle cx="50" cy="37" r="5.5" fill="#FFFFFF"/>
+                    <path d="M31 49 Q50 72 69 49" fill="none" stroke="#C9A15A" stroke-width="9" stroke-linecap="round"/>
+                </svg>
+                Clinicest
             </a>
 
             <nav class="hidden items-center gap-8 lg:flex">
