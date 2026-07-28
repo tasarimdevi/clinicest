@@ -69,18 +69,22 @@ class RealContentSeeder extends Seeder
 
         $treatmentDefs = [
             ['slug' => 'dental-implants', 'name' => 'Dental Implants', 'category' => $restorative, 'min' => 45000, 'max' => 90000],
-            ['slug' => 'all-on-4', 'name' => 'All-on-4', 'category' => $restorative, 'min' => 250000, 'max' => 400000],
-            ['slug' => 'hollywood-smile', 'name' => 'Hollywood Smile', 'category' => $cosmetic, 'min' => 180000, 'max' => 350000],
+            ['slug' => 'all-on-4', 'name' => 'All-on-4', 'category' => $restorative, 'min' => 350000, 'max' => 650000, 'trips' => 2],
+            ['slug' => 'hollywood-smile', 'name' => 'Hollywood Smile', 'category' => $cosmetic, 'min' => 250000, 'max' => 600000],
             ['slug' => 'veneers', 'name' => 'Veneers', 'category' => $cosmetic, 'min' => 15000, 'max' => 35000],
-            ['slug' => 'teeth-whitening', 'name' => 'Teeth Whitening', 'category' => $cosmetic, 'min' => 8000, 'max' => 15000],
-            ['slug' => 'invisalign', 'name' => 'Invisalign', 'category' => $restorative, 'min' => 200000, 'max' => 350000],
+            ['slug' => 'teeth-whitening', 'name' => 'Teeth Whitening', 'category' => $cosmetic, 'min' => 15000, 'max' => 35000],
+            ['slug' => 'invisalign', 'name' => 'Invisalign', 'category' => $restorative, 'min' => 200000, 'max' => 350000, 'trips' => 2],
         ];
 
-        // Per-treatment editorial copy. Only "dental-implants" has real,
-        // researched content so far (see docs/06-seo-architecture.md §1 —
-        // this is the priority pillar); the rest still use the generic
-        // fallback below and need the same treatment before they carry
-        // real long-form value (no thin/duplicate content per §3 EEAT).
+        // Per-treatment editorial copy — every treatment now has real,
+        // researched content (see docs/06-seo-architecture.md §1 for the
+        // pillar priority order this followed). Prices above were also
+        // corrected against 2026 market research where the original
+        // placeholder figures were noticeably off (all-on-4, hollywood
+        // smile, teeth whitening) — see docs/10-roadmap.md §3, these are
+        // still reference figures pending real onboarded-clinic pricing,
+        // not live contracts, so keeping them accurate matters more than
+        // keeping them unchanged.
         $treatmentCopy = [
             'dental-implants' => [
                 'summary' => 'Dental implants in Turkey cost €450–900 per tooth (around £400–800), roughly 65-75% less than UK or German private prices, from clinics using the same Straumann and Nobel Biocare implant systems used at home.',
@@ -92,6 +96,59 @@ class RealContentSeeder extends Seeder
                     .'<p>If you\'re missing most or all of your teeth in an arch rather than one or two, a full-arch solution like <a href="/treatments/all-on-4">All-on-4</a> usually works out cheaper per tooth and requires less bone than placing individual implants across the whole arch — see our All-on-4 vs All-on-6 comparison for which fits your case.</p>'
                     .'<h2>What to check before you book</h2>'
                     .'<p>Ask directly which implant brand and warranty terms apply, confirm the dentist is registered with the Turkish Dental Association (TDB), and get your treatment plan and final price in writing before you travel. Every clinic listed on Clinicest has passed a documented licensing and sterilisation check — see <a href="/how-it-works">How It Works</a> for the full standard.</p>',
+            ],
+            'all-on-4' => [
+                'summary' => 'All-on-4 full-arch restoration in Turkey costs €3,500–6,500 per arch (both arches: €7,000–12,000) — around 70-80% less than UK or US private prices — replacing a full arch of missing teeth with just four implants over two trips.',
+                'body' => '<h2>What All-on-4 actually costs</h2>'
+                    .'<p>A single arch (upper or lower) typically costs €3,500–6,500 in Turkey, with both arches together running €7,000–12,000 — set against equivalent full-arch implant work in the UK or US that easily reaches double or triple that. Four strategically angled implants per arch support a full fixed bridge, avoiding the bone grafting that individual implants across a whole arch would often need.</p>'
+                    .'<h2>Why it takes two trips</h2>'
+                    .'<p>Unlike single implants, All-on-4 normally needs two visits: the first (5-7 days) covers any extractions, 3D imaging, placing the four implants, and fitting a temporary bridge you can eat and smile with immediately. The second visit, 3-6 months later once the implants have integrated with the bone, is for fitting your final, permanent bridge — usually just 2-3 days.</p>'
+                    .'<h2>All-on-4 vs. All-on-6</h2>'
+                    .'<p>All-on-6 uses two extra implants for additional support and is often recommended for lower bone density or maximum long-term durability, at a higher cost. All-on-4 suits most patients with reasonable bone density who want a less invasive, faster, and more affordable full-arch solution — see our <a href="/treatments/dental-implants">Dental Implants</a> page if you only need one or two teeth replaced rather than a full arch.</p>'
+                    .'<h2>What to check before you book</h2>'
+                    .'<p>Confirm exactly how many implants and which brand are included in your quote, whether a bone graft is likely once your clinic reviews your scans, and get the total price for both trips in writing — some quotes only cover the first visit.</p>',
+            ],
+            'hollywood-smile' => [
+                'summary' => 'A full Hollywood Smile (veneers across the visible smile) costs €2,500–6,000 in Turkey using the same E-Max and zirconia materials used in the UK, where the same treatment runs £10,000–30,000+ — typically completed in a single 5-10 day trip.',
+                'body' => '<h2>What a Hollywood Smile actually costs</h2>'
+                    .'<p>A full set of veneers (usually 16-20 visible teeth for a complete smile makeover) costs €2,500–6,000 in Turkey, against £10,000–30,000+ for the same E-Max or zirconia veneers in the UK. As with implants, the gap comes from lower clinic overheads, not lower-grade materials.</p>'
+                    .'<h2>How long does it take?</h2>'
+                    .'<p>Most Hollywood Smile cases are completed in a single trip of 5-10 days: digital smile design and tooth preparation early on, temporary veneers while your permanent set is fabricated, then final fitting before you fly home.</p>'
+                    .'<h2>E-Max vs. zirconia</h2>'
+                    .'<p>E-Max veneers are thinner and more translucent, giving a more natural look, and typically last 10-15 years. Zirconia is more opaque but stronger and more chip-resistant, often preferred when a tooth needs more coverage or extra durability. Your clinic will recommend one based on your teeth and goals, not a single "better" answer.</p>'
+                    .'<h2>What to check before you book</h2>'
+                    .'<p>Confirm exactly how many veneers are included in your quoted price (a partial makeover of 6-8 teeth costs less than a full 16-20 tooth set), which material is quoted, and ask to see a digital smile design mock-up before committing to the shape and shade.</p>',
+            ],
+            'veneers' => [
+                'summary' => 'Dental veneers in Turkey cost €185–290 per tooth (E-Max or zirconia), compared with $1,200–2,500 per tooth in the UK or US — for patients fixing a few teeth rather than a full smile makeover.',
+                'body' => '<h2>Veneers vs. a full Hollywood Smile</h2>'
+                    .'<p>If you only need to fix a handful of chipped, discoloured, or uneven teeth, individual veneers are usually more cost-effective than a full <a href="/treatments/hollywood-smile">Hollywood Smile</a> makeover. Pricing is per tooth: €185–290 depending on material, versus $1,200–2,500 per tooth in the UK or US.</p>'
+                    .'<h2>E-Max vs. zirconia veneers</h2>'
+                    .'<p>E-Max veneers are thin, translucent, and look closest to natural enamel — the common choice when a handful of front teeth need a subtle, natural-looking fix. Zirconia is more opaque and more durable, often chosen when a tooth needs more coverage or extra strength.</p>'
+                    .'<h2>How many trips does it take?</h2>'
+                    .'<p>Most veneer cases on a few teeth are completed in a single trip of 5-7 days: preparation and temporary veneers early on, then your final set fitted before you leave.</p>'
+                    .'<h2>What to check before you book</h2>'
+                    .'<p>Confirm the exact number of teeth and material in your quote, and ask to see your dentist\'s portfolio of similarly-sized cases — veneer work depends heavily on the dentist\'s aesthetic skill, not just the material.</p>',
+            ],
+            'teeth-whitening' => [
+                'summary' => 'Professional teeth whitening in Turkey costs €150–350 for a full session, compared with £300–850 in the UK — roughly 60-75% less, and usually combined with another treatment during the same trip rather than booked alone.',
+                'body' => '<h2>What professional whitening costs</h2>'
+                    .'<p>A full in-clinic whitening session (laser, BEYOND, or Philips Zoom) costs €150–350 in Turkey, against £300–850 for the same treatment in the UK — savings of roughly 60-75%. Results are visible immediately and typically last 1-3 years depending on diet and habits.</p>'
+                    .'<h2>Is it worth a trip on its own?</h2>'
+                    .'<p>Realistically, whitening alone rarely justifies international travel — it\'s the treatment patients most often add to a bigger trip (implants, veneers, or a check-up) rather than book by itself. If whitening is your only need, a reputable local dentist is usually the simpler choice.</p>'
+                    .'<h2>What to expect</h2>'
+                    .'<p>A session typically takes 60-90 minutes, with results visible immediately. Some mild, temporary sensitivity in the following day or two is normal and settles on its own.</p>',
+            ],
+            'invisalign' => [
+                'summary' => 'Invisalign clear aligners in Turkey cost €1,800–3,500 for a full course, compared with £1,500–5,500 in the UK — typically requiring 2-3 in-person visits over the course of treatment.',
+                'body' => '<h2>What Invisalign actually costs</h2>'
+                    .'<p>A full Invisalign course in Turkey costs €1,800–3,500, against £1,500–5,500 in the UK — savings of roughly 50-65%, using the same Invisalign aligner system and digital scanning technology.</p>'
+                    .'<h2>How the trips work</h2>'
+                    .'<p>Unlike a single-visit treatment, Invisalign is a months-long process: an initial visit for scanning and starting your aligner series, then periodic check-ins to track progress, and a final visit once treatment is complete. Confirm with your clinic exactly how many in-person visits your specific plan needs, and whether remote photo check-ins can cover any of them.</p>'
+                    .'<h2>Is it right for you?</h2>'
+                    .'<p>Invisalign suits mild-to-moderate misalignment and spacing issues; more complex bite corrections may still need traditional braces or a combination approach. Your clinic\'s 3D scan and treatment plan will confirm whether Invisalign alone will get you the result you want.</p>'
+                    .'<h2>What to check before you book</h2>'
+                    .'<p>Ask exactly how many aligner trays and in-person visits are included in your quoted price, and how check-ins work between visits if you won\'t be back in Turkey for months at a time.</p>',
             ],
         ];
 
@@ -110,7 +167,7 @@ class RealContentSeeder extends Seeder
                 'category_id' => $t['category']->id,
                 'avg_duration_min' => 90,
                 'recovery_days' => 7,
-                'trips_required' => 1,
+                'trips_required' => $t['trips'] ?? 1,
                 'base_price_min' => $t['min'],
                 'base_price_max' => $t['max'],
                 'currency' => 'EUR',
@@ -195,6 +252,95 @@ class RealContentSeeder extends Seeder
             'question' => ['en' => 'What happens if I have a complication after I return home?'],
             'answer' => ['en' => 'Ask your matched clinic about this before you book — reputable clinics give a written aftercare plan and stay reachable for follow-up questions, and can coordinate with your home dentist if in-person care is needed.'],
             'sort' => 4,
+        ]);
+
+        Faq::create([
+            'faqable_type' => Treatment::class,
+            'faqable_id' => $treatments['all-on-4']->id,
+            'question' => ['en' => 'How much does All-on-4 cost in Turkey?'],
+            'answer' => ['en' => 'A single arch typically costs €3,500–6,500 in Turkey; both arches together run €7,000–12,000 — roughly 70-80% less than equivalent UK or US private pricing.'],
+            'sort' => 1,
+        ]);
+        Faq::create([
+            'faqable_type' => Treatment::class,
+            'faqable_id' => $treatments['all-on-4']->id,
+            'question' => ['en' => 'How many trips does All-on-4 require?'],
+            'answer' => ['en' => 'Two trips: an initial 5-7 day visit for implant placement and a temporary bridge, then a second 2-3 day visit 3-6 months later for your final, permanent bridge once healing is complete.'],
+            'sort' => 2,
+        ]);
+        Faq::create([
+            'faqable_type' => Treatment::class,
+            'faqable_id' => $treatments['all-on-4']->id,
+            'question' => ['en' => "What's the difference between All-on-4 and All-on-6?"],
+            'answer' => ['en' => 'All-on-6 adds two more implants for extra support, usually recommended for lower bone density or maximum long-term durability; All-on-4 is less invasive and more affordable for patients with adequate bone density.'],
+            'sort' => 3,
+        ]);
+
+        Faq::create([
+            'faqable_type' => Treatment::class,
+            'faqable_id' => $treatments['hollywood-smile']->id,
+            'question' => ['en' => 'How much does a Hollywood Smile cost in Turkey?'],
+            'answer' => ['en' => 'A full set of veneers typically costs €2,500–6,000 in Turkey, compared with £10,000–30,000+ for the same treatment in the UK.'],
+            'sort' => 1,
+        ]);
+        Faq::create([
+            'faqable_type' => Treatment::class,
+            'faqable_id' => $treatments['hollywood-smile']->id,
+            'question' => ['en' => 'How many teeth does a Hollywood Smile cover?'],
+            'answer' => ['en' => 'Most full smile makeovers cover 16-20 visible teeth, though partial cases of 6-8 teeth are common and cost proportionally less — confirm the exact tooth count in your quote.'],
+            'sort' => 2,
+        ]);
+        Faq::create([
+            'faqable_type' => Treatment::class,
+            'faqable_id' => $treatments['hollywood-smile']->id,
+            'question' => ['en' => 'E-Max or zirconia — which is better?'],
+            'answer' => ['en' => 'Neither is universally better: E-Max is thinner and more natural-looking, zirconia is stronger and more chip-resistant. Your clinic will recommend one based on your teeth and goals.'],
+            'sort' => 3,
+        ]);
+
+        Faq::create([
+            'faqable_type' => Treatment::class,
+            'faqable_id' => $treatments['veneers']->id,
+            'question' => ['en' => 'How much do veneers cost in Turkey?'],
+            'answer' => ['en' => 'Individual veneers cost €185–290 per tooth in Turkey (E-Max or zirconia), compared with $1,200–2,500 per tooth in the UK or US.'],
+            'sort' => 1,
+        ]);
+        Faq::create([
+            'faqable_type' => Treatment::class,
+            'faqable_id' => $treatments['veneers']->id,
+            'question' => ['en' => "What's the difference between veneers and a Hollywood Smile?"],
+            'answer' => ['en' => 'Veneers on a handful of teeth suit patients fixing specific chips or discoloration; a Hollywood Smile is a full 16-20 tooth makeover for a complete new smile — the per-tooth price is similar, but the case size and total cost differ.'],
+            'sort' => 2,
+        ]);
+
+        Faq::create([
+            'faqable_type' => Treatment::class,
+            'faqable_id' => $treatments['teeth-whitening']->id,
+            'question' => ['en' => 'How much is teeth whitening in Turkey?'],
+            'answer' => ['en' => 'A full professional whitening session costs €150–350 in Turkey, against £300–850 in the UK — around 60-75% less.'],
+            'sort' => 1,
+        ]);
+        Faq::create([
+            'faqable_type' => Treatment::class,
+            'faqable_id' => $treatments['teeth-whitening']->id,
+            'question' => ['en' => 'Should I travel to Turkey just for teeth whitening?'],
+            'answer' => ['en' => "Usually not on its own — the travel cost rarely makes sense for whitening alone. It's most commonly combined with a larger treatment like implants or veneers during the same trip."],
+            'sort' => 2,
+        ]);
+
+        Faq::create([
+            'faqable_type' => Treatment::class,
+            'faqable_id' => $treatments['invisalign']->id,
+            'question' => ['en' => 'How much does Invisalign cost in Turkey?'],
+            'answer' => ['en' => 'A full course costs €1,800–3,500 in Turkey, compared with £1,500–5,500 in the UK — savings of roughly 50-65%.'],
+            'sort' => 1,
+        ]);
+        Faq::create([
+            'faqable_type' => Treatment::class,
+            'faqable_id' => $treatments['invisalign']->id,
+            'question' => ['en' => 'How many trips does Invisalign treatment need?'],
+            'answer' => ['en' => 'Typically 2-3: an initial scanning/fitting visit, one or more progress check-ins, and a final visit — though some clinics support remote photo check-ins between trips.'],
+            'sort' => 2,
         ]);
 
         // Global site FAQs (faqable left null) — powers the /faq hub's
