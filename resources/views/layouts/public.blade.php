@@ -34,17 +34,17 @@
          independent of light/dark theme — see docs/03-design-system.md §1. --}}
     <header x-data="{ mobileOpen: false }"
         class="sticky top-0 z-40 border-b border-white/10 bg-brand-950/90 backdrop-blur-xl">
-        <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-            <a href="{{ route('home') }}" class="flex items-center gap-3">
-                <span class="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-gold-400/25">
-                    <svg class="h-6 w-6" viewBox="0 0 100 100" aria-hidden="true">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 sm:py-5 lg:px-8">
+            <a href="{{ route('home') }}" class="flex items-center gap-4">
+                <span class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl border border-gold-400/25 sm:h-16 sm:w-16">
+                    <svg class="h-8 w-8 sm:h-9 sm:w-9" viewBox="0 0 100 100" aria-hidden="true">
                         <circle cx="50" cy="35" r="6" class="fill-white"/>
                         <path d="M29 47 Q50 73 71 47" fill="none" stroke-width="10" stroke-linecap="round" class="stroke-gold-400"/>
                     </svg>
                 </span>
                 <span class="flex flex-col leading-tight">
-                    <span class="font-serif text-xl font-medium tracking-tight text-ink-50">Clinicest</span>
-                    <span class="font-mono text-[10px] font-semibold uppercase tracking-[0.2em] text-gold-400">{{ __('İstanbul Dental Care') }}</span>
+                    <span class="font-serif text-3xl font-medium tracking-tight text-ink-50 sm:text-4xl">Clinicest</span>
+                    <span class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-gold-400">{{ __('İstanbul Dental Care') }}</span>
                 </span>
             </a>
 
