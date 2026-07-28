@@ -265,7 +265,11 @@
             @endphp
             @foreach ($statCards as $s)
                 <div class="bg-brand-900/40 px-6 py-8 text-center backdrop-blur-sm">
-                    <p class="font-mono text-4xl font-bold tabular-nums text-gold-300 sm:text-5xl">
+                    <p @class([
+                        'font-mono font-bold tabular-nums text-gold-300',
+                        'text-4xl sm:text-5xl' => $s['v'] !== null,
+                        'text-2xl sm:text-3xl whitespace-nowrap' => $s['v'] === null,
+                    ])>
                         @if ($s['v'] !== null)
                             <x-count-up :to="$s['v']" :suffix="$s['suffix']" :decimals="$s['dec']" />
                         @else
