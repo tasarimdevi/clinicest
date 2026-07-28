@@ -44,7 +44,7 @@
                 </span>
                 <span class="flex flex-col leading-tight">
                     <span class="font-serif text-3xl font-medium tracking-tight text-ink-50 sm:text-4xl">Clinicest</span>
-                    <span class="font-mono text-xs font-semibold uppercase tracking-[0.2em] text-gold-400">{{ __('İstanbul Dental Care') }}</span>
+                    <span class="font-mono text-[9px] font-semibold uppercase tracking-wide text-gold-400">{{ __('İstanbul Dental Care') }}</span>
                 </span>
             </a>
 
