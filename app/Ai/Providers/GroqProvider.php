@@ -65,7 +65,9 @@ class GroqProvider implements AiProvider
             ->post(self::ENDPOINT, $payload);
 
         if ($response->failed()) {
-            throw new RuntimeException("Groq API request failed: {$response->status()} {$response->body()}");
+            $body = substr($response->body(), 0, 300);
+
+            throw new RuntimeException("Groq API request failed: {$response->status()} {$body}");
         }
 
         return $response->json();

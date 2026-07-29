@@ -15,6 +15,7 @@ use App\Models\ChatSession;
 use App\Models\ChatSetting;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Str;
 use Livewire\Component;
 use Throwable;
 
@@ -102,7 +103,7 @@ class ChatWidget extends Component
             'model' => $outcome['model'],
             'latency_ms' => (int) ((microtime(true) - $start) * 1000),
             'flagged' => $outcome['flagged'],
-            'flag_reason' => $outcome['flag_reason'],
+            'flag_reason' => $outcome['flag_reason'] !== null ? Str::limit($outcome['flag_reason'], 250, '') : null,
         ]);
 
         $session->increment('message_count');
