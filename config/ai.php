@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 use App\Ai\Providers\ClaudeProvider;
+use App\Ai\Providers\GroqProvider;
 
 /*
 |--------------------------------------------------------------------------
@@ -22,6 +23,16 @@ return [
             'api_key' => env('ANTHROPIC_API_KEY'),
             'model' => env('AI_CLAUDE_MODEL', 'claude-opus-4-8'),
             'fast_model' => env('AI_CLAUDE_FAST_MODEL', 'claude-haiku-4-5-20251001'),
+        ],
+
+        // Used explicitly by the chat assistant (AiService::provider('groq'))
+        // for its free-tier LLM — 'default' above stays 'claude' so this
+        // never silently repoints any other AI feature.
+        'groq' => [
+            'driver' => GroqProvider::class,
+            'api_key' => env('GROQ_API_KEY'),
+            'model' => env('AI_GROQ_MODEL', 'llama-3.3-70b-versatile'),
+            'fast_model' => env('AI_GROQ_FAST_MODEL', 'llama-3.1-8b-instant'),
         ],
     ],
 

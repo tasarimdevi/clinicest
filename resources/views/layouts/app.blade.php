@@ -52,6 +52,9 @@
                 $navUser?->can('billing.view')
                     ? ['label' => __('Billing'), 'route' => 'admin.billing.index', 'pattern' => 'admin.billing.*']
                     : null,
+                $navUser?->can('settings.manage')
+                    ? ['label' => __('Chat Assistant'), 'route' => 'admin.chat-settings.index', 'pattern' => 'admin.chat-settings.*']
+                    : null,
             ])),
             request()->routeIs('clinic.*') && $currentClinic => array_values(array_filter([
                 ['label' => __('Dashboard'), 'route' => 'clinic.dashboard', 'params' => [$currentClinic], 'pattern' => 'clinic.dashboard'],

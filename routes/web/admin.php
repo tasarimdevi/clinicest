@@ -5,6 +5,7 @@ declare(strict_types=1);
 use App\Livewire\Admin\BeforeAfterModeration;
 use App\Livewire\Admin\Billing;
 use App\Livewire\Admin\Categories;
+use App\Livewire\Admin\ChatSettings;
 use App\Livewire\Admin\ClinicApplications;
 use App\Livewire\Admin\ClinicForm;
 use App\Livewire\Admin\Clinics;
@@ -79,4 +80,5 @@ Route::middleware(['auth', 'can:access-admin'])->prefix('admin')->name('admin.')
     Route::get('/reviews', ReviewModeration::class)->name('reviews.index');
     Route::get('/before-after', BeforeAfterModeration::class)->name('before-after.index');
     Route::get('/billing', Billing::class)->name('billing.index');
+    Route::get('/chat-settings', ChatSettings::class)->name('chat-settings.index');
 });

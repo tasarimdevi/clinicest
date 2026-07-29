@@ -161,6 +161,8 @@
         </a>
     </div>
 
+    <livewire:public.chat-widget />
+
     @livewireScripts
 </body>
 </html>

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Ai\AiService;
 use App\Models\Country;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -20,6 +21,10 @@ class AppServiceProvider extends ServiceProvider
         // than Imagick — it's the extension available in this environment
         // and covers the JPEG/WebP work we need (see ImageProcessor).
         $this->app->bind(ImageManager::class, fn () => new ImageManager(new Driver));
+
+        // config/ai.php's array can't be autowired as a constructor param,
+        // so AiService needs an explicit binding to be resolvable at all.
+        $this->app->singleton(AiService::class, fn () => new AiService(config('ai')));
     }
 
     /**

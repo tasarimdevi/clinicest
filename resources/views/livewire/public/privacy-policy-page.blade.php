@@ -37,6 +37,9 @@
         <h2>{{ __('How long we keep it') }}</h2>
         <p>{{ __('We keep enquiry data for as long as needed to provide the matching service and respond to your request, or until you ask us to erase it, whichever comes first.') }}</p>
 
+        <h2>{{ __('AI chat assistant') }}</h2>
+        <p>{{ __('If you use the AI chat widget on our site, your messages are processed by Groq, a US-based AI provider, to generate responses — this involves transferring your message data outside the country you live in. We mask obvious personal identifiers (phone numbers, email addresses, ID numbers) from your messages before they are sent. Conversations are stored for support quality and audit purposes under the same retention approach as other enquiry data, and may be linked to a quote request if you choose to submit one through the chat.') }}</p>
+
         <h2>{{ __('Cookies') }}</h2>
         <p>{{ __('The site currently uses only a session cookie required for the site to function (e.g. keeping a form\'s state while you fill it in). We do not currently run third-party analytics or advertising cookies.') }}</p>
 
