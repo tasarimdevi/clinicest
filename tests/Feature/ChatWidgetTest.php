@@ -91,6 +91,32 @@ it('replaces the reply with a safe fallback when the model states an unverified 
     expect($assistantMessage->original_draft)->toContain('2500');
 });
 
+it('degrades to a safe fallback instead of a 500 when Groq rejects a malformed tool call', function () {
+    ChatSetting::current()->update(['enabled' => true]);
+
+    Http::fake([
+        'https://api.groq.com/*' => Http::response([
+            'error' => [
+                'message' => "Failed to call a function. Please adjust your prompt.",
+                'type' => 'invalid_request_error',
+                'code' => 'tool_use_failed',
+            ],
+        ], 400),
+    ]);
+
+    Livewire::test(ChatWidget::class)
+        ->set('draft', 'implant fiyatlari nedir')
+        ->call('send')
+        ->assertHasNoErrors();
+
+    $assistantMessage = ChatMessage::where('role', 'assistant')->first();
+
+    expect($assistantMessage)->not->toBeNull();
+    expect($assistantMessage->flagged)->toBeTrue();
+    expect($assistantMessage->flag_reason)->toContain('groq call failed');
+    expect($assistantMessage->content)->toBe(\App\Ai\Guardrails\ChatResponseVerifier::fallback());
+});
+
 it('stops accepting messages once the per-session cap is reached', function () {
     ChatSetting::current()->update(['enabled' => true, 'max_messages_per_session' => 1]);
 
