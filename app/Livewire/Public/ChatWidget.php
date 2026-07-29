@@ -32,6 +32,12 @@ use Throwable;
  */
 class ChatWidget extends Component
 {
+    // Llama models routinely chain more than one tool call per turn (e.g.
+    // search_treatments -> get_cost_estimate using what it found) -- this
+    // bounds how many rounds converse() will follow before falling back,
+    // rather than only supporting a single round.
+    private const MAX_TOOL_ROUNDS = 4;
+
     public bool $enabled = false;
 
     public ?int $chatSessionId = null;
@@ -114,12 +120,12 @@ class ChatWidget extends Component
     }
 
     /**
-     * Runs the Groq round-trip(s) (with one tool-call round if the model asks
-     * for one) and the numeric-claim guardrail. Never lets a Groq/tool
-     * failure crash the request — a malformed tool call or a transient API
-     * error degrades to a safe fallback message instead of a 500, since an
-     * external LLM call is exactly the kind of thing that can fail in ways
-     * this feature must not let take the whole page down with it.
+     * Runs the Groq round-trip(s) — looping through up to MAX_TOOL_ROUNDS of
+     * tool calls, since models routinely chain more than one — and the
+     * numeric-claim guardrail. Never lets a Groq/tool failure crash the
+     * request: a malformed tool call, a transient API error, or the model
+     * exhausting its tool-call rounds without ever producing text all
+     * degrade to a safe fallback message instead of a 500 or a blank reply.
      *
      * @return array{content: string, draft: string, flagged: bool, flag_reason: ?string,
      *     tool_name: ?string, tool_input: ?array, tool_output: ?array, model: ?string, tokens_used: int}
@@ -144,15 +150,21 @@ class ChatWidget extends Component
             /** @var GroqProvider $groq */
             $groq = app(AiService::class)->provider('groq');
 
-            $response = $groq->chat($groqMessages, ['tools' => $tools->definitions(), 'tool_choice' => 'auto']);
-            $choice = $response['choices'][0]['message'] ?? [];
-
             $amounts = [];
             $toolName = null;
             $toolInput = null;
             $toolOutput = null;
+            $response = [];
+            $choice = [];
 
-            if (! empty($choice['tool_calls'])) {
+            for ($round = 0; $round < self::MAX_TOOL_ROUNDS; $round++) {
+                $response = $groq->chat($groqMessages, ['tools' => $tools->definitions(), 'tool_choice' => 'auto']);
+                $choice = $response['choices'][0]['message'] ?? [];
+
+                if (empty($choice['tool_calls'])) {
+                    break;
+                }
+
                 $groqMessages[] = $choice;
 
                 foreach ($choice['tool_calls'] as $call) {
@@ -171,12 +183,13 @@ class ChatWidget extends Component
                         'content' => json_encode($result['result']),
                     ];
                 }
-
-                $response = $groq->chat($groqMessages, ['tools' => $tools->definitions(), 'tool_choice' => 'auto']);
-                $choice = $response['choices'][0]['message'] ?? [];
             }
 
             $draft = (string) ($choice['content'] ?? '');
+
+            if ($draft === '') {
+                return $fallback('model exhausted tool-call rounds without a text reply');
+            }
             $verified = (new ChatResponseVerifier)->verify($draft, $amounts);
 
             return [

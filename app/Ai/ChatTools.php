@@ -48,7 +48,7 @@ class ChatTools
                 'type' => 'function',
                 'function' => [
                     'name' => 'get_cost_estimate',
-                    'description' => "Get Clinicest's own price-range estimate (Turkey vs. home country) for a treatment, by treatment slug and optional 2-letter country code.",
+                    'description' => "Get Clinicest's own price-range estimate (Turkey vs. home country) for a treatment, by treatment slug and optional 2-letter country code. Always call search_treatments first to get a real slug — never guess one.",
                     'parameters' => [
                         'type' => 'object',
                         'properties' => [
@@ -109,9 +109,21 @@ class ChatTools
     {
         $query = (string) ($args['query'] ?? '');
 
+        // The model doesn't reliably pass a single keyword ("implant") over
+        // a short phrase ("implant prices") — matching on the whole phrase
+        // as one substring would miss "Dental Implants" entirely, so match
+        // on any individual word instead.
+        $words = array_filter(preg_split('/\s+/', trim($query)) ?: []);
+
         $treatments = Treatment::query()
             ->where('status', 'published')
-            ->where(fn ($q) => $q->where('name', 'like', "%{$query}%")->orWhere('summary', 'like', "%{$query}%"))
+            ->where(function ($q) use ($words, $query) {
+                $q->where('name', 'like', "%{$query}%")->orWhere('summary', 'like', "%{$query}%");
+
+                foreach ($words as $word) {
+                    $q->orWhere('name', 'like', "%{$word}%")->orWhere('summary', 'like', "%{$word}%");
+                }
+            })
             ->limit(5)
             ->get();
 

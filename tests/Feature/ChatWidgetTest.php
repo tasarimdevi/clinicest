@@ -117,6 +117,56 @@ it('degrades to a safe fallback instead of a 500 when Groq rejects a malformed t
     expect($assistantMessage->content)->toBe(\App\Ai\Guardrails\ChatResponseVerifier::fallback());
 });
 
+it('follows a second chained tool call instead of showing a blank reply', function () {
+    ChatSetting::current()->update(['enabled' => true]);
+
+    Http::fake([
+        'https://api.groq.com/*' => Http::sequence()
+            ->push([
+                'model' => 'llama-3.3-70b-versatile',
+                'choices' => [[
+                    'message' => [
+                        'role' => 'assistant',
+                        'tool_calls' => [[
+                            'id' => 'call_1',
+                            'function' => ['name' => 'search_treatments', 'arguments' => json_encode(['query' => 'implant'])],
+                        ]],
+                    ],
+                ]],
+                'usage' => ['total_tokens' => 50],
+            ])
+            ->push([
+                'model' => 'llama-3.3-70b-versatile',
+                'choices' => [[
+                    'message' => [
+                        'role' => 'assistant',
+                        'tool_calls' => [[
+                            'id' => 'call_2',
+                            'function' => ['name' => 'get_cost_estimate', 'arguments' => json_encode(['treatment_slug' => 'dental-implants'])],
+                        ]],
+                    ],
+                ]],
+                'usage' => ['total_tokens' => 50],
+            ])
+            ->push([
+                'model' => 'llama-3.3-70b-versatile',
+                'choices' => [[
+                    'message' => ['role' => 'assistant', 'content' => 'İmplant fiyatları hakkında bilgi verebilirim.'],
+                ]],
+                'usage' => ['total_tokens' => 60],
+            ]),
+    ]);
+
+    Livewire::test(ChatWidget::class)
+        ->set('draft', 'implant fiyatlari nedir')
+        ->call('send');
+
+    $assistantMessage = ChatMessage::where('role', 'assistant')->first();
+
+    expect($assistantMessage->content)->toBe('İmplant fiyatları hakkında bilgi verebilirim.');
+    expect($assistantMessage->flagged)->toBeFalse();
+});
+
 it('stops accepting messages once the per-session cap is reached', function () {
     ChatSetting::current()->update(['enabled' => true, 'max_messages_per_session' => 1]);
 
