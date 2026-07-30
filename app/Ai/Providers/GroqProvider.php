@@ -68,6 +68,12 @@ class GroqProvider implements AiProvider
             ->post(self::ENDPOINT, $payload);
 
         if ($response->failed()) {
+            $error = $response->json('error') ?? [];
+
+            if (($error['code'] ?? null) === 'tool_use_failed' && isset($error['failed_generation'])) {
+                throw new GroqToolCallFailedException($error['failed_generation']);
+            }
+
             $body = substr($response->body(), 0, 300);
 
             throw new RuntimeException("Groq API request failed: {$response->status()} {$body}");

@@ -9,6 +9,7 @@ use App\Models\ChatMessage;
 use App\Models\ChatSession;
 use App\Models\ChatSetting;
 use App\Models\Lead;
+use App\Models\Treatment;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
@@ -118,6 +119,46 @@ it('degrades to a safe fallback instead of a 500 when Groq rejects a malformed t
     expect($assistantMessage->flagged)->toBeTrue();
     expect($assistantMessage->flag_reason)->toContain('groq call failed');
     expect($assistantMessage->content)->toBe(ChatResponseVerifier::fallback());
+});
+
+it('recovers when Groq rejects llama\'s native-format tool call, instead of always falling back', function () {
+    ChatSetting::current()->update(['enabled' => true]);
+
+    Treatment::create([
+        'slug' => 'dental-implants', 'name' => ['en' => 'Dental Implants'], 'currency' => 'EUR', 'status' => 'published',
+    ]);
+
+    Http::fake([
+        'https://api.groq.com/*' => Http::sequence()
+            // Groq rejects the turn outright because the model emitted its
+            // native <function=...> tag instead of a structured tool call —
+            // this is the exact shape seen in production logs.
+            ->push([
+                'error' => [
+                    'message' => "Failed to call a function. Please adjust your prompt. See 'failed_generation' for more details.",
+                    'type' => 'invalid_request_error',
+                    'code' => 'tool_use_failed',
+                    'failed_generation' => '<function=search_treatments{"query": "implant"}</function>',
+                ],
+            ], 400)
+            ->push([
+                'model' => 'llama-3.3-70b-versatile',
+                'choices' => [[
+                    'message' => ['role' => 'assistant', 'content' => 'İmplant tedavimiz mevcut, size yardımcı olabilirim.'],
+                ]],
+                'usage' => ['total_tokens' => 70],
+            ]),
+    ]);
+
+    Livewire::test(ChatWidget::class)
+        ->set('draft', 'implant fiyatlari nedir')
+        ->call('send');
+
+    $assistantMessage = ChatMessage::where('role', 'assistant')->first();
+
+    expect($assistantMessage->content)->toBe('İmplant tedavimiz mevcut, size yardımcı olabilirim.');
+    expect($assistantMessage->flagged)->toBeFalse();
+    expect($assistantMessage->tool_name)->toBe('search_treatments');
 });
 
 it('follows a second chained tool call instead of showing a blank reply', function () {
