@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Ai\Guardrails\ChatResponseVerifier;
 use App\Livewire\Public\ChatWidget;
 use App\Models\ChatMessage;
 use App\Models\ChatSession;
@@ -97,7 +98,7 @@ it('degrades to a safe fallback instead of a 500 when Groq rejects a malformed t
     Http::fake([
         'https://api.groq.com/*' => Http::response([
             'error' => [
-                'message' => "Failed to call a function. Please adjust your prompt.",
+                'message' => 'Failed to call a function. Please adjust your prompt.',
                 'type' => 'invalid_request_error',
                 'code' => 'tool_use_failed',
             ],
@@ -114,7 +115,7 @@ it('degrades to a safe fallback instead of a 500 when Groq rejects a malformed t
     expect($assistantMessage)->not->toBeNull();
     expect($assistantMessage->flagged)->toBeTrue();
     expect($assistantMessage->flag_reason)->toContain('groq call failed');
-    expect($assistantMessage->content)->toBe(\App\Ai\Guardrails\ChatResponseVerifier::fallback());
+    expect($assistantMessage->content)->toBe(ChatResponseVerifier::fallback());
 });
 
 it('follows a second chained tool call instead of showing a blank reply', function () {
