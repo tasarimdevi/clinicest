@@ -62,7 +62,7 @@
                     <a href="{{ $localeAlternates['tr'] ?? route('home') }}" class="{{ app()->getLocale() === 'tr' ? 'text-gold-400' : 'hover:text-ink-100' }}">TR</a>
                 </div>
                 <a href="{{ route('get-quote') }}"
-                   class="hidden rounded-md bg-gold-500 px-4 py-2 text-sm font-semibold text-brand-950 shadow-card transition hover:bg-gold-400 sm:inline-flex">
+                   class="cx-lift hidden rounded-md bg-gold-500 px-4 py-2 text-sm font-semibold text-brand-950 shadow-card transition hover:bg-gold-400 sm:inline-flex">
                     {{ __('nav.get_quote') }}
                 </a>
                 <button @click="mobileOpen = !mobileOpen" class="lg:hidden" aria-label="{{ __('Menu') }}">
