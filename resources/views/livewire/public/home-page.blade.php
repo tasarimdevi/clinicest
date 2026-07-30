@@ -714,7 +714,7 @@
                 <p class="mt-5 font-mono text-sm tracking-wide text-ink-300">{{ __('home.final_cta_subtitle') }}</p>
                 <div class="mt-9 flex flex-col items-center justify-center gap-3 sm:flex-row sm:flex-wrap">
                     <a href="{{ route('get-quote') }}"
-                       class="cx-lift inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gold-500 px-7 py-4 text-base font-semibold text-brand-950 shadow-hero transition hover:bg-gold-400 sm:w-auto">
+                       class="cx-lift cx-shimmer inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gold-500 px-7 py-4 text-base font-semibold text-brand-950 shadow-hero transition hover:bg-gold-400 sm:w-auto">
                         {{ __('home.hero_cta') }}
                     </a>
                     <a href="https://wa.me/" target="_blank" rel="noopener"
