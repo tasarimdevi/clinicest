@@ -3,12 +3,14 @@
 declare(strict_types=1);
 
 use App\Ai\Guardrails\ChatResponseVerifier;
+use App\Jobs\ProcessChatReply;
 use App\Livewire\Public\ChatWidget;
 use App\Models\ChatMessage;
 use App\Models\ChatSession;
 use App\Models\ChatSetting;
 use App\Models\Lead;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
 
 beforeEach(function () {
@@ -166,6 +168,56 @@ it('follows a second chained tool call instead of showing a blank reply', functi
 
     expect($assistantMessage->content)->toBe('İmplant fiyatları hakkında bilgi verebilirim.');
     expect($assistantMessage->flagged)->toBeFalse();
+});
+
+it('dispatches ProcessChatReply and waits instead of calling Groq inline', function () {
+    ChatSetting::current()->update(['enabled' => true]);
+    Queue::fake();
+
+    Livewire::test(ChatWidget::class)
+        ->set('draft', 'implant fiyatlari nedir')
+        ->call('send')
+        ->assertSet('waiting', true);
+
+    Queue::assertPushed(ProcessChatReply::class, fn (ProcessChatReply $job) => $job->chatSessionId === ChatSession::first()->id);
+
+    // The job was faked, not run -- send() itself must never have called Groq.
+    expect(ChatMessage::where('role', 'assistant')->count())->toBe(0);
+});
+
+it('picks up the reply once ProcessChatReply has written it, via poll', function () {
+    ChatSetting::current()->update(['enabled' => true]);
+
+    $session = ChatSession::create([
+        'status' => 'open',
+        'locale' => 'en',
+        'ip_hash' => hash('sha256', 'poll-test'),
+    ]);
+
+    $userMessage = ChatMessage::create([
+        'chat_session_id' => $session->id,
+        'role' => 'user',
+        'content' => 'implant fiyatlari nedir',
+    ]);
+
+    $component = Livewire::test(ChatWidget::class)
+        ->set('chatSessionId', $session->id)
+        ->set('lastSeenMessageId', $userMessage->id)
+        ->set('waiting', true);
+
+    // Nothing written yet -- poll() must be a no-op.
+    $component->call('poll')->assertSet('waiting', true);
+
+    ChatMessage::create([
+        'chat_session_id' => $session->id,
+        'role' => 'assistant',
+        'content' => 'Merhaba! Implant fiyatları için size yardımcı olabilirim.',
+    ]);
+
+    $component->call('poll')->assertSet('waiting', false);
+
+    expect(collect($component->get('messages'))->last())
+        ->toBe(['role' => 'assistant', 'content' => 'Merhaba! Implant fiyatları için size yardımcı olabilirim.']);
 });
 
 it('stops accepting messages once the per-session cap is reached', function () {

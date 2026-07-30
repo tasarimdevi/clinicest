@@ -25,7 +25,8 @@
                 </div>
 
                 <div class="flex-1 space-y-3 overflow-y-auto p-4" x-ref="scroll"
-                     x-init="$watch('$wire.messages', () => $nextTick(() => $refs.scroll.scrollTop = $refs.scroll.scrollHeight))">
+                     x-init="$watch('$wire.messages', () => $nextTick(() => $refs.scroll.scrollTop = $refs.scroll.scrollHeight))"
+                     @if ($waiting) wire:poll.1500ms="poll" @endif>
                     @if (empty($messages))
                         <p class="text-sm text-ink-500">
                             {{ __('Hi! Ask me about treatments, the process, or costs — I can help you get a free quote.') }}
@@ -48,11 +49,13 @@
                         </div>
                     @endforeach
 
-                    <div wire:loading.flex wire:target="send" class="flex gap-1 rounded-lg bg-ink-50 px-3 py-2" style="width: fit-content">
-                        <span class="h-2 w-2 animate-bounce rounded-full bg-ink-300"></span>
-                        <span class="h-2 w-2 animate-bounce rounded-full bg-ink-300 [animation-delay:0.15s]"></span>
-                        <span class="h-2 w-2 animate-bounce rounded-full bg-ink-300 [animation-delay:0.3s]"></span>
-                    </div>
+                    @if ($waiting)
+                        <div class="flex gap-1 rounded-lg bg-ink-50 px-3 py-2" style="width: fit-content" wire:loading.class="opacity-60" wire:target="poll">
+                            <span class="h-2 w-2 animate-bounce rounded-full bg-ink-300"></span>
+                            <span class="h-2 w-2 animate-bounce rounded-full bg-ink-300 [animation-delay:0.15s]"></span>
+                            <span class="h-2 w-2 animate-bounce rounded-full bg-ink-300 [animation-delay:0.3s]"></span>
+                        </div>
+                    @endif
 
                     @if ($limitReached)
                         <p class="rounded-lg bg-gold-50 px-3 py-2 text-xs text-ink-600">
@@ -64,10 +67,10 @@
                 </div>
 
                 <form wire:submit="send" class="flex items-center gap-2 border-t border-ink-100 p-3">
-                    <input type="text" wire:model="draft" @disabled($limitReached)
+                    <input type="text" wire:model="draft" @disabled($limitReached || $waiting)
                            class="flex-1 rounded-md border border-ink-200 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none disabled:bg-ink-50"
                            placeholder="{{ __('Type your question…') }}">
-                    <button type="submit" wire:loading.attr="disabled" wire:target="send" @disabled($limitReached)
+                    <button type="submit" wire:loading.attr="disabled" wire:target="send" @disabled($limitReached || $waiting)
                             class="rounded-md bg-brand-600 px-3 py-2 text-sm font-semibold text-white disabled:opacity-50">
                         {{ __('Send') }}
                     </button>
