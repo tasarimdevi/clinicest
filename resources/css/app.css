@@ -91,6 +91,39 @@
     [x-cloak] {
         display: none !important;
     }
+
+    /*
+     * Sitewide form baseline. Every form across the app sets a border
+     * *color* utility (e.g. border-ink-300) without the separate border
+     * *width* utility Tailwind also requires — so none of them ever
+     * rendered a visible border, just a borderless blank box. Fixing this
+     * once here (rather than in each of the ~40 views that hit it) also
+     * gives every input a consistent size/radius/focus state for free;
+     * a file's own border-{color} utility still wins for tinting since
+     * utilities outrank this base layer, only the width was ever missing.
+     */
+    input:not([type='checkbox']):not([type='radio']):not([type='range']),
+    select,
+    textarea {
+        @apply w-full rounded-md border border-ink-200 bg-white px-3 py-2.5 text-sm text-ink-900 shadow-sm transition placeholder:text-ink-400;
+    }
+
+    input:not([type='checkbox']):not([type='radio']):not([type='range']):focus,
+    select:focus,
+    textarea:focus {
+        @apply border-brand-400 outline-none ring-2 ring-brand-500/20;
+    }
+
+    input:disabled,
+    select:disabled,
+    textarea:disabled {
+        @apply cursor-not-allowed bg-ink-50 text-ink-400;
+    }
+
+    input[type='checkbox'],
+    input[type='radio'] {
+        @apply border-ink-300 text-brand-600 focus:ring-2 focus:ring-brand-500/30;
+    }
 }
 
 /*
