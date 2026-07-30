@@ -60,8 +60,11 @@ class GroqProvider implements AiProvider
             'temperature' => $options['temperature'] ?? 0.4,
         ], static fn ($value) => $value !== null);
 
+        // Kept short: ChatWidget can chain several of these calls in one
+        // request (multi-round tool calling), and this host has little
+        // memory headroom to spare on a request held open for a long time.
         $response = Http::withToken($apiKey)
-            ->timeout(20)
+            ->timeout(12)
             ->post(self::ENDPOINT, $payload);
 
         if ($response->failed()) {

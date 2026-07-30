@@ -35,8 +35,10 @@ class ChatWidget extends Component
     // Llama models routinely chain more than one tool call per turn (e.g.
     // search_treatments -> get_cost_estimate using what it found) -- this
     // bounds how many rounds converse() will follow before falling back,
-    // rather than only supporting a single round.
-    private const MAX_TOOL_ROUNDS = 4;
+    // rather than only supporting a single round. Kept low (3 rounds x
+    // GroqProvider's per-call timeout) so worst-case latency stays well
+    // under the proxy/client's patience on this memory-constrained host.
+    private const MAX_TOOL_ROUNDS = 3;
 
     public bool $enabled = false;
 
