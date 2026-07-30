@@ -11,6 +11,7 @@ use App\Models\ChatSession;
 use App\Models\ChatSetting;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 
 /**
@@ -42,6 +43,16 @@ class ProcessChatReply implements ShouldQueue
         if ($session === null) {
             return;
         }
+
+        // SetLocale middleware (app/Http/Middleware/SetLocale.php) is what
+        // normally makes route('treatments.show', $model) and
+        // app()->getLocale() resolve to the visitor's locale -- it never
+        // runs for a queued job, so without this, tools generating a
+        // locale-prefixed URL throw ("Missing required parameter: locale")
+        // and translations fall back to the app's default locale instead of
+        // the visitor's.
+        app()->setLocale($session->locale);
+        URL::defaults(['locale' => $session->locale]);
 
         $settings = ChatSetting::current();
         $start = microtime(true);
