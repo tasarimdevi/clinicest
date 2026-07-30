@@ -133,6 +133,7 @@ class ChatTools
                     'slug' => $t->slug,
                     'name' => $t->getTranslation('name', app()->getLocale()),
                     'summary' => $t->getTranslation('summary', app()->getLocale()),
+                    'url' => route('treatments.show', $t),
                 ])->all(),
             ],
             'amounts' => [],
